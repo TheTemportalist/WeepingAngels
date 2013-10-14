@@ -15,6 +15,7 @@ import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
 import WeepingAngels.Client.Model.ModelWeepingAngel;
 import WeepingAngels.Entity.EntityStatue;
+import WeepingAngels.lib.Reference;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -67,7 +68,7 @@ public class TileEntityPlinthRenderer extends TileEntitySpecialRenderer
             */   
         	
             /*this.bindTextureByName("/resources/weepingangel.png");*/
-        	this.bindTexture(Texture);
+        	this.bindTexture(Reference.weepingAngelTex);
         	GL11.glPushMatrix();
             GL11.glDisable(GL11.GL_CULL_FACE);       
             GL11.glTranslatef((float)d + 0.5F, (float)d1 + 2.0f, (float)d2 + 0.5F);

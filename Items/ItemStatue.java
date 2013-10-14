@@ -3,19 +3,19 @@ package WeepingAngels.Items;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
-import WeepingAngels.WeepingAngelsMod;
-import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import WeepingAngels.Entity.EntityStatue;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import WeepingAngels.WeepingAngelsMod;
+import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
+import WeepingAngels.Entity.EntityStatue;
+import WeepingAngels.lib.Reference;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemStatue extends Item
 {
@@ -117,8 +117,8 @@ public class ItemStatue extends Item
         return true;
 	}
 	@SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister par1IconRegister)
-    {
-        this.itemIcon = par1IconRegister.registerIcon("weepingangels:statue");
-    }
+	public void registerIcons(IconRegister iconReg) {
+		this.itemIcon = iconReg.registerIcon(Reference.BASE_TEX + "statue");
+	}
+	
 }

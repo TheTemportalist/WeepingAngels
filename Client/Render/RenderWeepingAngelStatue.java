@@ -2,6 +2,7 @@ package WeepingAngels.Client.Render;
 
 
 import WeepingAngels.Client.Model.ModelWeepingAngel;
+import WeepingAngels.lib.Reference;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -16,11 +17,8 @@ public class RenderWeepingAngelStatue extends RenderLiving{
 		super(new ModelWeepingAngel(), 0.5f);
 	}
 
-	private static final ResourceLocation Texture = new ResourceLocation("weepingangels:textures/entity/weepingangel.png");
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
-
-	return Texture;
-
+		return Reference.weepingAngelTex;
 	}
 }

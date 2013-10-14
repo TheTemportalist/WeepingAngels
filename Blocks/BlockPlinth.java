@@ -63,10 +63,18 @@ public class BlockPlinth extends BlockContainer
 		{
 			if(WeepingAngelsMod.DEBUG) System.out.println("Powered");
 			ComeToLife(world, i, j, k);
+			world.setBlock(i, j, k,
+					Block.stoneSingleSlab.blockID,
+					world.getBlockMetadata(i, j, k),
+					3);
 			idDrop = 0;
 		}
 	}
 
+	public int idPicked(World world, int x, int y, int z) {
+		return WeepingAngelsMod.statue.itemID;
+	}
+	
 	private void ComeToLife(World world, int i, int j, int k)
 	{		
 		TileEntityPlinth tileentityplinth = (TileEntityPlinth)world.getBlockTileEntity(i, j, k);
