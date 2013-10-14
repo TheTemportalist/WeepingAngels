@@ -1,5 +1,6 @@
 package WeepingAngels.Client.Render;
 
+import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Client.Model.ModelWeepingAngel;
 import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.lib.Reference;
@@ -14,6 +15,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class RenderWeepingAngel extends RenderLiving
 {
 	protected ModelWeepingAngel weepingAngelModel;
+	private ResourceLocation textureToUse = Reference.weepingAngelTex;
 	
     public RenderWeepingAngel(float f)
     {
@@ -21,10 +23,23 @@ public class RenderWeepingAngel extends RenderLiving
         this.weepingAngelModel = (ModelWeepingAngel)this.mainModel;
     }
     
-    public void renderWeepingAngel(EntityWeepingAngel entityweepingangel, double d, double d1, double d2, 
+    public void renderWeepingAngel(EntityWeepingAngel angel, double d, double d1, double d2, 
             float f, float f1)
     {
-        super.doRenderLiving(entityweepingangel, d, d1, d2, f, f1);
+    	// 0=false, 1=true
+    	byte angry = angel.getDataWatcher().getWatchableObjectByte(16);
+    	if(WeepingAngelsMod.DEBUG)System.out.println(
+    			"Render: Angry byte = " + angry);
+    	if(angry == 0) {
+    		if(WeepingAngelsMod.DEBUG)System.out.println(
+    				"Render: Is not angry");
+    		this.textureToUse = Reference.weepingAngelTex;
+    	}else{
+    		if(WeepingAngelsMod.DEBUG)System.out.println(
+    				"Render: Is angry");
+    		this.textureToUse = Reference.weepingAngelAngryTex;
+    	}
+        super.doRenderLiving(angel, d, d1, d2, f, f1);
     }
 
     public void doRenderLiving(EntityLiving entityliving, double d, double d1, double d2, 
@@ -41,7 +56,7 @@ public class RenderWeepingAngel extends RenderLiving
 
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
-		return Reference.weepingAngelTex;
+		return this.textureToUse;
 	}
 
 	

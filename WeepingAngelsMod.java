@@ -51,7 +51,7 @@ public class WeepingAngelsMod  {
 	public static int statueItemID;
 	public static int entityWeepingAngelID;
 	
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static boolean pickOnly;
 
 	@Instance(Reference.MOD_ID)
@@ -88,7 +88,7 @@ public class WeepingAngelsMod  {
 	}
 
 	@Mod.EventHandler
-	public void load(FMLInitializationEvent event) {
+	public void init(FMLInitializationEvent event) {
 		
 		plinthBlock = (new BlockPlinth(plinthBlockID, TileEntityPlinth.class, Material.rock)).setHardness(2.0F).setResistance(10F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("Plinth");		
 		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn(spawnBlockID, 1).setHardness(0.5F).setUnlocalizedName("weepingangelspawn").setCreativeTab(CreativeTabs.tabMisc);	
@@ -118,7 +118,7 @@ public class WeepingAngelsMod  {
 				BiomeGenBase.extremeHillsEdge
 		});
 		}
-		LanguageRegistry.instance().addStringLocalization("entity.WeepingAngelsMod.Weeping Angel.name", "Weeping Angel");
+		LanguageRegistry.instance().addStringLocalization("entity.WeepingAngels.Weeping Angel.name", "Weeping Angel");
 
 		//Spawn Block Entity
 		LanguageRegistry.addName(blockWeepingAngelSpawn, "Weeping Angel Spawn Block");

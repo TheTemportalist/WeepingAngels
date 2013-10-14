@@ -44,7 +44,8 @@ public class EntityWeepingAngel extends EntityMob
 	
 	private int health;
 	private float moveSpeed;
-	private String texture;
+	private float maxSpeed = 7F, minSpeed = 0.3F;
+	private double distanceToSeen = 5D;
 
 	public EntityWeepingAngel(World world)
 	{
@@ -223,7 +224,7 @@ public class EntityWeepingAngel extends EntityMob
 		if(spawntimer >= 0)
 			--spawntimer;
 		breakOnePerTick = false;
-		moveSpeed = entityToAttack != null ? 7F : 0.3F;
+		moveSpeed = entityToAttack != null ? this.maxSpeed : this.minSpeed;
 		isJumping = false;
 		if(worldObj.isDaytime())
 		{
@@ -236,40 +237,47 @@ public class EntityWeepingAngel extends EntityMob
 				canSeeSkyAndDay = false;
 			}
 		}
-		if(entityToAttack != null && (entityToAttack instanceof EntityPlayer))
+		if(this.entityToAttack != null && (this.entityToAttack instanceof EntityPlayer))
 		{
-			if(!canAngelBeSeenMultiplayer())
+			if(WeepingAngelsMod.DEBUG)System.out.println("Checking Seen");
+			if(canAngelBeSeenMultiplayer())
 			{
+				if(WeepingAngelsMod.DEBUG)System.out.println("Not Seen");
 				if((getDistancetoEntityToAttack() > 15D && timeTillNextTeleport-- < 0))
 				{
 					func_35182_c(entityToAttack);
 					worldObj.playSoundAtEntity(this, getMovementSound(), getSoundVolume() * 1.1f, ((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
 					timeTillNextTeleport = rand.nextInt(60) + 20;
 				}
-				if(WeepingAngelsMod.DEBUG)System.out.println(timeTillNextTeleport);
-				if((entityToAttack instanceof EntityPlayer) && getDistancetoEntityToAttack() <= 5D)
-				{
-					this.texture = "weepingangels:weepingangel-angry.png";
+				if(WeepingAngelsMod.DEBUG)System.out.println("Time till port: " + timeTillNextTeleport);
+				
+				if(WeepingAngelsMod.DEBUG)System.out.println("Checking near players");
+				//if((entityToAttack instanceof EntityPlayer) && getDistancetoEntityToAttack() <= this.distanceToSeen)
+				if(getDistancetoEntityToAttack() <= this.distanceToSeen) {					
 					this.aggressiveArmMovement = true;
 					this.dataWatcher.updateObject(16, Byte.valueOf((byte)1));
 					if(WeepingAngelsMod.DEBUG)System.out.println("Angry");
 					entityToAttack.applyEntityCollision(entityToAttack);
 
-				}
-				else
-				{
-					this.texture = "weepingangels:weepingangel.png";
+				}else{
 					this.aggressiveArmMovement = false;
 					this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
+					if(WeepingAngelsMod.DEBUG)System.out.println("Not Angry");
 					entityToAttack.applyEntityCollision(entityToAttack);
 				}
-				if((entityToAttack instanceof EntityPlayer) && getDistancetoEntityToAttack() > 5D && rand.nextInt(100) > 80)
-				{
-					armMovement = !armMovement;
-					if(armMovement) 
-						this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));
-					else
+				
+				if((entityToAttack instanceof EntityPlayer) &&
+						getDistancetoEntityToAttack() >
+								this.distanceToSeen &&
+						rand.nextInt(100) > 80) {
+					//armMovement = !armMovement;
+					if(armMovement) {
+						if(WeepingAngelsMod.DEBUG)System.out.println("Arm Movement: 1");
+						//this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));
+					}else{
+						if(WeepingAngelsMod.DEBUG)System.out.println("Arm Movement: 0");
 						this.dataWatcher.updateObject(17, Byte.valueOf((byte)0));
+					}
 				}
 			}
 			if(worldObj.getFullBlockLightValue(MathHelper.floor_double(posX), MathHelper.floor_double(posY), MathHelper.floor_double(posZ)) < 1 && worldObj.getFullBlockLightValue(MathHelper.floor_double(entityToAttack.posX), MathHelper.floor_double(entityToAttack.posY), MathHelper.floor_double(entityToAttack.posZ)) < 1 && randomSoundDelay > 0 && --randomSoundDelay == 0)
@@ -306,7 +314,7 @@ public class EntityWeepingAngel extends EntityMob
 			}
 		}
 		byte var1 = this.dataWatcher.getWatchableObjectByte(16);
-        this.texture = var1 == 1 ? "weepingangels:weepingangel-angry.png" : "weepingangels:weepingangel.png";
+
 		super.onUpdate();
 	}
 

@@ -18,6 +18,10 @@ public class Reference {
 	public static final ResourceLocation weepingAngelTex =
 			new ResourceLocation(
 					BASE_TEX + "textures/entities/weepingangel.png");
+	public static final ResourceLocation weepingAngelAngryTex =
+			new ResourceLocation(
+					BASE_TEX + "textures/entities/weepingangel-angry.png");
+
 	public static final ResourceLocation weepingAngelStatueTex =
 			new ResourceLocation(
 					BASE_TEX + "textures/blocks/plinth.png");
