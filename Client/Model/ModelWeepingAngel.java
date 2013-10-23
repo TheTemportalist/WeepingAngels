@@ -172,7 +172,7 @@ public class ModelWeepingAngel extends ModelBase
 
     public void setRotationAngles(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
     {
-    	/*
+    	
     	if(entity instanceof EntityWeepingAngel){
     		if(((EntityWeepingAngel)entity).getAngry())
         {
@@ -227,7 +227,7 @@ public class ModelWeepingAngel extends ModelBase
             leftarm.rotateAngleY = 0.55851F;
             leftarm.rotateAngleZ = 0.0F;
     	}
-    	*/
+    	
     }
 
     private float toRadians(float f)

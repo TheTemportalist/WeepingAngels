@@ -1,13 +1,15 @@
 package WeepingAngels;
 
+import java.lang.reflect.Field;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.EnumArt;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
@@ -39,7 +41,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 @Mod( modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION)
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, channels = {"statue"}, packetHandler = PacketHandler.class)
 public class WeepingAngelsMod  {
-	
+
 	public static Block	plinthBlock;
 	public static Block blockWeepingAngelSpawn;
 	public static Item statue;
@@ -55,14 +57,16 @@ public class WeepingAngelsMod  {
 	public static int statueItemID;
 	public static int entityWeepingAngelID;
 	public static int entityWAPaintingID;
-	
+
 	public static Item waPaint;
 	public static int waPaint_ID;
 	public static boolean waP_Enable = true;
-	
+
 	public static final boolean DEBUG = true;
 	public static boolean pickOnly;
 	public static boolean worldSpawnAngels = true;
+
+	public static Potion angelConvert;
 
 	@Instance(Reference.MOD_ID)
 	public static WeepingAngelsMod instance;
@@ -70,23 +74,23 @@ public class WeepingAngelsMod  {
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS,
 			serverSide = Reference.SERVER_PROXY_CLASS)
 	public static ServerProxy proxy;
-	
+
 	public static final String wapNAME = "WeepingAngelArt";
 	/*
 	EntityPainting wap = new EntityPainting(
 			world, 0, 0, 0, 0, "WeepingAngelArt");
-	*/
+	 */
 	public static EnumArt waa = EnumHelper.addArt(
 			WeepingAngelsMod.wapNAME.toLowerCase(), WeepingAngelsMod.wapNAME, 16, 16, 0, 0);
-	
-	
+
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		proxy.preInit();
 
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load(); // load configs from its file
-		
+
 		entityWeepingAngelID = config.get(Configuration.CATEGORY_GENERAL,	"EntityWeepingAngelID",	300).getInt();
 		entityWAPaintingID	= config.get(Configuration.CATEGORY_GENERAL,	"EntityWAPaintingID",	301).getInt();
 		statueItemID = config.get(Configuration.CATEGORY_ITEM, "StatueItemID", 12034).getInt();
@@ -99,21 +103,49 @@ public class WeepingAngelsMod  {
 		maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "MaxSpawnedPerInstance", 2).getInt();
 		spawnRate = config.get(Configuration.CATEGORY_GENERAL, "SpawnRate", 2).getInt();	
 		maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "MaxSpawnedPerInstance", 2).getInt();
-		
+
 		WeepingAngelsMod.pickOnly = config.get(Configuration.CATEGORY_GENERAL, "Hurt Angel with PickAxe only", false).getBoolean(false);
 		WeepingAngelsMod.waPaint_ID = config.get(Configuration.CATEGORY_ITEM, "Weeping angel Painting", 3025).getInt();
-		
+
 		if(config.hasChanged()) {
 			config.save(); // Configs saved to its file
 		}
-		
+
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
-		
+
+
+
+		Potion[] potionTypes = null;
+
+		for (Field f : Potion.class.getDeclaredFields()) {
+			f.setAccessible(true);
+			try {
+				if ((f.getName().equals("potionTypes")) || (f.getName().equals("field_76425_a"))) {
+					Field modfield = Field.class.getDeclaredField("modifiers");
+					modfield.setAccessible(true);
+					modfield.setInt(f, f.getModifiers() & 0xFFFFFFEF);
+
+					potionTypes = (Potion[])(Potion[])f.get(null);
+					Potion[] newPotionTypes = new Potion[256];
+					System.arraycopy(potionTypes, 0, newPotionTypes, 0, potionTypes.length);
+					f.set(null, newPotionTypes);
+				}
+			} catch (Exception e) {
+				System.err.println("Severe error, please report this to the mod author:");
+				System.err.println(e);
+			}
+
+		}
+
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.registerRenderThings();
+		
+		WeepingAngelsMod.angelConvert = new PotionConvert(40, true, 0).setPotionName("potion.angelconvert");
+	    LanguageRegistry.instance().addStringLocalization("potion.angelconvert", "Angel Conversion");
+
 		
 		plinthBlock = (new BlockPlinth(plinthBlockID, TileEntityPlinth.class, Material.rock)).setHardness(2.0F).setResistance(10F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("Plinth");		
 		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn(spawnBlockID, 1).setHardness(0.5F).setUnlocalizedName("weepingangelspawn").setCreativeTab(CreativeTabs.tabMisc);	
@@ -121,7 +153,7 @@ public class WeepingAngelsMod  {
 
 		EntityRegistry.registerModEntity(EntityWAPainting.class, "Weeping Angel Painting", entityWAPaintingID, this, 80, 3, false);
 		EntityList.IDtoClassMapping.put(entityWAPaintingID, EntityWAPainting.class);
-				
+
 		// Register all entities, blocks and items to game
 		//Weeping Angel Entity
 		EntityRegistry.registerModEntity(EntityWeepingAngel.class, "Weeping Angel", entityWeepingAngelID, this, 80, 3, true);
@@ -144,11 +176,11 @@ public class WeepingAngelsMod  {
 				BiomeGenBase.frozenRiver,
 				BiomeGenBase.extremeHills,
 				BiomeGenBase.extremeHillsEdge
-		});
+			});
 		}
 		LanguageRegistry.instance().addStringLocalization("entity.WeepingAngels.Weeping Angel.name", "Weeping Angel");
 		LanguageRegistry.instance().addStringLocalization("entity.WeepingAngels.Weeping Angel Painting.name", "Weeping Angel Painting");
-		
+
 		//Spawn Block Entity
 		LanguageRegistry.addName(blockWeepingAngelSpawn, "Weeping Angel Spawn Block");
 
@@ -157,16 +189,16 @@ public class WeepingAngelsMod  {
 		GameRegistry.registerBlock(blockWeepingAngelSpawn, "Weeping Angel Spawn Block");
 		LanguageRegistry.addName(plinthBlock, "Plinth");
 		LanguageRegistry.addName(statue,"Weeping Angel Statue");
-		
+
 		if(WeepingAngelsMod.waP_Enable) {
 			WeepingAngelsMod.waPaint = new ItemWeepPaint(
 					WeepingAngelsMod.waPaint_ID, EntityWAPainting.class)
-				.setUnlocalizedName("waPaint");
+			.setUnlocalizedName("waPaint");
 			LanguageRegistry.addName(
 					WeepingAngelsMod.waPaint, "Weeping Angel Painting");
 			WeepingAngelsMod.waPaint.setCreativeTab(CreativeTabs.tabDecorations);
 		}
-		
+
 	}
 
 	@Mod.EventHandler

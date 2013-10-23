@@ -28,15 +28,15 @@ public class RenderWeepingAngel extends RenderLiving
     {
     	// 0=false, 1=true
     	byte angry = angel.getDataWatcher().getWatchableObjectByte(16);
-    	if(WeepingAngelsMod.DEBUG)System.out.println(
-    			"Render: Angry byte = " + angry);
+    	//if(WeepingAngelsMod.DEBUG)System.out.println(
+    		//	"Render: Angry byte = " + angry);
     	if(angry == 0) {
-    		if(WeepingAngelsMod.DEBUG)System.out.println(
-    				"Render: Is not angry");
+    		//if(WeepingAngelsMod.DEBUG)System.out.println(
+    			//	"Render: Is not angry");
     		this.textureToUse = Reference.weepingAngelTex;
     	}else{
-    		if(WeepingAngelsMod.DEBUG)System.out.println(
-    				"Render: Is angry");
+    		//if(WeepingAngelsMod.DEBUG)System.out.println(
+    			//	"Render: Is angry");
     		this.textureToUse = Reference.weepingAngelAngryTex;
     	}
         super.doRenderLiving(angel, d, d1, d2, f, f1);
