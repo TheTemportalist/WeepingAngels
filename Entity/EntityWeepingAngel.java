@@ -71,9 +71,6 @@ public class EntityWeepingAngel extends EntityCreature {
         else
             this.moveSpeed = this.minSpeed;
         
-        
-        
-        
         if(this.worldObj.isDaytime()) {
             float f = getBrightness(1.0F);
             if(f > 0.5F && this.worldObj.canBlockSeeTheSky(
@@ -89,14 +86,10 @@ public class EntityWeepingAngel extends EntityCreature {
         
         EntityPlayer ep = this.findPlayerToAttack();
         if(this.isInFieldOfVision(ep)) {
-            if(WeepingAngelsMod.DEBUG) System.out.println("Angel can be seen");
+            if(WeepingAngelsMod.DEBUG)
+            	System.out.println("Angel can be seen");
             this.moveSpeed = 0.0F;
-        }
-        
-        
-        
-        
-        
+        }     
         
         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
                 .setAttribute(this.moveSpeed);
@@ -180,7 +173,7 @@ public class EntityWeepingAngel extends EntityCreature {
     private boolean isInFieldOfVision(EntityLivingBase player) {
         if(player == null)
             return false;
-        Vec3 vec3 = player.getLook(1.0F).normalize();
+        Vec3 vec3 = player.getLookVec();
         Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(
                 this.posX - player.posX,
                 this.boundingBox.minY +
@@ -191,7 +184,7 @@ public class EntityWeepingAngel extends EntityCreature {
         double d0 = vec31.lengthVector();
         vec31 = vec31.normalize();
         double d1 = vec3.dotProduct(vec31);
-        return d1 > 1.0D - 0.025D / d0 ? player.canEntityBeSeen(this) : false;
+        return d1 > ((1.0D - 0.025D) / d0) ? player.canEntityBeSeen(this) : false;
     }
     
     // ~~~~~ Freezing the Angel 2~~~~~
