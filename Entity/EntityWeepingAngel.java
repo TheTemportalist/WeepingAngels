@@ -9,11 +9,17 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import WeepingAngels.WeepingAngelsMod;
 
 public class EntityWeepingAngel extends EntityCreature {
@@ -24,6 +30,7 @@ public class EntityWeepingAngel extends EntityCreature {
 	private int torchTimer;
 	private int torchNextBreak;
 	private boolean breakOnePerTick;
+	private boolean didBreak;
 	private boolean canTeleport;
 	public boolean armMovement;
 	public boolean aggressiveArmMovement;
@@ -82,6 +89,19 @@ public class EntityWeepingAngel extends EntityCreature {
 				this.canSeeSkyAndDay = false;
 		}
 
+		if(this.didBreak) {
+			int delay = 20*30;
+			int i = 0;
+			while(i < delay) {
+				i++;
+			}
+			this.didBreak = false;
+		}
+
+		if(!this.canSeeSkyAndDay && !this.didBreak) {
+			//this.findNearestTorch();
+		}
+
 		EntityPlayer player = this.getClosestPlayer();
 		if(player != null) {
 			this.entityToAttack = player;
@@ -121,14 +141,6 @@ public class EntityWeepingAngel extends EntityCreature {
 						this.getDistancetoEntityToAttack() <= (4 * this.distanceToSeen);
 			}
 		}
-		/*
-		if(this.isJumping) {
-			this.setPosition(
-					(int)(this.posX),
-					(int)(this.posY),
-					(int)(this.posZ));
-		}
-		*/
 		if(this.entityToAttack != null) {
 			double d1 = this.entityToAttack.posX-this.posX;
 			double d2 = this.entityToAttack.posY-this.posY;
@@ -137,36 +149,53 @@ public class EntityWeepingAngel extends EntityCreature {
 			double closeDis = 13.856D;
 			double farDis = 20.785D;
 			//if(!this.worldObj.isRemote)
-				//if(WeepingAngelsMod.DEBUG) System.out.println(
-					//	"Distance to: " + distance);
+			//if(WeepingAngelsMod.DEBUG) System.out.println(
+			//	"Distance to: " + distance);
 			if(distance >= farDis) {
 				//if(!this.worldObj.isRemote)
-					//if(WeepingAngelsMod.DEBUG) System.out.println(
-						//	"Calm + Closed");
+				//if(WeepingAngelsMod.DEBUG) System.out.println(
+				//	"Calm + Closed");
 				this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
 				this.dataWatcher.updateObject(17, Byte.valueOf((byte)0));
 			}else{
 				if(distance < farDis) {
 					//if(!this.worldObj.isRemote)
-						//if(WeepingAngelsMod.DEBUG) System.out.println(
-							//	"Calm + Open");
+					//if(WeepingAngelsMod.DEBUG) System.out.println(
+					//	"Calm + Open");
 					this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
 					this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));
 					if(distance < closeDis) {
 						//if(!this.worldObj.isRemote)
-							//if(WeepingAngelsMod.DEBUG) System.out.println(
-								//	"Angry + Open");
+						//if(WeepingAngelsMod.DEBUG) System.out.println(
+						//	"Angry + Open");
 						this.dataWatcher.updateObject(16, Byte.valueOf((byte)1));
 						this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));
 					}
 				}
 			}
 		}
-		
-		
+
+
 
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
-				.setAttribute(this.moveSpeed);
+		.setAttribute(this.moveSpeed);
+
+
+		int r = 10;
+		double x = this.posX, y = this.posY, z = this.posZ;
+		for(int i = (int)x-r; i < x+r; i++) {
+			for(int k = (int)z-r; k < z+r; k++) {
+				for(int j = (int)y-r; j < y+r; j++) {
+					if(this.worldObj.getBlockId(i, j, k) ==
+							Block.lavaMoving.blockID ||
+							this.worldObj.getBlockId(i, j, k) ==
+							Block.lavaStill.blockID) {
+						this.heal(0.05F);
+					}
+				}
+			}
+		}
+
 		super.onUpdate();
 	}
 
@@ -206,6 +235,7 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 	}
 	public boolean getCanSpawnHere() {
+		if(WeepingAngelsMod.spawnRate == 0) return false;
 		if(this.worldObj.difficultySetting > 0 &&
 				this.isValidLightLevel() &&
 				super.getCanSpawnHere()) {
@@ -214,7 +244,7 @@ public class EntityWeepingAngel extends EntityCreature {
 			int j1 = MathHelper.floor_double(this.posY + j2);
 			int k = MathHelper.floor_double(this.posZ);
 
-			if(j1 < 60)
+			if(j1 <= WeepingAngelsMod.maxSpawnHeight)
 				return WeepingAngelsMod.worldSpawnAngels;
 		}
 		return false;
@@ -234,6 +264,7 @@ public class EntityWeepingAngel extends EntityCreature {
 	public boolean getArmMovement() {
 		return this.dataWatcher.getWatchableObjectByte(17) == 1; 
 	}
+
 
 	// ~~~~~ Freezing the Angel ~~~~~
 	private boolean isInFieldOfVision(EntityLivingBase player) {
@@ -502,25 +533,19 @@ public class EntityWeepingAngel extends EntityCreature {
 	}
 
 	// ~~~~~ Torches ~~~~~
-	private void findNearestTorch()
-	{
-		int i = (int)posX;
-		int j = (int)posY;
-		int k = (int)posZ;
-		int l = i + 10;
-		int i1 = j + 10;
-		int j1 = k + 10;
-		int k1 = i - 10;
-		int l1 = j - 10;
-		int i2 = k - 10;
-		int j2 = 100;
-		for(int k2 = k1; k2 < l; k2++) {
-			for(int l2 = l1; l2 < i1; l2++) {
-				for(int i3 = i2; i3 < j1; i3++) {
-					if(this.getDistance(i, j, k, k2, l2, i3) > (double)j2) {
+	private boolean findNearestTorch() {
+		int i = (int)this.posX;
+		int j = (int)this.posY;
+		int k = (int)this.posZ;
+		int radius = 10;
+		int maxRadius = 100;
+		for(int i1 = i-radius; i1 < i+radius; i1++) {
+			for(int k1 = k-radius; k1 < k+radius; k1++) {
+				for(int j1 = j-(radius*2); j1 < j+(radius/2); j1++) {
+					if(this.getDistance(i, j, k, i1, j1, k1) > (double)maxRadius) {
 						continue;
 					}
-					int j3 = worldObj.getBlockId(k2, l2, i3);
+					int j3 = worldObj.getBlockId(i1, j1, k1);
 					Block block = j3 > 0 ? Block.blocksList[j3] : null;
 					if(block == null || block != Block.torchWood &&
 							block != Block.torchRedstoneActive &&
@@ -532,37 +557,30 @@ public class EntityWeepingAngel extends EntityCreature {
 											posX,
 											posY + (double)getEyeHeight(),
 											posZ),
-											Vec3.createVectorHelper(k2, l2, i3)
-									) != null ||
-									worldObj.clip(
-											Vec3.createVectorHelper(
-													entityToAttack.posX,
-													entityToAttack.posY +
-													(double)entityToAttack.getEyeHeight(),
-													entityToAttack.posZ),
-													Vec3.createVectorHelper(k2, l2, i3)
-											) != null) {
+											Vec3.createVectorHelper(i1, j1, k1)
+									) != null) {
 						continue;
 					}
-					if(!this.breakOnePerTick)
+					if(!this.didBreak)
 					{
-						block.dropBlockAsItem(worldObj, k2, l2, i3, 1, 1);
-						worldObj.setBlockToAir(k2, l2, i3);
+						block.dropBlockAsItem(worldObj, i1, j1, k1, 1, 1);
+						worldObj.setBlockToAir(i1, j1, k1);
 						//worldObj.playSoundAtEntity(
 						//		this,
 						//		"weepingangels:light",
 						//		getSoundVolume(),
 						//		((rand.nextFloat() - rand.nextFloat())
 						//				* 0.2F + 1.0F) * 1.8F);
-						this.breakOnePerTick = true;
+						this.didBreak = true;
+						return true;
+					}else{
+						return false;
 					}
-					break;
 				}
 
 			}
-
 		}
-
+		return false;
 	}
 	public double getDistance(int i, int j, int k, int l, int i1, int j1) {
 		int k1 = l - i;
@@ -701,222 +719,159 @@ public class EntityWeepingAngel extends EntityCreature {
 		return true;
 	}
 
-	/*
+	// ~~~~~ Attacking ~~~~~
 	@Override
-	protected EntityPlayer findPlayerToAttack() {
-		if(this.spawntimer < 0){
-			EntityPlayer entityplayer = this.worldObj
-					.getClosestPlayerToEntity(this, closestPlayerRadius);
-			if(entityplayer != null && this.canAngelBeSeenMultiplayer()) {
-				return entityplayer;
-			}else{
-				return null;
-			}
-		} 
-		return null;
-	}
-	private boolean LineOfSightCheck(EntityPlayer entity1) {
-		if(entity1 == null)
-			return false;
+	protected void attackEntity(Entity entity, float f) {
 
-		if(this.worldObj.rayTraceBlocks_do_do(
-				Vec3.createVectorHelper(
-						this.posX,
-						this.posY + (double)getEyeHeight(),
-						this.posZ),
-						Vec3.createVectorHelper(
-								entity1.posX,
-								entity1.posY + (double)entity1.getEyeHeight(),
-								entity1.posZ),
-								true, true) == null)
-			return true;
-		if(this.worldObj.rayTraceBlocks_do_do(
-				Vec3.createVectorHelper(
-						this.posX,
-						this.posY + this.height,
-						this.posZ),
-						Vec3.createVectorHelper(
-								entity1.posX,
-								entity1.posY + (double)entity1.getEyeHeight(),
-								entity1.posZ),
-								true, true) == null)
-			return true;
-		if(this.worldObj.rayTraceBlocks_do_do(
-				Vec3.createVectorHelper(
-						this.posX,
-						this.posY + (this.height * 0.1),
-						this.posZ),
-						Vec3.createVectorHelper(
-								entity1.posX,
-								entity1.posY + (double)entity1.getEyeHeight(),
-								entity1.posZ),
-								true, true) == null)
-			return true;
-		if(this.worldObj.rayTraceBlocks_do_do(
-				Vec3.createVectorHelper(
-						posX + 0.7,
-						posY + (double)getEyeHeight(),
-						posZ),
-						Vec3.createVectorHelper(
-								entity1.posX,
-								entity1.posY + (double)entity1.getEyeHeight(),
-								entity1.posZ),
-								true, true) == null)
-			return true;
-		if(this.worldObj.rayTraceBlocks_do_do(
-				Vec3.createVectorHelper(
-						posX - 0.7,
-						posY + (double)getEyeHeight(),
-						posZ),
-						Vec3.createVectorHelper(
-								entity1.posX,
-								entity1.posY + (double)entity1.getEyeHeight(),
-								entity1.posZ),
-								true, true) == null)
-			return true;
-		if(this.worldObj.rayTraceBlocks_do_do(
-				Vec3.createVectorHelper(
-						posX,
-						posY + (double)getEyeHeight(),
-						posZ + 0.7),
-						Vec3.createVectorHelper(
-								entity1.posX,
-								entity1.posY + (double)entity1.getEyeHeight(),
-								entity1.posZ),
-								true, true) == null)
-			return true;
-		if(this.worldObj.rayTraceBlocks_do_do(
-				Vec3.createVectorHelper(
-						posX,
-						posY + (double)getEyeHeight(),
-						posZ - 0.7),
-						Vec3.createVectorHelper(
-								entity1.posX,
-								entity1.posY + (double)entity1.getEyeHeight(),
-								entity1.posZ),
-								true, true) == null)
-			return true;
-		if(this.worldObj.rayTraceBlocks_do_do(
-				Vec3.createVectorHelper(
-						posX,
-						posY + (height * 1.2),
-						posZ - 0.7),
-						Vec3.createVectorHelper(
-								entity1.posX,
-								entity1.posY + (double)entity1.getEyeHeight(),
-								entity1.posZ),
-								true, true) == null)
-			return true;
-		if(this.worldObj.rayTraceBlocks_do_do(
-				Vec3.createVectorHelper(
-						posX,
-						posY + (height * 1.2) + 1,
-						posZ),
-						Vec3.createVectorHelper(
-								entity1.posX,
-								entity1.posY + (double)entity1.getEyeHeight(),
-								entity1.posZ),
-								true, true) == null);
-		return true;
-	}
-	public boolean GetFlag(float f, float f1, float f2, float f3, float f4)
-	{
-		if(f < f3)
-		{
-			if(f2 >= f + f4)
-			{
-				return true;
-			}
-			if(f2 <= f1)
-			{
-				return true;
-			}
-		}
-		if(f1 >= f4)
-		{
-			if(f2 <= f1 - f4)
-			{
-				return true;
-			}
-			if(f2 >= f)
-			{
-				return true;
-			}
-		}
-		if(f1 < f4 && f >= f3)
-		{
-			return f2 <= f1 && f2 > f;
-		} else
-		{
-			return false;
-		}
-	}
-	private boolean isInFieldOfVision1(Entity entityweepingangel,
-			EntityPlayer entityToAttack, float f4i, float f5i)
-	{
-		float f = entityToAttack.rotationYaw;
-		float f1 = entityToAttack.rotationPitch;
-		entityToAttack.attackEntityAsMob(entityToAttack);
-		float f2 = entityToAttack.rotationYaw;
-		float f3 = entityToAttack.rotationPitch;
-		entityToAttack.rotationYaw = f;
-		entityToAttack.rotationPitch = f1;
-		f = f2;
-		f1 = f3;
-		float f4 = f4i; // 70f
-		float f5 = f5i; // 65f
-		float f6 = entityToAttack.rotationYaw - f4;
-		float f7 = entityToAttack.rotationYaw + f4;
-		float f8 = entityToAttack.rotationPitch - f5;
-		float f9 = entityToAttack.rotationPitch + f5;
-		boolean flag = this.GetFlag(f6, f7, f, 0.0F, 360F);
-		boolean flag1 = this.GetFlag(f8, f9, f1, -180F, 180F);
-		return flag && flag1 &&
-				(entityToAttack.canEntityBeSeen(entityweepingangel) ||
-						LineOfSightCheck(entityToAttack));
-	}
-	private boolean canAngelBeSeen(EntityPlayer entity1) {
-		if(worldObj.getFullBlockLightValue(MathHelper.floor_double(posX), MathHelper.floor_double(posY), MathHelper.floor_double(posZ)) < 1)
-		{
-			this.randomSoundDelay = rand.nextInt(40);
-			return false;
-		}
-		if(entity1.canEntityBeSeen(this) || this.LineOfSightCheck(entity1))
-		{
-			return this.isInFieldOfVision1(this, entity1, 70, 65);
-		} else
-		{
-			return false;
-		}
-	}
-	private boolean canAngelBeSeenMultiplayer() {
-		if(worldObj.getFullBlockLightValue(MathHelper.floor_double(posX), MathHelper.floor_double(posY), MathHelper.floor_double(posZ)) < 1)
-		{
-			this.randomSoundDelay = rand.nextInt(40);
-			return false;
-		}
-		int i = 0;
-		List list = worldObj.getEntitiesWithinAABB(EntityPlayer.class, boundingBox.expand(64D, 20D, 64D));
-		for(int j = 0; j < list.size(); j++)
-		{
-			EntityPlayer entity1 = (EntityPlayer)list.get(j);
-			if(entity1 instanceof EntityPlayer)
-			{
-				if(this.canAngelBeSeen(entity1))
-				{
-					i++;
+		if(entityToAttack != null &&
+				(entityToAttack instanceof EntityPlayer) &&
+				!this.canBeSeenMulti()) {
+			EntityPlayer entityPlayer = (EntityPlayer)entityToAttack;
+
+			//Always attack, but teleport sometimes as specified in the config
+			super.attackEntity(entity, f);
+
+			if(!entityPlayer.capabilities.isCreativeMode) {
+				if(rand.nextInt(100) < WeepingAngelsMod.poisonChance) {
+					if(entity instanceof EntityLivingBase) {
+						((EntityLivingBase)entity).addPotionEffect(
+								new PotionEffect(
+										WeepingAngelsMod.angelConvert.id,
+										20*60*5, 1));
+					}
+				}
+				if(rand.nextInt(100) < WeepingAngelsMod.teleportChance) {
+					if(getDistancetoEntityToAttack() <= 2) {
+						worldObj.playSoundEffect(entityToAttack.posX, entityToAttack.posY, entityToAttack.posZ, "mob.ghast.scream", getSoundVolume(), ((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
+						worldObj.playSoundAtEntity(entityToAttack, "weepingangels:teleport_activate", getSoundVolume(), ((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
+						for(int k = 0; k < 5; k++) {
+							worldObj.spawnParticle("portal", entityToAttack.posX + (rand.nextDouble() - 0.5D) * (double)width, (entityToAttack.posY + rand.nextDouble() * (double)height) - 0.25D, entityToAttack.posZ + (rand.nextDouble() - 0.5D) * (double)width, (rand.nextDouble() - 0.5D) * 2D, -rand.nextDouble(), (rand.nextDouble() - 0.5D) * 2D);
+						}                   
+
+						this.teleportPlayer(entityToAttack);
+						for(int k = 0; k < 5; k++) {
+							worldObj.spawnParticle("portal", entityToAttack.posX + (rand.nextDouble() - 0.5D) * (double)width, (entityToAttack.posY + rand.nextDouble() * (double)height) - 0.25D, entityToAttack.posZ + (rand.nextDouble() - 0.5D) * (double)width, (rand.nextDouble() - 0.5D) * 2D, -rand.nextDouble(), (rand.nextDouble() - 0.5D) * 2D);
+						}
+						worldObj.playSoundAtEntity(entityToAttack, "weepingangels:teleport_activate", getSoundVolume(), ((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
+						entityToAttack = null;
+					}
 				}
 			}
 		}
-		if(i > 0)
-		{
-			return true;
-		}
-		else
-		{
+	}
+
+	public boolean attackEntityFrom(DamageSource source, float damage) {
+		if(source == null) {
 			return false;
 		}
+		if(source.getSourceOfDamage() instanceof EntityPlayer) {
+			if(!WeepingAngelsMod.pickOnly)
+				super.attackEntityFrom(source, damage);
+			else{
+				EntityPlayer entityplayer = (EntityPlayer)source.getSourceOfDamage();
+				ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+				if(worldObj.difficultySetting > 2) {
+					if(itemstack != null &&
+							(itemstack.itemID == Item.pickaxeDiamond.itemID ||
+							itemstack.canHarvestBlock(Block.obsidian))) {
+						super.attackEntityFrom(source, damage);
+					}
+				}else
+					if(itemstack != null &&
+					(itemstack.itemID == Item.pickaxeDiamond.itemID ||
+					itemstack.itemID == Item.pickaxeIron.itemID ||
+					(itemstack.canHarvestBlock(Block.oreDiamond) &&
+							(itemstack.itemID != Item.pickaxeGold.itemID)))) {
+						super.attackEntityFrom(source, damage);
+					}
+			}
+		}
+		return false;
 	}
-	 */
+
+
+	private void teleportPlayer(Entity entity)
+	{
+		if(entity instanceof EntityPlayer)
+		{
+			int rangeDifference = 2 * (WeepingAngelsMod.teleportRangeMax - WeepingAngelsMod.teleportRangeMin);
+			int offsetX = rand.nextInt(rangeDifference) - rangeDifference/2 + WeepingAngelsMod.teleportRangeMin;
+			int offsetZ = rand.nextInt(rangeDifference) - rangeDifference/2 + WeepingAngelsMod.teleportRangeMin;
+
+			//Center the values on a block, to make the boundingbox calculations match less.
+			double newX = MathHelper.floor_double(entity.posX) + offsetX + 0.5;
+			double newY = rand.nextInt(128);
+			double newZ = MathHelper.floor_double(entity.posZ) + offsetZ + 0.5;
+
+			double bbMinX = newX - entity.width / 2.0;
+			double bbMinY = newY - entity.yOffset + entity.ySize;
+			double bbMinZ = newZ - entity.width / 2.0;
+			double bbMaxX = newX + entity.width / 2.0;
+			double bbMaxY = newY - entity.yOffset + entity.ySize + entity.height;
+			double bbMaxZ = newZ + entity.width / 2.0;
+
+			//FMLLog.info("Teleporting from: "+(int)entity.posX+" "+(int)entity.posY+" "+(int)entity.posZ);
+			//FMLLog.info("Teleporting with offsets: "+offsetX+" "+newY+" "+offsetZ);
+			//FMLLog.info("Starting BB Bounds: "+bbMinX+" "+bbMinY+" "+bbMinZ+" "+bbMaxX+" "+bbMaxY+" "+bbMaxZ);
+
+			//Use a testing boundingBox, so we don't have to move the player around to test if it is a valid location
+			AxisAlignedBB boundingBox = AxisAlignedBB.getBoundingBox(bbMinX, bbMinY, bbMinZ, bbMaxX, bbMaxY, bbMaxZ);
+
+			// Make sure you are trying to teleport to a loaded chunk.
+			Chunk teleportChunk = worldObj.getChunkFromBlockCoords((int)newX, (int)newZ);
+			if (!teleportChunk.isChunkLoaded)
+			{
+				worldObj.getChunkProvider().loadChunk(teleportChunk.xPosition, teleportChunk.zPosition);
+			}
+
+			// Move up, until nothing intersects the entity anymore
+			while (newY > 0 && newY < 128 && !this.worldObj.getCollidingBoundingBoxes(entity, boundingBox).isEmpty())
+			{
+				++newY;
+
+				bbMinY = newY - entity.yOffset + entity.ySize;
+				bbMaxY = newY - entity.yOffset + entity.ySize + entity.height;
+
+				boundingBox.setBounds(bbMinX, bbMinY, bbMinZ, bbMaxX, bbMaxY, bbMaxZ);
+
+				//FMLLog.info("Failed to teleport, retrying at height: "+(int)newY);
+			}
+
+			//If we could place it, could we have placed it lower? To prevent teleports really high up.
+			do 
+			{
+				--newY;
+
+				bbMinY = newY - entity.yOffset + entity.ySize;
+				bbMaxY = newY - entity.yOffset + entity.ySize + entity.height;
+
+				boundingBox.setBounds(bbMinX, bbMinY, bbMinZ, bbMaxX, bbMaxY, bbMaxZ);
+
+				//FMLLog.info("Trying a lower teleport at height: "+(int)newY);
+			}
+			while (newY > 0 && newY < 128 && this.worldObj.getCollidingBoundingBoxes(entity, boundingBox).isEmpty());
+			//Set Y one higher, as the last lower placing test failed.
+			++newY;
+
+			//Check for placement in lava
+			//NOTE: This can potentially hang the game indefinitely, due to random recursion
+			//However this situation is highly unlikelely
+			//My advice: Dont encounter Weeping Angels in seas of lava
+			//NOTE: This can theoretically still teleport you to a block of lava with air underneath, but gladly lava spreads ;)
+			int blockId = worldObj.getBlockId(MathHelper.floor_double(newX), MathHelper.floor_double(newY), MathHelper.floor_double(newZ));
+			if (blockId == 10 || blockId == 11)
+			{
+				teleportPlayer(entity);
+				return;
+			}
+
+			//Set the location of the player, on the final position.
+			entity.setLocationAndAngles(newX, newY, newZ, entity.rotationYaw, entity.rotationPitch);
+			//FMLLog.info("Succesfully teleported to: "+(int)entity.posX+" "+(int)entity.posY+" "+(int)entity.posZ);
+		}
+	}
+
+
+
 
 }

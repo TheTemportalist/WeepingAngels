@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.EnumArt;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -50,6 +51,9 @@ public class WeepingAngelsMod  {
 	public static int maxSpawn;
 	public static int attackStrength;
 	public static int teleportChance;
+	public static int poisonChance;
+	public static int maxSpawnHeight;
+	
 	public static int teleportRangeMin;
 	public static int teleportRangeMax;
 	public static int plinthBlockID;
@@ -96,14 +100,24 @@ public class WeepingAngelsMod  {
 		statueItemID = config.get(Configuration.CATEGORY_ITEM, "StatueItemID", 12034).getInt();
 		plinthBlockID = config.get(Configuration.CATEGORY_BLOCK, "PlinthBlockID", 3023).getInt();
 		spawnBlockID = config.get(Configuration.CATEGORY_BLOCK, "SpawnBlockID", 3024).getInt();
-		attackStrength = config.get(Configuration.CATEGORY_GENERAL, "AttackStrength", 2).getInt();
-		teleportChance = config.get(Configuration.CATEGORY_GENERAL, "TeleportChance", 5).getInt();
-		teleportRangeMin = config.get(Configuration.CATEGORY_GENERAL, "TeleportRangeMin", 0).getInt();
-		teleportRangeMax = config.get(Configuration.CATEGORY_GENERAL, "TeleportRangeMax", 100).getInt();
-		maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "MaxSpawnedPerInstance", 2).getInt();
-		spawnRate = config.get(Configuration.CATEGORY_GENERAL, "SpawnRate", 2).getInt();	
-		maxSpawn = config.get(Configuration.CATEGORY_GENERAL, "MaxSpawnedPerInstance", 2).getInt();
-
+		
+		attackStrength = config.get(Configuration.CATEGORY_GENERAL,
+				"AttackStrength",			2).getInt();
+		WeepingAngelsMod.poisonChance = config.get(Configuration.CATEGORY_GENERAL,
+				"Poison Chance Percentage",		5).getInt();
+		teleportChance = config.get(Configuration.CATEGORY_GENERAL,
+				"Teleport Chance Percentage",	20).getInt();
+		teleportRangeMin = config.get(Configuration.CATEGORY_GENERAL,
+				"TeleportRangeMin",			0).getInt();
+		teleportRangeMax = config.get(Configuration.CATEGORY_GENERAL,
+				"TeleportRangeMax",			100).getInt();
+		maxSpawn = config.get(Configuration.CATEGORY_GENERAL,
+				"MaxSpawnedPerInstance",	2).getInt();
+		spawnRate = config.get(Configuration.CATEGORY_GENERAL,
+				"SpawnRate",				2).getInt();
+		maxSpawnHeight = config.get(Configuration.CATEGORY_GENERAL,
+				"Max Spawn Y-Level",		40).getInt();
+		
 		WeepingAngelsMod.pickOnly = config.get(Configuration.CATEGORY_GENERAL, "Hurt Angel with PickAxe only", false).getBoolean(false);
 		WeepingAngelsMod.waPaint_ID = config.get(Configuration.CATEGORY_ITEM, "Weeping angel Painting", 3025).getInt();
 
@@ -139,6 +153,7 @@ public class WeepingAngelsMod  {
 
 	}
 
+	@SuppressWarnings("unused")
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.registerRenderThings();
@@ -150,7 +165,12 @@ public class WeepingAngelsMod  {
 		plinthBlock = (new BlockPlinth(plinthBlockID, TileEntityPlinth.class, Material.rock)).setHardness(2.0F).setResistance(10F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("Plinth");		
 		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn(spawnBlockID, 1).setHardness(0.5F).setUnlocalizedName("weepingangelspawn").setCreativeTab(CreativeTabs.tabMisc);	
 		statue = (new ItemStatue(statueItemID, EntityStatue.class)).setUnlocalizedName("Statue").setCreativeTab(CreativeTabs.tabMisc).setMaxStackSize(64);
-
+		
+		GameRegistry.addRecipe(new ItemStack(
+				WeepingAngelsMod.blockWeepingAngelSpawn, 1), new Object[] {
+			"xxx", "xcx", "xxx", 'x', Block.stone, 'c', WeepingAngelsMod.statue
+		});
+		
 		EntityRegistry.registerModEntity(EntityWAPainting.class, "Weeping Angel Painting", entityWAPaintingID, this, 80, 3, false);
 		EntityList.IDtoClassMapping.put(entityWAPaintingID, EntityWAPainting.class);
 
@@ -190,7 +210,7 @@ public class WeepingAngelsMod  {
 		LanguageRegistry.addName(plinthBlock, "Plinth");
 		LanguageRegistry.addName(statue,"Weeping Angel Statue");
 
-		if(WeepingAngelsMod.waP_Enable) {
+		if(false){//WeepingAngelsMod.waP_Enable) {
 			WeepingAngelsMod.waPaint = new ItemWeepPaint(
 					WeepingAngelsMod.waPaint_ID, EntityWAPainting.class)
 			.setUnlocalizedName("waPaint");

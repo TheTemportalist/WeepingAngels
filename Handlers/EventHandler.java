@@ -6,13 +6,13 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityPainting;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import CountryGamer_PlantsVsZombies.PvZMod.PvZ_Main;
-import CountryGamer_PlantsVsZombies.PvZMod.Entities.Mobs.Plants.EntityPlantBase;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Entity.EntityWeepingAngel;
 
@@ -83,7 +83,7 @@ public class EventHandler {
 						EntityWeepingAngel angel =
 								new EntityWeepingAngel(ent.worldObj);
 						angel.setPosition(i, y, k);
-						ent.worldObj.spawnEntityInWorld(angel);
+						//ent.worldObj.spawnEntityInWorld(angel);
 						//int i1 = Direction.facingToDirection[];
 						//EntityPainting newPaint = painting;
 						//newPaint.art = EnumArt.Kebab;
@@ -103,7 +103,12 @@ public class EventHandler {
 	public void entityDeathEvent(LivingDeathEvent event) {
 		if(event.entityLiving != null) {
 			EntityLivingBase ent = event.entityLiving;
-
+			if(ent.isPotionActive(WeepingAngelsMod.angelConvert)) {
+				EntityWeepingAngel angel = new EntityWeepingAngel(ent.worldObj);
+				angel.setPosition(ent.posX, ent.posY, ent.posZ);
+				ent.worldObj.spawnEntityInWorld(angel);
+			}
+			
 		}
 	}
 
@@ -111,15 +116,27 @@ public class EventHandler {
 	public void onEntityUpdate(LivingUpdateEvent event) {
 		EntityLivingBase targetEntity = event.entityLiving;
 
-		if (targetEntity.isPotionActive(WeepingAngelsMod.angelConvert)) {
+		if(targetEntity.isPotionActive(WeepingAngelsMod.angelConvert)) {
 			
+			int duration = targetEntity.getActivePotionEffect(
+					WeepingAngelsMod.angelConvert).getDuration();
+			
+			//id, duration, strength
+			targetEntity.removePotionEffect(Potion.blindness.id);
+			targetEntity.addPotionEffect(new PotionEffect(
+					Potion.blindness.id, duration, 1));
+			targetEntity.removePotionEffect(Potion.moveSlowdown.id);
+			targetEntity.addPotionEffect(new PotionEffect(
+					Potion.moveSlowdown.id, duration, 1));
 
-			if (targetEntity.getActivePotionEffect(
-					WeepingAngelsMod.angelConvert).getDuration() == 0) {
+			if(duration == 0) {
 				targetEntity.removePotionEffect(
 						WeepingAngelsMod.angelConvert.id);
 				return;
 			}
 		}
 	}
+	
+	
+	
 }
