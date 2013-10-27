@@ -1,6 +1,7 @@
 package WeepingAngels;
 
 import java.lang.reflect.Field;
+import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -11,6 +12,7 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.src.ModLoader;
 import net.minecraft.util.EnumArt;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
@@ -43,6 +45,8 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, channels = {"statue"}, packetHandler = PacketHandler.class)
 public class WeepingAngelsMod  {
 
+	public static final Logger log = Logger.getLogger("WeepingAngels");
+	
 	public static Block	plinthBlock;
 	public static Block blockWeepingAngelSpawn;
 	public static Item statue;
@@ -218,6 +222,8 @@ public class WeepingAngelsMod  {
 					WeepingAngelsMod.waPaint, "Weeping Angel Painting");
 			WeepingAngelsMod.waPaint.setCreativeTab(CreativeTabs.tabDecorations);
 		}
+		
+		ModLoader.registerTileEntity(TileEntityPlinth.class, "plinth");
 
 	}
 

@@ -113,7 +113,7 @@ public class EntityWeepingAngel extends EntityCreature {
 
 		if(this.canBeSeenMulti()) {
 			//if(WeepingAngelsMod.DEBUG)
-			//	System.out.println("Angel can be seen");
+			//	WeepingAngelsMod.log.info("Angel can be seen");
 			if(!(this.worldObj.getFullBlockLightValue(
 					MathHelper.floor_double(this.posX),
 					MathHelper.floor_double(this.posY),
@@ -149,24 +149,24 @@ public class EntityWeepingAngel extends EntityCreature {
 			double closeDis = 13.856D;
 			double farDis = 20.785D;
 			//if(!this.worldObj.isRemote)
-			//if(WeepingAngelsMod.DEBUG) System.out.println(
+			//if(WeepingAngelsMod.DEBUG) WeepingAngelsMod.log.info(
 			//	"Distance to: " + distance);
 			if(distance >= farDis) {
 				//if(!this.worldObj.isRemote)
-				//if(WeepingAngelsMod.DEBUG) System.out.println(
+				//if(WeepingAngelsMod.DEBUG) WeepingAngelsMod.log.info(
 				//	"Calm + Closed");
 				this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
 				this.dataWatcher.updateObject(17, Byte.valueOf((byte)0));
 			}else{
 				if(distance < farDis) {
 					//if(!this.worldObj.isRemote)
-					//if(WeepingAngelsMod.DEBUG) System.out.println(
+					//if(WeepingAngelsMod.DEBUG) WeepingAngelsMod.log.info(
 					//	"Calm + Open");
 					this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
 					this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));
 					if(distance < closeDis) {
 						//if(!this.worldObj.isRemote)
-						//if(WeepingAngelsMod.DEBUG) System.out.println(
+						//if(WeepingAngelsMod.DEBUG) WeepingAngelsMod.log.info(
 						//	"Angry + Open");
 						this.dataWatcher.updateObject(16, Byte.valueOf((byte)1));
 						this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));

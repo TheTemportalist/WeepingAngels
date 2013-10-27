@@ -41,7 +41,7 @@ public class TileEntityPlinthRenderer extends TileEntitySpecialRenderer
  
         if(i == 1)
         {
-        	//System.out.println("Running!");
+        	//WeepingAngelsMod.log.info("Running!");
  
         	/*
             entitystatue.setLocationAndAngles((double)tileentityplinth.xCoord + 0.5D, (double)tileentityplinth.yCoord + 0.5D, (double)tileentityplinth.zCoord + 0.5D, 0.0F, 0.0F);

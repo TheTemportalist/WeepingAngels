@@ -61,7 +61,8 @@ public class BlockPlinth extends BlockContainer
 	{
 		if(world.isBlockIndirectlyGettingPowered(i, j, k) || world.isBlockIndirectlyGettingPowered(i, j + 1, k))
 		{
-			if(WeepingAngelsMod.DEBUG) System.out.println("Powered");
+			if(WeepingAngelsMod.DEBUG)
+				WeepingAngelsMod.log.info("Powered");
 			ComeToLife(world, i, j, k);
 			world.setBlock(i, j, k,
 					Block.stoneSingleSlab.blockID,
@@ -121,13 +122,17 @@ public class BlockPlinth extends BlockContainer
 	@Override
 	public void breakBlock(World world, int i, int j, int k, int par5, int par6)
 	{
-		if(WeepingAngelsMod.DEBUG) System.out.println("BlockPlinth broken at i: " + i + " j: " + j + " k: " + k);
+		if(WeepingAngelsMod.DEBUG)
+			WeepingAngelsMod.log.info("BlockPlinth broken at i: " + i + " j: " + j + " k: " + k);
 		TileEntityPlinth tileentityplinth = (TileEntityPlinth)world.getBlockTileEntity(i, j, k);
-		int var = tileentityplinth.getBlockMetadata();
+		int var = 0;
+		if (tileentityplinth != null)
+			var = tileentityplinth.getBlockMetadata();
 		if(var == 1)
 		{
 			idDrop = tileentityplinth.statueType;
-			if(WeepingAngelsMod.DEBUG) System.out.println("Dropped item: " + idDrop);
+			if(WeepingAngelsMod.DEBUG)
+				WeepingAngelsMod.log.info("Dropped item: " + idDrop);
 		}
 		else
 			idDrop = 0;

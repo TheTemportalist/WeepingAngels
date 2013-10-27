@@ -11,7 +11,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityPlinth extends TileEntity
-{
+{	
 	public int statueType = WeepingAngelsMod.statue.itemID;
 	public String signText[] = {
 			"", ""
@@ -70,7 +70,8 @@ public class TileEntityPlinth extends TileEntity
 		{
 			this.statueEntity.readFromNBT(nbttagcompound);
 		}
-		if(WeepingAngelsMod.DEBUG)System.out.println("rotation: "+ this.rotation + " Active: " + this.canBeActivated);
+		if(WeepingAngelsMod.DEBUG)
+			WeepingAngelsMod.log.info("rotation: "+ this.rotation + " Active: " + this.canBeActivated);
 	}
 
 	/**

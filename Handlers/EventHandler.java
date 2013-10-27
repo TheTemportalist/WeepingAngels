@@ -27,8 +27,8 @@ public class EventHandler {
 			//if(painting.art.title.equalsIgnoreCase(WeepingAngelsMod.wapNAME) ) {
 			if(!ent.worldObj.isRemote) {
 				if(WeepingAngelsMod.DEBUG) {
-					System.out.println("Spawn Weeping Angel Painting");
-					System.out.println("Direction: " +
+					WeepingAngelsMod.log.info("Spawn Weeping Angel Painting");
+					WeepingAngelsMod.log.info("Direction: " +
 							painting.hangingDirection);
 				}
 				int r = 2;
@@ -39,7 +39,7 @@ public class EventHandler {
 
 				if(rEntities.size() != 0) {
 					if(WeepingAngelsMod.DEBUG && !painting.worldObj.isRemote)
-						System.out.println(
+						WeepingAngelsMod.log.info(
 								"There are " + rEntities.size() + " angels nearby.");
 				}else{
 					// side to +x -x +z -z
@@ -72,13 +72,13 @@ public class EventHandler {
 					//	for(double i = x-1; i < x+1; i++) {
 					//		for(double k = z-1; i < z+1; k++) {
 					if(WeepingAngelsMod.DEBUG)
-						System.out.println("Checking Spots");
+						WeepingAngelsMod.log.info("Checking Spots");
 					if(ent.worldObj.getBlockId(
 							(int)i, (int)y, (int)k)		== 0 &&
 							ent.worldObj.getBlockId(
 									(int)i, (int)(y+1), (int)k)	== 0) {
 						if(WeepingAngelsMod.DEBUG)
-							System.out.println("Found Decent Spot");
+							WeepingAngelsMod.log.info("Found Decent Spot");
 
 						EntityWeepingAngel angel =
 								new EntityWeepingAngel(ent.worldObj);
