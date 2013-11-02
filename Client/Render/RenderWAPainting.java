@@ -43,7 +43,8 @@ public class RenderWAPainting extends RenderPainting {
 				GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 				GL11.glPopMatrix();
 			}else
-				if(WeepingAngelsMod.DEBUG) System.out.println("Art is null");
+				if(WeepingAngelsMod.DEBUG)
+					WeepingAngelsMod.log.info("Art is null");
 		}
 	}
 

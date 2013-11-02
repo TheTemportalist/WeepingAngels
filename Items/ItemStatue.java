@@ -109,7 +109,8 @@ public class ItemStatue extends Item
 		tileentityplinth.setRotation(statueYaw);
 		tileentityplinth.statueType = entitystatue.dropId;
 		itemstack.stackSize--;
-		if(WeepingAngelsMod.DEBUG) System.out.println("l: " + l + " yaw: " + statueYaw + " playerYaw: " + entityplayer.rotationYaw);
+		if(WeepingAngelsMod.DEBUG)
+			WeepingAngelsMod.log.info("l: " + l + " yaw: " + statueYaw + " playerYaw: " + entityplayer.rotationYaw);
 		/*if(tileentityplinth != null)
         {
             ModLoader.getMinecraftInstance().displayGuiScreen(new GuiEditPlinth(tileentityplinth));

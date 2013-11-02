@@ -202,7 +202,8 @@ public class EntityWeepingAngel_Old extends EntityMob
 	@Override
 	public void onUpdate()
 	{
-		//if(WeepingAngelsMod.DEBUG)System.out.println("EWP Location x: " + this.posX + " y: " + this.posY+ " z: " + this.posZ);
+		//if(WeepingAngelsMod.DEBUG)
+			//WeepingAngelsMod.log.info("EWP Location x: " + this.posX + " y: " + this.posY+ " z: " + this.posZ);
 		if(spawntimer >= 0)
 			--spawntimer;
 		breakOnePerTick = false;
@@ -220,30 +221,36 @@ public class EntityWeepingAngel_Old extends EntityMob
 		}
 		if(this.entityToAttack != null && (this.entityToAttack instanceof EntityPlayer))
 		{
-			if(WeepingAngelsMod.DEBUG)System.out.println("Checking Seen");
+			if(WeepingAngelsMod.DEBUG)
+				WeepingAngelsMod.log.info("Checking Seen");
 			if(canAngelBeSeenMultiplayer())
 			{
-				if(WeepingAngelsMod.DEBUG)System.out.println("Not Seen");
+				if(WeepingAngelsMod.DEBUG)
+					WeepingAngelsMod.log.info("Not Seen");
 				if((getDistancetoEntityToAttack() > 15D && timeTillNextTeleport-- < 0))
 				{
 					func_35182_c(entityToAttack);
 					worldObj.playSoundAtEntity(this, getMovementSound(), getSoundVolume() * 1.1f, ((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
 					timeTillNextTeleport = rand.nextInt(60) + 20;
 				}
-				if(WeepingAngelsMod.DEBUG)System.out.println("Time till port: " + timeTillNextTeleport);
+				if(WeepingAngelsMod.DEBUG)
+					WeepingAngelsMod.log.info("Time till port: " + timeTillNextTeleport);
 
-				if(WeepingAngelsMod.DEBUG)System.out.println("Checking near players");
+				if(WeepingAngelsMod.DEBUG)
+					WeepingAngelsMod.log.info("Checking near players");
 				//if((entityToAttack instanceof EntityPlayer) && getDistancetoEntityToAttack() <= this.distanceToSeen)
 				if(getDistancetoEntityToAttack() <= this.distanceToSeen) {                  
 					this.aggressiveArmMovement = true;
 					this.dataWatcher.updateObject(16, Byte.valueOf((byte)1));
-					if(WeepingAngelsMod.DEBUG)System.out.println("Angry");
+					if(WeepingAngelsMod.DEBUG)
+						WeepingAngelsMod.log.info("Angry");
 					entityToAttack.applyEntityCollision(entityToAttack);
 
 				}else{
 					this.aggressiveArmMovement = false;
 					this.dataWatcher.updateObject(16, Byte.valueOf((byte)0));
-					if(WeepingAngelsMod.DEBUG)System.out.println("Not Angry");
+					if(WeepingAngelsMod.DEBUG)
+						WeepingAngelsMod.log.info("Not Angry");
 					entityToAttack.applyEntityCollision(entityToAttack);
 				}
 
@@ -252,10 +259,12 @@ public class EntityWeepingAngel_Old extends EntityMob
 						rand.nextInt(100) > 80) {
 					//armMovement = !armMovement;
 					if(armMovement) {
-						if(WeepingAngelsMod.DEBUG)System.out.println("Arm Movement: 1");
+						if(WeepingAngelsMod.DEBUG)
+							WeepingAngelsMod.log.info("Arm Movement: 1");
 						//this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));
 					}else{
-						if(WeepingAngelsMod.DEBUG)System.out.println("Arm Movement: 0");
+						if(WeepingAngelsMod.DEBUG)
+							WeepingAngelsMod.log.info("Arm Movement: 0");
 						this.dataWatcher.updateObject(17, Byte.valueOf((byte)0));
 					}
 				}
@@ -272,7 +281,7 @@ public class EntityWeepingAngel_Old extends EntityMob
 			}
 			//if(checkForOtherAngels())
 			//{
-			//  System.out.println("TimeLocked");
+			//  WeepingAngelsMod.log.info("TimeLocked");
 			//  moveStrafing = moveForward = 0.0F;
 			//    moveSpeed = 0.0F;
 			//}

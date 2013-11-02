@@ -733,7 +733,8 @@ public class EntityWeepingAngel_New extends EntityMob {
 	//~~~~ On Update ~~~~~~
 	@Override
 	public void onUpdate() {
-		//if(WeepingAngelsMod.DEBUG)System.out.println("EWP Location x: " + this.posX + " y: " + this.posY+ " z: " + this.posZ);
+		//if(WeepingAngelsMod.DEBUG)
+			//WeepingAngelsMod.log.info("EWP Location x: " + this.posX + " y: " + this.posY+ " z: " + this.posZ);
 		if(this.spawntimer >= 0)
 			--this.spawntimer;
 		
@@ -758,9 +759,11 @@ public class EntityWeepingAngel_New extends EntityMob {
 		// Angry and Arms
 		if(this.entityToAttack != null &&
 				(this.entityToAttack instanceof EntityPlayer)) {
-			if(WeepingAngelsMod.DEBUG)System.out.println("Checking Seen");
+			if(WeepingAngelsMod.DEBUG)
+				WeepingAngelsMod.log.info("Checking Seen");
 			if(this.canAngelBeSeenMultiplayer()) {
-				if(WeepingAngelsMod.DEBUG)System.out.println("Not Seen");
+				if(WeepingAngelsMod.DEBUG)
+					WeepingAngelsMod.log.info("Not Seen");
 				if((this.getDistancetoEntityToAttack() > 15D &&
 						this.timeTillNextTeleport-- < 0)) {
 					this.func_35182_c(entityToAttack);
@@ -768,22 +771,24 @@ public class EntityWeepingAngel_New extends EntityMob {
 					this.timeTillNextTeleport = rand.nextInt(60) + 20;
 				}
 				if(WeepingAngelsMod.DEBUG)
-					System.out.println("Time till port: " + timeTillNextTeleport);
+					WeepingAngelsMod.log.info("Time till port: " + timeTillNextTeleport);
 				
 				if(WeepingAngelsMod.DEBUG)
-					System.out.println("Checking near players");
+					WeepingAngelsMod.log.info("Checking near players");
 				if((entityToAttack instanceof EntityPlayer) &&
 						getDistancetoEntityToAttack() <= this.distanceToSeen) {
 				//if(this.getDistancetoEntityToAttack() <= this.distanceToSeen) {					
 					//this.aggressiveArmMovement = true;
 					this.dataWatcher.updateObject(16, Byte.valueOf((byte)1)); // sets angry
-					if(WeepingAngelsMod.DEBUG)System.out.println("Angry"); // print angry
+					if(WeepingAngelsMod.DEBUG)
+						WeepingAngelsMod.log.info("Angry"); // print angry
 					this.entityToAttack.applyEntityCollision(entityToAttack);
 
 				}else{
 					//this.aggressiveArmMovement = false;
 					this.dataWatcher.updateObject(16, Byte.valueOf((byte)0)); // sets not angry
-					if(WeepingAngelsMod.DEBUG)System.out.println("Not Angry"); // print not angry
+					if(WeepingAngelsMod.DEBUG)
+						WeepingAngelsMod.log.info("Not Angry"); // print not angry
 					this.entityToAttack.applyEntityCollision(entityToAttack);
 				}
 				/* Arm movemnent things
@@ -793,10 +798,12 @@ public class EntityWeepingAngel_New extends EntityMob {
 						rand.nextInt(100) > 80) {
 					//armMovement = !armMovement;
 					if(armMovement) {
-						if(WeepingAngelsMod.DEBUG)System.out.println("Arm Movement: 1");
+						if(WeepingAngelsMod.DEBUG)
+							WeepingAngelsMod.log.info("Arm Movement: 1");
 						//this.dataWatcher.updateObject(17, Byte.valueOf((byte)1));
 					}else{
-						if(WeepingAngelsMod.DEBUG)System.out.println("Arm Movement: 0");
+						if(WeepingAngelsMod.DEBUG)
+							WeepingAngelsMod.log.info("Arm Movement: 0");
 						this.dataWatcher.updateObject(17, Byte.valueOf((byte)0));
 					}
 				}
