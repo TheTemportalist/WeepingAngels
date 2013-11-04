@@ -165,18 +165,25 @@ public class WeepingAngelsMod  {
 		WeepingAngelsMod.angelConvert = new PotionConvert(40, true, 0).setPotionName("potion.angelconvert");
 	    LanguageRegistry.instance().addStringLocalization("potion.angelconvert", "Angel Conversion");
 
-		
-		plinthBlock = (new BlockPlinth(plinthBlockID, TileEntityPlinth.class, Material.rock)).setHardness(2.0F).setResistance(10F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("Plinth");		
 		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn(spawnBlockID, 1).setHardness(0.5F).setUnlocalizedName("weepingangelspawn").setCreativeTab(CreativeTabs.tabMisc);	
-		statue = (new ItemStatue(statueItemID, EntityStatue.class)).setUnlocalizedName("Statue").setCreativeTab(CreativeTabs.tabMisc).setMaxStackSize(64);
+
 		
-		GameRegistry.addRecipe(new ItemStack(
-				WeepingAngelsMod.blockWeepingAngelSpawn, 1), new Object[] {
-			"xxx", "xcx", "xxx", 'x', Block.stone, 'c', WeepingAngelsMod.statue
-		});
+		if(WeepingAngelsMod.statueItemID != 0) {
+			plinthBlock = (new BlockPlinth(plinthBlockID, TileEntityPlinth.class, Material.rock)).setHardness(2.0F).setResistance(10F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("Plinth");		
+			statue = (new ItemStatue(statueItemID, EntityStatue.class)).setUnlocalizedName("Statue").setCreativeTab(CreativeTabs.tabMisc).setMaxStackSize(64);
+			GameRegistry.registerBlock(plinthBlock, "Plinth");
+			LanguageRegistry.addName(plinthBlock, "Plinth");
+			LanguageRegistry.addName(statue,"Weeping Angel Statue");
+			GameRegistry.addRecipe(new ItemStack(
+					WeepingAngelsMod.blockWeepingAngelSpawn, 1), new Object[] {
+				"xxx", "xcx", "xxx", 'x', Block.stone, 'c', WeepingAngelsMod.statue
+			});
+		}
+	
 		
-		EntityRegistry.registerModEntity(EntityWAPainting.class, "Weeping Angel Painting", entityWAPaintingID, this, 80, 3, false);
-		EntityList.IDtoClassMapping.put(entityWAPaintingID, EntityWAPainting.class);
+		
+		//EntityRegistry.registerModEntity(EntityWAPainting.class, "Weeping Angel Painting", entityWAPaintingID, this, 80, 3, false);
+		//EntityList.IDtoClassMapping.put(entityWAPaintingID, EntityWAPainting.class);
 
 		// Register all entities, blocks and items to game
 		//Weeping Angel Entity
@@ -209,10 +216,7 @@ public class WeepingAngelsMod  {
 		LanguageRegistry.addName(blockWeepingAngelSpawn, "Weeping Angel Spawn Block");
 
 		//Statue Block and Item
-		GameRegistry.registerBlock(plinthBlock, "Plinth");
 		GameRegistry.registerBlock(blockWeepingAngelSpawn, "Weeping Angel Spawn Block");
-		LanguageRegistry.addName(plinthBlock, "Plinth");
-		LanguageRegistry.addName(statue,"Weeping Angel Statue");
 
 		if(false){//WeepingAngelsMod.waP_Enable) {
 			WeepingAngelsMod.waPaint = new ItemWeepPaint(
