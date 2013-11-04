@@ -1,15 +1,18 @@
 package WeepingAngels.Proxy;
 
-import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ServerProxy {
 
 	public void registerRenderThings()
 	{
-		GameRegistry.registerTileEntity(TileEntityPlinth.class, "TileEntityPlinth");
+		GameRegistry.registerTileEntity(
+				WeepingAngels.Blocks.TileEnt.TileEntityPlinth.class,
+				"TileEntityPlinth");
+		TileEntity.addMapping(
+				WeepingAngels.Blocks.TileEnt.TileEntityPlinth.class,
+				"TileEntityPlinth");
 	}
 
 	public void preInit()

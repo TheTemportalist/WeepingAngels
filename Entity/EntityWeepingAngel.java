@@ -88,20 +88,16 @@ public class EntityWeepingAngel extends EntityCreature {
 			else
 				this.canSeeSkyAndDay = false;
 		}
-
-		if(this.didBreak) {
-			int delay = 20*30;
-			int i = 0;
-			while(i < delay) {
-				i++;
+		
+		boolean torchFound = false;
+		if(this.getLightValue() > 1.0D && !this.canSeeSkyAndDay) {
+			//torchFound = this.findNearestTorch();
+			if(!torchFound) {
+				if(WeepingAngelsMod.DEBUG)
+					WeepingAngelsMod.log.info("No Torches Found");
 			}
-			this.didBreak = false;
 		}
-
-		if(!this.canSeeSkyAndDay && !this.didBreak) {
-			//this.findNearestTorch();
-		}
-
+		
 		EntityPlayer player = this.getClosestPlayer();
 		if(player != null) {
 			this.entityToAttack = player;
@@ -249,7 +245,13 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 		return false;
 	}
-
+	private double getLightValue() {
+		int i = MathHelper.floor_double(this.posX);
+		int j = MathHelper.floor_double(this.boundingBox.minY);
+		int k = MathHelper.floor_double(this.posZ);
+		return this.worldObj.getBlockLightValue(i, j, k);
+	}
+	
 	// ~~~~~~~~~~~~~~~ Weeping Angel Attributes ~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	protected void entityInit() {
@@ -542,42 +544,22 @@ public class EntityWeepingAngel extends EntityCreature {
 		for(int i1 = i-radius; i1 < i+radius; i1++) {
 			for(int k1 = k-radius; k1 < k+radius; k1++) {
 				for(int j1 = j-(radius*2); j1 < j+(radius/2); j1++) {
-					if(this.getDistance(i, j, k, i1, j1, k1) > (double)maxRadius) {
-						continue;
-					}
-					int j3 = worldObj.getBlockId(i1, j1, k1);
-					Block block = j3 > 0 ? Block.blocksList[j3] : null;
-					if(block == null || block != Block.torchWood &&
-							block != Block.torchRedstoneActive &&
-							block != Block.redstoneLampActive &&
-							block != Block.redstoneRepeaterActive &&
-							block != Block.glowStone ||
-							worldObj.clip(
-									Vec3.createVectorHelper(
-											posX,
-											posY + (double)getEyeHeight(),
-											posZ),
-											Vec3.createVectorHelper(i1, j1, k1)
-									) != null) {
-						continue;
-					}
-					if(!this.didBreak)
-					{
-						block.dropBlockAsItem(worldObj, i1, j1, k1, 1, 1);
-						worldObj.setBlockToAir(i1, j1, k1);
-						//worldObj.playSoundAtEntity(
-						//		this,
-						//		"weepingangels:light",
-						//		getSoundVolume(),
-						//		((rand.nextFloat() - rand.nextFloat())
-						//				* 0.2F + 1.0F) * 1.8F);
-						this.didBreak = true;
-						return true;
-					}else{
-						return false;
+					if(this.getDistance(i, j, k, i1, j1, k1) < (double)maxRadius) {
+						int j3 = worldObj.getBlockId(i1, j1, k1);
+						Block block = j3 > 0 ? Block.blocksList[j3] : null;
+						if(block != null || block == Block.torchWood) {
+							block.dropBlockAsItem(worldObj, i1, j1, k1, 1, 1);
+							worldObj.setBlockToAir(i1, j1, k1);
+							//worldObj.playSoundAtEntity(
+							//		this,
+							//		"weepingangels:light",
+							//		getSoundVolume(),
+							//		((rand.nextFloat() - rand.nextFloat())
+							//				* 0.2F + 1.0F) * 1.8F);
+							return true;
+						}
 					}
 				}
-
 			}
 		}
 		return false;
