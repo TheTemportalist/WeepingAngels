@@ -227,7 +227,7 @@ public class WeepingAngelsMod  {
 			WeepingAngelsMod.waPaint.setCreativeTab(CreativeTabs.tabDecorations);
 		}
 		
-		ModLoader.registerTileEntity(TileEntityPlinth.class, "plinth");
+		//ModLoader.registerTileEntity(TileEntityPlinth.class, "plinth");
 
 	}
 

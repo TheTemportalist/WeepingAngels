@@ -7,9 +7,9 @@ public class ServerProxy {
 
 	public void registerRenderThings()
 	{
-		GameRegistry.registerTileEntity(
-				WeepingAngels.Blocks.TileEnt.TileEntityPlinth.class,
-				"TileEntityPlinth");
+		//GameRegistry.registerTileEntity(
+		//		WeepingAngels.Blocks.TileEnt.TileEntityPlinth.class,
+		//		"TileEntityPlinth");
 		TileEntity.addMapping(
 				WeepingAngels.Blocks.TileEnt.TileEntityPlinth.class,
 				"TileEntityPlinth");
