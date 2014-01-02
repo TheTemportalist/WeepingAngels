@@ -121,7 +121,7 @@ public class EntityWeepingAngel extends EntityCreature {
 				this.entityToAttack instanceof EntityPlayer &&
 				(this.canBeSeenMulti())) {
 			if(!this.canSeeSkyAndDay) {
-				this.findNearestTorch();
+				//this.findNearestTorch();
 			}
 			if((this.getDistancetoEntityToAttack() > 2D &&
 					this.canTeleport)) {
