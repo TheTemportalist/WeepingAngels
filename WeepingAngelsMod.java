@@ -65,10 +65,11 @@ public class WeepingAngelsMod {
 	public static int statueItemID;
 	public static int entityWeepingAngelID;
 	public static int entityWAPaintingID;
+	public static int potionDuration;
 
 	public static Item waPaint;
 	public static int waPaint_ID;
-	public static boolean waP_Enable = true;
+	public static boolean waP_Enable = false;
 
 	public static final boolean DEBUG = true;
 	public static boolean pickOnly;
@@ -127,6 +128,10 @@ public class WeepingAngelsMod {
 				.getInt();
 		maxSpawnHeight = config.get(Configuration.CATEGORY_GENERAL,
 				"Max Spawn Y-Level", 40).getInt();
+		potionDuration = config
+				.get(Configuration.CATEGORY_GENERAL,
+						"How long the weeping angel poison will last (default 5 minutes, 60 seconds * 5)",
+						300).getInt();
 
 		WeepingAngelsMod.pickOnly = config.get(Configuration.CATEGORY_GENERAL,
 				"Hurt Angel with PickAxe only", false).getBoolean(false);
@@ -209,10 +214,8 @@ public class WeepingAngelsMod {
 		EntityList.IDtoClassMapping.put(entityWeepingAngelID,
 				EntityWeepingAngel.class);
 		EntityList.entityEggs.put(entityWeepingAngelID, new EntityEggInfo(
-				entityWeepingAngelID, 0, 0xffffff));
-		// EntityRegistry.registerGlobalEntityID(EntityWeepingAngel.class,
-		// "Weeping Angel", ModLoader.getUniqueEntityId(), 0x00000, 0xffffff);
-		if (spawnRate != 0) {
+				entityWeepingAngelID, 0x808080, 0xD1D1D1));
+		if (spawnRate > 0) {
 			EntityRegistry.addSpawn(EntityWeepingAngel.class, spawnRate, 1,
 					maxSpawn, EnumCreatureType.monster, new BiomeGenBase[] {
 							BiomeGenBase.iceMountains, BiomeGenBase.icePlains,
