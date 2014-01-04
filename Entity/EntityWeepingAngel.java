@@ -150,11 +150,14 @@ public class EntityWeepingAngel extends EntityCreature {
 				if (!this.canTeleport) {
 					this.dataWatcher.updateObject(19, maxTeleTicks);
 				}
+				// TODO
+				/*
 				worldObj.playSoundAtEntity(
 						this,
 						this.getMovementSound(),
 						getSoundVolume() * 1.1f,
 						((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
+				*/
 				if (WeepingAngelsMod.DEBUG)
 					WeepingAngelsMod.log.info("Teleported Angel");
 			}
@@ -722,6 +725,8 @@ public class EntityWeepingAngel extends EntityCreature {
 				}
 				if (rand.nextInt(100) < WeepingAngelsMod.teleportChance) {
 					if (getDistancetoEntityToAttack() <= 2) {
+						// TODO
+						/*
 						worldObj.playSoundEffect(
 								entity.posX,
 								entity.posY,
@@ -734,6 +739,7 @@ public class EntityWeepingAngel extends EntityCreature {
 								"weepingangels:teleport_activate",
 								getSoundVolume(),
 								((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
+						*/
 						for (int k = 0; k < 5; k++) {
 							worldObj.spawnParticle("portal", entity.posX
 									+ (rand.nextDouble() - 0.5D)
@@ -760,11 +766,14 @@ public class EntityWeepingAngel extends EntityCreature {
 									-rand.nextDouble(),
 									(rand.nextDouble() - 0.5D) * 2D);
 						}
+						// TODO
+						/*
 						worldObj.playSoundAtEntity(
 								entity,
 								"weepingangels:teleport_activate",
 								getSoundVolume(),
 								((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
+						*/
 						entity = null;
 					}
 				}
