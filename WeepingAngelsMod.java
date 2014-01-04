@@ -12,7 +12,7 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
-import net.minecraft.src.ModLoader;
+import net.minecraft.stats.Achievement;
 import net.minecraft.util.EnumArt;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
@@ -26,6 +26,7 @@ import WeepingAngels.Entity.EntityWAPainting;
 import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.Handlers.EventHandler;
 import WeepingAngels.Items.ItemStatue;
+import WeepingAngels.Items.ItemWADebug;
 import WeepingAngels.Items.ItemWeepPaint;
 import WeepingAngels.Proxy.PacketHandler;
 import WeepingAngels.Proxy.ServerProxy;
@@ -71,11 +72,16 @@ public class WeepingAngelsMod {
 	public static int waPaint_ID;
 	public static boolean waP_Enable = false;
 
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
+	public static Item debugItem;
+	public static int debugItemiD;
+	public static String debugItemName = "Debugger";
+
 	public static boolean pickOnly;
 	public static boolean worldSpawnAngels = true;
 
 	public static Potion angelConvert;
+	public static Achievement angelAchieve;
 
 	@Instance(Reference.MOD_ID)
 	public static WeepingAngelsMod instance;
@@ -104,8 +110,13 @@ public class WeepingAngelsMod {
 				"EntityWeepingAngelID", 300).getInt();
 		entityWAPaintingID = config.get(Configuration.CATEGORY_GENERAL,
 				"EntityWAPaintingID", 301).getInt();
+
 		statueItemID = config.get(Configuration.CATEGORY_ITEM, "StatueItemID",
 				12034).getInt();
+		if (WeepingAngelsMod.DEBUG)
+			WeepingAngelsMod.debugItemiD = config.get(
+					Configuration.CATEGORY_ITEM, debugItemName, 12035).getInt();
+
 		plinthBlockID = config.get(Configuration.CATEGORY_BLOCK,
 				"PlinthBlockID", 3023).getInt();
 		spawnBlockID = config.get(Configuration.CATEGORY_BLOCK, "SpawnBlockID",
@@ -121,7 +132,7 @@ public class WeepingAngelsMod {
 		teleportRangeMin = config.get(Configuration.CATEGORY_GENERAL,
 				"TeleportRangeMin", 0).getInt();
 		teleportRangeMax = config.get(Configuration.CATEGORY_GENERAL,
-				"TeleportRangeMax", 100).getInt();
+				"TeleportRangeMax", 10).getInt();
 		maxSpawn = config.get(Configuration.CATEGORY_GENERAL,
 				"MaxSpawnedPerInstance", 2).getInt();
 		spawnRate = config.get(Configuration.CATEGORY_GENERAL, "SpawnRate", 2)
@@ -143,6 +154,7 @@ public class WeepingAngelsMod {
 		}
 
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
+		GameRegistry.registerPickupHandler(new EventHandler());
 
 		Potion[] potionTypes = null;
 
@@ -171,7 +183,6 @@ public class WeepingAngelsMod {
 
 	}
 
-	@SuppressWarnings("unused")
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.registerRenderThings();
@@ -180,16 +191,28 @@ public class WeepingAngelsMod {
 				.setPotionName("potion.angelconvert");
 		LanguageRegistry.instance().addStringLocalization(
 				"potion.angelconvert", "Angel Conversion");
+		
+		this.blocks();
+		this.items();
+		this.entities();
 
-		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn(spawnBlockID, 1)
-				.setHardness(0.5F).setUnlocalizedName("weepingangelspawn")
-				.setCreativeTab(CreativeTabs.tabMisc);
+		angelAchieve = new Achievement(3000, "AngelAchieve", -4, -7, statue,
+				null).setSpecial().registerAchievement();
+		LanguageRegistry.instance().addStringLocalization(
+				"achievement.AngelAchieve", "en_US", "Scared of an Angel");
+		LanguageRegistry.instance().addStringLocalization(
+				"achievement.AngelAchieve.desc", "en_US",
+				"Find a Weeping Angel Statue");
+	}
 
+	public void items() {
 		if (WeepingAngelsMod.statueItemID != 0) {
 			plinthBlock = (new BlockPlinth(plinthBlockID,
 					TileEntityPlinth.class, Material.rock)).setHardness(2.0F)
 					.setResistance(10F).setStepSound(Block.soundStoneFootstep)
 					.setUnlocalizedName("Plinth");
+			GameRegistry.registerTileEntity(TileEntityPlinth.class,
+					"TileEntityPlinth");
 			statue = (new ItemStatue(statueItemID, EntityStatue.class))
 					.setUnlocalizedName("Statue")
 					.setCreativeTab(CreativeTabs.tabMisc).setMaxStackSize(64);
@@ -202,6 +225,26 @@ public class WeepingAngelsMod {
 					WeepingAngelsMod.statue });
 		}
 
+		if (WeepingAngelsMod.DEBUG)
+			WeepingAngelsMod.debugItem = new ItemWADebug(
+					WeepingAngelsMod.debugItemiD, Reference.MOD_ID,
+					WeepingAngelsMod.debugItemName);
+
+	}
+
+	public void blocks() {
+		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn(spawnBlockID, 1)
+				.setHardness(0.5F).setUnlocalizedName("weepingangelspawn")
+				.setCreativeTab(CreativeTabs.tabMisc);
+		LanguageRegistry.addName(blockWeepingAngelSpawn,
+				"Weeping Angel Spawn Block");
+		GameRegistry.registerBlock(blockWeepingAngelSpawn,
+				"Weeping Angel Spawn Block");
+
+	}
+
+	@SuppressWarnings("unused")
+	public void entities() {
 		// EntityRegistry.registerModEntity(EntityWAPainting.class,
 		// "Weeping Angel Painting", entityWAPaintingID, this, 80, 3, false);
 		// EntityList.IDtoClassMapping.put(entityWAPaintingID,
@@ -232,15 +275,6 @@ public class WeepingAngelsMod {
 		LanguageRegistry.instance().addStringLocalization(
 				"entity.WeepingAngels.Weeping Angel Painting.name",
 				"Weeping Angel Painting");
-
-		// Spawn Block Entity
-		LanguageRegistry.addName(blockWeepingAngelSpawn,
-				"Weeping Angel Spawn Block");
-
-		// Statue Block and Item
-		GameRegistry.registerBlock(blockWeepingAngelSpawn,
-				"Weeping Angel Spawn Block");
-
 		if (false) {// WeepingAngelsMod.waP_Enable) {
 			WeepingAngelsMod.waPaint = new ItemWeepPaint(
 					WeepingAngelsMod.waPaint_ID, EntityWAPainting.class)
@@ -250,9 +284,6 @@ public class WeepingAngelsMod {
 			WeepingAngelsMod.waPaint
 					.setCreativeTab(CreativeTabs.tabDecorations);
 		}
-
-		GameRegistry.registerTileEntity(TileEntityPlinth.class,
-				"TileEntityPlinth");
 	}
 
 	@Mod.EventHandler
