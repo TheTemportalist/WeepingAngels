@@ -71,7 +71,7 @@ public class WeepingAngelsMod {
 	public static int waPaint_ID;
 	public static boolean waP_Enable = false;
 
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static Item debugItem;
 	public static int debugItemiD;
 	public static String debugItemName = "Debugger";
@@ -129,7 +129,7 @@ public class WeepingAngelsMod {
 		teleportChance = config.get(Configuration.CATEGORY_GENERAL,
 				"Teleport Chance Percentage", 20).getInt();
 		teleportRangeMax = config.get(Configuration.CATEGORY_GENERAL,
-				"TeleportRangeMax", 10).getInt();
+				"TeleportRangeMax", 60).getInt();
 		maxSpawn = config.get(Configuration.CATEGORY_GENERAL,
 				"MaxSpawnedPerInstance", 2).getInt();
 		spawnRate = config.get(Configuration.CATEGORY_GENERAL, "SpawnRate", 2)
@@ -199,7 +199,7 @@ public class WeepingAngelsMod {
 				"achievement.AngelAchieve", "en_US", "Scared of an Angel");
 		LanguageRegistry.instance().addStringLocalization(
 				"achievement.AngelAchieve.desc", "en_US",
-				"Find a Weeping Angel Statue");
+				"The statue is coming. Don't Blink.");
 	}
 
 	public void items() {
