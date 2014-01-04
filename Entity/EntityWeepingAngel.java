@@ -21,6 +21,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import WeepingAngels.WeepingAngelsMod;
+import WeepingAngels.lib.Util;
 
 public class EntityWeepingAngel extends EntityCreature {
 
@@ -801,97 +802,7 @@ public class EntityWeepingAngel extends EntityCreature {
 
 	private void teleportPlayer(Entity entity) {
 		if (entity instanceof EntityPlayer) {
-			int rangeDifference = 2 * (WeepingAngelsMod.teleportRangeMax - WeepingAngelsMod.teleportRangeMin);
-			int offsetX = rand.nextInt(rangeDifference) - rangeDifference / 2
-					+ WeepingAngelsMod.teleportRangeMin;
-			int offsetZ = rand.nextInt(rangeDifference) - rangeDifference / 2
-					+ WeepingAngelsMod.teleportRangeMin;
-
-			// Center the values on a block, to make the boundingbox
-			// calculations match less.
-			double newX = MathHelper.floor_double(entity.posX) + offsetX + 0.5;
-			double newY = rand.nextInt(128);
-			double newZ = MathHelper.floor_double(entity.posZ) + offsetZ + 0.5;
-
-			double bbMinX = newX - entity.width / 2.0;
-			double bbMinY = newY - entity.yOffset + entity.ySize;
-			double bbMinZ = newZ - entity.width / 2.0;
-			double bbMaxX = newX + entity.width / 2.0;
-			double bbMaxY = newY - entity.yOffset + entity.ySize
-					+ entity.height;
-			double bbMaxZ = newZ + entity.width / 2.0;
-
-			// FMLLog.info("Teleporting from: "+(int)entity.posX+" "+(int)entity.posY+" "+(int)entity.posZ);
-			// FMLLog.info("Teleporting with offsets: "+offsetX+" "+newY+" "+offsetZ);
-			// FMLLog.info("Starting BB Bounds: "+bbMinX+" "+bbMinY+" "+bbMinZ+" "+bbMaxX+" "+bbMaxY+" "+bbMaxZ);
-
-			// Use a testing boundingBox, so we don't have to move the player
-			// around to test if it is a valid location
-			AxisAlignedBB boundingBox = AxisAlignedBB.getBoundingBox(bbMinX,
-					bbMinY, bbMinZ, bbMaxX, bbMaxY, bbMaxZ);
-
-			// Make sure you are trying to teleport to a loaded chunk.
-			Chunk teleportChunk = worldObj.getChunkFromBlockCoords((int) newX,
-					(int) newZ);
-			if (!teleportChunk.isChunkLoaded) {
-				worldObj.getChunkProvider().loadChunk(teleportChunk.xPosition,
-						teleportChunk.zPosition);
-			}
-
-			// Move up, until nothing intersects the entity anymore
-			while (newY > 0
-					&& newY < 128
-					&& !this.worldObj.getCollidingBoundingBoxes(entity,
-							boundingBox).isEmpty()) {
-				++newY;
-
-				bbMinY = newY - entity.yOffset + entity.ySize;
-				bbMaxY = newY - entity.yOffset + entity.ySize + entity.height;
-
-				boundingBox.setBounds(bbMinX, bbMinY, bbMinZ, bbMaxX, bbMaxY,
-						bbMaxZ);
-
-				// FMLLog.info("Failed to teleport, retrying at height: "+(int)newY);
-			}
-
-			// If we could place it, could we have placed it lower? To prevent
-			// teleports really high up.
-			do {
-				--newY;
-
-				bbMinY = newY - entity.yOffset + entity.ySize;
-				bbMaxY = newY - entity.yOffset + entity.ySize + entity.height;
-
-				boundingBox.setBounds(bbMinX, bbMinY, bbMinZ, bbMaxX, bbMaxY,
-						bbMaxZ);
-
-				// FMLLog.info("Trying a lower teleport at height: "+(int)newY);
-			} while (newY > 0
-					&& newY < 128
-					&& this.worldObj.getCollidingBoundingBoxes(entity,
-							boundingBox).isEmpty());
-			// Set Y one higher, as the last lower placing test failed.
-			++newY;
-
-			// Check for placement in lava
-			// NOTE: This can potentially hang the game indefinitely, due to
-			// random recursion
-			// However this situation is highly unlikelely
-			// My advice: Dont encounter Weeping Angels in seas of lava
-			// NOTE: This can theoretically still teleport you to a block of
-			// lava with air underneath, but gladly lava spreads ;)
-			int blockId = worldObj.getBlockId(MathHelper.floor_double(newX),
-					MathHelper.floor_double(newY),
-					MathHelper.floor_double(newZ));
-			if (blockId == 10 || blockId == 11) {
-				teleportPlayer(entity);
-				return;
-			}
-
-			// Set the location of the player, on the final position.
-			entity.setLocationAndAngles(newX, newY, newZ, entity.rotationYaw,
-					entity.rotationPitch);
-			// FMLLog.info("Succesfully teleported to: "+(int)entity.posX+" "+(int)entity.posY+" "+(int)entity.posZ);
+			Util.teleportPlayer(entity.worldObj, (EntityPlayer)entity, 0, WeepingAngelsMod.teleportRangeMax, true, true);
 		}
 	}
 

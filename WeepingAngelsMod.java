@@ -59,7 +59,6 @@ public class WeepingAngelsMod {
 	public static int poisonChance;
 	public static int maxSpawnHeight;
 
-	public static int teleportRangeMin;
 	public static int teleportRangeMax;
 	public static int plinthBlockID;
 	public static int spawnBlockID;
@@ -129,8 +128,6 @@ public class WeepingAngelsMod {
 				.getInt();
 		teleportChance = config.get(Configuration.CATEGORY_GENERAL,
 				"Teleport Chance Percentage", 20).getInt();
-		teleportRangeMin = config.get(Configuration.CATEGORY_GENERAL,
-				"TeleportRangeMin", 0).getInt();
 		teleportRangeMax = config.get(Configuration.CATEGORY_GENERAL,
 				"TeleportRangeMax", 10).getInt();
 		maxSpawn = config.get(Configuration.CATEGORY_GENERAL,
