@@ -71,7 +71,7 @@ public class WeepingAngelsMod {
 	public static int waPaint_ID;
 	public static boolean waP_Enable = false;
 
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static boolean pickOnly;
 	public static boolean worldSpawnAngels = true;
 
