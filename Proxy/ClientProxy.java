@@ -10,6 +10,7 @@ import WeepingAngels.Client.Sounds.WeepingAngelsMod_EventSounds;
 import WeepingAngels.Entity.EntityStatue;
 import WeepingAngels.Entity.EntityWAPainting;
 import WeepingAngels.Entity.EntityWeepingAngel;
+import WeepingAngels.Handlers.SoundEventHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
@@ -28,6 +29,8 @@ public class ClientProxy extends ServerProxy{
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPlinth.class, new TileEntityPlinthRenderer());
 		//ModLoader.registerTileEntity(TileEntityPlinth.class, "TileEntityPlinth", new TileEntityPlinthRenderer());
+		
+		MinecraftForge.EVENT_BUS.register(new SoundEventHandler());
 		
 	}
 

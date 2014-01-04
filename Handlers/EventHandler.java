@@ -10,17 +10,21 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Entity.EntityWeepingAngel;
+import WeepingAngels.lib.Reference;
 import cpw.mods.fml.common.IPickupNotifier;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class EventHandler implements IPickupNotifier {
 
+	// General Events
 	@ForgeSubscribe
 	public void entityJoinEvent(EntityJoinWorldEvent event) {
 		Entity ent = event.entity;
@@ -138,17 +142,7 @@ public class EventHandler implements IPickupNotifier {
 		}
 	}
 
-	//@ForgeSubscribe
-	public void onItemPickup(EntityItemPickupEvent event) {
-		if (WeepingAngelsMod.DEBUG)
-			WeepingAngelsMod.log.info(event.item.getEntityItem().itemID + ":"
-					+ WeepingAngelsMod.statue.itemID);
-		if (event.item.getEntityItem().itemID == WeepingAngelsMod.statue.itemID) {
-			event.entityPlayer
-					.triggerAchievement(WeepingAngelsMod.angelAchieve);
-		}
-	}
-
+	// Achivements on Item Pickup
 	@Override
 	public void notifyPickup(EntityItem item, EntityPlayer player) {
 		if (WeepingAngelsMod.DEBUG)
@@ -158,5 +152,6 @@ public class EventHandler implements IPickupNotifier {
 			player.addStat(WeepingAngelsMod.angelAchieve, 1);
 		}
 	}
+
 
 }

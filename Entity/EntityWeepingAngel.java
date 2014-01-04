@@ -21,6 +21,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import WeepingAngels.WeepingAngelsMod;
+import WeepingAngels.lib.Reference;
 import WeepingAngels.lib.Util;
 
 public class EntityWeepingAngel extends EntityCreature {
@@ -31,16 +32,14 @@ public class EntityWeepingAngel extends EntityCreature {
 	private int torchNextBreak;
 	private boolean breakOnePerTick;
 	private boolean didBreak;
-	private boolean canTeleport;
 	public boolean armMovement;
 	public boolean aggressiveArmMovement;
 
 	private float moveSpeed;
-	private float maxSpeed = 10.0F, minSpeed = 0.3F;
+	private float maxSpeed = 50.0F, minSpeed = 0.3F;
 	private final double closestPlayerRadius = 64D;
 	private double distanceToSeen = 5D;
 	private double minLight = 1.0;
-
 
 	public EntityWeepingAngel(World world) {
 		super(world);
@@ -141,35 +140,15 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 
 		// Teleportation
-		int maxTeleTicks = 20 * 60 * 1;
+		
 		if (this.entityToAttack != null
 				&& this.entityToAttack instanceof EntityPlayer
 				&& (!this.canBeSeenMulti())) {
-			if ((this.getDistancetoEntityToAttack() > 3D && this.canTeleport)) {
-				this.canTeleport = !this.func_35182_c(entityToAttack);
-				if (!this.canTeleport) {
-					this.dataWatcher.updateObject(19, maxTeleTicks);
-				}
-				// TODO
-				/*
-				worldObj.playSoundAtEntity(
-						this,
-						this.getMovementSound(),
-						getSoundVolume() * 1.1f,
-						((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
-				*/
-				if (WeepingAngelsMod.DEBUG)
-					WeepingAngelsMod.log.info("Teleported Angel");
+			if (this.getDistancetoEntityToAttack() > 3D) {
+				worldObj.playSoundAtEntity(this, Reference.BASE_TEX + "stone",
+						this.getSoundVolume(), 1.0F);
 			}
 		}
-
-		// teleportation countdown
-		if (this.dataWatcher.getWatchableObjectInt(19) >= maxTeleTicks) {
-			this.dataWatcher.updateObject(19,
-					this.dataWatcher.getWatchableObjectInt(19) - 1);
-		}
-		if (this.dataWatcher.getWatchableObjectInt(19) < 0) // zero check
-			this.dataWatcher.updateObject(19, 0);
 
 		// set the speed of the angel to the calcualted new speed
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
@@ -299,6 +278,27 @@ public class EntityWeepingAngel extends EntityCreature {
 		return this.worldObj.getBlockLightValue(i, j, k);
 	}
 
+	/**
+	 * Returns the sound this mob makes while it's alive.
+	 */
+	protected String getLivingSound() {
+		return Reference.BASE_TEX + "stone";
+	}
+
+	/**
+	 * Returns the sound this mob makes when it is hurt.
+	 */
+	protected String getHurtSound() {
+		return Reference.BASE_TEX + "light";
+	}
+
+	/**
+	 * Returns the sound this mob makes on death.
+	 */
+	protected String getDeathSound() {
+		return Reference.BASE_TEX + "crumble";
+	}
+
 	// ~~~~~~~~~~~~~~~ Weeping Angel Attributes ~~~~~~~~~~~~~~~~~~~~~~
 	@Override
 	protected void entityInit() {
@@ -306,7 +306,6 @@ public class EntityWeepingAngel extends EntityCreature {
 		this.dataWatcher.addObject(16, Byte.valueOf((byte) 0)); // Angry
 		this.dataWatcher.addObject(17, Byte.valueOf((byte) 0)); // ArmMovement
 		this.dataWatcher.addObject(18, 0); // TorchTicks
-		this.dataWatcher.addObject(19, 0); // TeleportTicks
 	}
 
 	public boolean getAngry() {
@@ -611,97 +610,6 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 	}
 
-	public String getMovementSound() {
-		if (entityToAttack != null && (entityToAttack instanceof EntityPlayer)
-				&& !isInFieldOfVision((EntityPlayer) this.entityToAttack)) {
-			/*
-			 * String s = "step.stone"; int i = rand.nextInt(4); switch(i) {
-			 * case 0: // '\0' s = "mob.angel.stoneone"; break;
-			 * 
-			 * case 1: // '\001' s = "mob.angel.stonetwo"; break;
-			 * 
-			 * case 2: // '\002' s = "mob.angel.stonethree"; break;
-			 * 
-			 * case 3: // '\003' s = "mob.angel.stonefour"; break; } return s;
-			 */
-			return "weepingangels:stone";
-		} else {
-			return "";
-		}
-	}
-
-	/**
-	 * Checks area around target I think. Definitely returns if the angel
-	 * teleported. -Country_Gamer
-	 * 
-	 * @param entity
-	 * @return
-	 */
-	protected boolean func_35182_c(Entity entity) {
-		Vec3 vec3d = Vec3.createVectorHelper(posX - entity.posX,
-				((boundingBox.minY + (double) (height / 2.0F)) - entity.posY)
-						+ (double) entity.getEyeHeight(), posZ - entity.posZ);
-		vec3d = vec3d.normalize();
-		double d = 6D;
-		double d1 = (posX + (rand.nextDouble() - 0.5D) * 8D) - vec3d.xCoord * d;
-		double d2 = (posY + (double) (rand.nextInt(16) - 8)) - vec3d.yCoord * d;
-		double d3 = (posZ + (rand.nextDouble() - 0.5D) * 8D) - vec3d.zCoord * d;
-		return this.teleportAngel(d1, d2, d3);
-	}
-
-	protected boolean teleportAngel(double d, double d1, double d2) {
-		double d3 = posX;
-		double d4 = posY;
-		double d5 = posZ;
-		posX = d;
-		posY = d1;
-		posZ = d2;
-		boolean flag = false;
-		int i = MathHelper.floor_double(posX);
-		int j = MathHelper.floor_double(posY);
-		int k = MathHelper.floor_double(posZ);
-		if (worldObj.blockExists(i, j, k)) {
-			boolean flag1;
-			for (flag1 = false; !flag1 && j > 0;) {
-				int i1 = worldObj.getBlockId(i, j - 1, k);
-				if (i1 == 0 || !Block.blocksList[i1].blockMaterial.isSolid()) {
-					posY--;
-					j--;
-				} else {
-					flag1 = true;
-				}
-			}
-
-			if (flag1) {
-				this.setPosition(posX, posY, posZ);
-				if (worldObj.getCollidingBoundingBoxes(this, boundingBox)
-						.size() == 0 && !worldObj.isAnyLiquid(boundingBox)) {
-					flag = true;
-				}
-			}
-		}
-		if (!flag) {
-			this.setPosition(d3, d4, d5);
-			return false;
-		}
-		int l = 128;
-
-		for (int j1 = 0; j1 < l; j1++) {
-			double d6 = (double) j1 / ((double) l - 1.0D);
-			float f = (rand.nextFloat() - 0.5F) * 0.2F;
-			float f1 = (rand.nextFloat() - 0.5F) * 0.2F;
-			float f2 = (rand.nextFloat() - 0.5F) * 0.2F;
-			double d7 = d3 + (posX - d3) * d6 + (rand.nextDouble() - 0.5D)
-					* (double) width * 2D;
-			double d8 = d4 + (posY - d4) * d6 + rand.nextDouble()
-					* (double) height;
-			double d9 = d5 + (posZ - d5) * d6 + (rand.nextDouble() - 0.5D)
-					* (double) width * 2D;
-			worldObj.spawnParticle("portal", d7, d8, d9, f, f1, f2);
-		}
-
-		return true;
-	}
 
 	// ~~~~~ Attacking ~~~~~
 	@Override
@@ -725,55 +633,12 @@ public class EntityWeepingAngel extends EntityCreature {
 				}
 				if (rand.nextInt(100) < WeepingAngelsMod.teleportChance) {
 					if (getDistancetoEntityToAttack() <= 2) {
-						// TODO
-						/*
-						worldObj.playSoundEffect(
-								entity.posX,
-								entity.posY,
-								entity.posZ,
-								"mob.ghast.scream",
-								getSoundVolume(),
-								((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
-						worldObj.playSoundAtEntity(
-								entity,
-								"weepingangels:teleport_activate",
-								getSoundVolume(),
-								((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
-						*/
-						for (int k = 0; k < 5; k++) {
-							worldObj.spawnParticle("portal", entity.posX
-									+ (rand.nextDouble() - 0.5D)
-									* (double) width,
-									(entity.posY + rand.nextDouble()
-											* (double) height) - 0.25D,
-									entity.posZ + (rand.nextDouble() - 0.5D)
-											* (double) width,
-									(rand.nextDouble() - 0.5D) * 2D,
-									-rand.nextDouble(),
-									(rand.nextDouble() - 0.5D) * 2D);
-						}
-
-						this.teleportPlayer(entity);
-						for (int k = 0; k < 5; k++) {
-							worldObj.spawnParticle("portal", entity.posX
-									+ (rand.nextDouble() - 0.5D)
-									* (double) width,
-									(entity.posY + rand.nextDouble()
-											* (double) height) - 0.25D,
-									entity.posZ + (rand.nextDouble() - 0.5D)
-											* (double) width,
-									(rand.nextDouble() - 0.5D) * 2D,
-									-rand.nextDouble(),
-									(rand.nextDouble() - 0.5D) * 2D);
-						}
-						// TODO
-						/*
-						worldObj.playSoundAtEntity(
-								entity,
-								"weepingangels:teleport_activate",
-								getSoundVolume(),
-								((rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F) * 1.8F);
-						*/
+						Util.teleportPlayer(entityPlayer.worldObj,
+								entityPlayer, 0,
+								WeepingAngelsMod.teleportRangeMax, true, true);
+						this.worldObj.playSoundAtEntity(entityPlayer,
+								Reference.BASE_TEX + "teleport_activate", 1.0F,
+								1.0F);
 						entity = null;
 					}
 				}
@@ -807,12 +672,6 @@ public class EntityWeepingAngel extends EntityCreature {
 			}
 		}
 		return false;
-	}
-
-	private void teleportPlayer(Entity entity) {
-		if (entity instanceof EntityPlayer) {
-			Util.teleportPlayer(entity.worldObj, (EntityPlayer)entity, 0, WeepingAngelsMod.teleportRangeMax, true, true);
-		}
 	}
 
 }
