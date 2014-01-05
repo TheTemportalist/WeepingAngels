@@ -1,6 +1,5 @@
 package WeepingAngels;
 
-import java.lang.reflect.Field;
 import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
@@ -11,15 +10,12 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
 import net.minecraft.stats.Achievement;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.EnumArt;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.MinecraftForge;
-import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.Blocks.BlockPlinth;
 import WeepingAngels.Blocks.BlockWeepingAngelSpawn;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
@@ -40,6 +36,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -85,9 +82,9 @@ public class WeepingAngelsMod {
 	public static boolean worldSpawnAngels = true;
 
 	public static Achievement angelAchieve;
-	public static int	angelAchieveiD;
-	
-	public static int	maxConvertTicks = 20 * 3; // per 1/2 heart
+	public static int angelAchieveiD;
+
+	public static int maxConvertTicks = 20 * 3; // per 1/2 heart
 
 	@Instance(Reference.MOD_ID)
 	public static WeepingAngelsMod instance;
@@ -147,7 +144,9 @@ public class WeepingAngelsMod {
 				.get(Configuration.CATEGORY_GENERAL,
 						"How long the weeping angel poison will last (default 5 minutes, 60 seconds * 5)",
 						300).getInt();
-		WeepingAngelsMod.angelAchieveiD = config.get(Configuration.CATEGORY_GENERAL, "Scared of An Angel ID", 9000).getInt();
+		WeepingAngelsMod.angelAchieveiD = config.get(
+				Configuration.CATEGORY_GENERAL, "Scared of An Angel ID", 9000)
+				.getInt();
 
 		WeepingAngelsMod.pickOnly = config.get(Configuration.CATEGORY_GENERAL,
 				"Hurt Angel with PickAxe only", false).getBoolean(false);
@@ -167,22 +166,22 @@ public class WeepingAngelsMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.registerRenderThings();
-		
+
 		this.blocks();
 		this.items();
 		this.entities();
-		
+
 		if (statue != null) {
-			WeepingAngelsMod.angelAchieve = new Achievement(WeepingAngelsMod.angelAchieveiD, "AngelAchieve", -4, -7, statue,
-					null).setSpecial().registerAchievement();
+			WeepingAngelsMod.angelAchieve = new Achievement(
+					WeepingAngelsMod.angelAchieveiD, "AngelAchieve", -4, -7,
+					statue, null).setSpecial().registerAchievement();
 			LanguageRegistry.instance().addStringLocalization(
 					"achievement.AngelAchieve", "en_US", "Scared of an Angel");
 			LanguageRegistry.instance().addStringLocalization(
 					"achievement.AngelAchieve.desc", "en_US",
 					"The statue is coming. Don't Blink.");
 		}
-		
-		
+
 	}
 
 	public void items() {
@@ -268,7 +267,12 @@ public class WeepingAngelsMod {
 
 	@Mod.EventHandler
 	public static void postInit(FMLPostInitializationEvent event) {
-		
+
+	}
+
+	@Mod.EventHandler
+	public void onServerStarting(FMLServerStartingEvent event) {
+		GameRegistry.registerPlayerTracker(new EventHandler());
 	}
 
 }

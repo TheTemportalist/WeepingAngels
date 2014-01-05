@@ -44,6 +44,8 @@ public class ServerTickHandler implements ITickHandler {
 				}
 				//WeepingAngelsMod.log.info("Angel Convert Health: "
 				//		+ pData.getInteger("angelHealth"));
+			}else{
+				//WeepingAngelsMod.log.info("angelConvertHealth == false");
 			}
 		}
 	}

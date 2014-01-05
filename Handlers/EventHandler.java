@@ -7,23 +7,16 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Entity.EntityWeepingAngel;
-import WeepingAngels.lib.Reference;
 import cpw.mods.fml.common.IPickupNotifier;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.fml.common.IPlayerTracker;
 
-public class EventHandler implements IPickupNotifier {
+public class EventHandler implements IPickupNotifier, IPlayerTracker {
 
 	// General Events
 	@ForgeSubscribe
@@ -111,7 +104,7 @@ public class EventHandler implements IPickupNotifier {
 		if (event.entityLiving != null) {
 			EntityLivingBase ent = event.entityLiving;
 			if (ent instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer)ent;
+				EntityPlayer player = (EntityPlayer) ent;
 				if (player.getEntityData().getBoolean("angelConvertActive")) {
 					if (!player.worldObj.isRemote) {
 						EntityWeepingAngel angel = new EntityWeepingAngel(
@@ -137,5 +130,30 @@ public class EventHandler implements IPickupNotifier {
 		}
 	}
 
+	// Player tracker
+	@Override
+	public void onPlayerLogin(EntityPlayer player) {
+		boolean hasAllKeys = player.getEntityData()
+				.hasKey("angelConvertActive")
+				&& player.getEntityData().hasKey("angelHealth")
+				&& player.getEntityData().hasKey("angelHealTick");
+		if (!hasAllKeys) {
+			player.getEntityData().setBoolean("angelConvertActive", false);
+			player.getEntityData().setInteger("angelHealth", 0);
+			player.getEntityData().setInteger("angelHealTick", 0);
+		}
+	}
+
+	@Override
+	public void onPlayerLogout(EntityPlayer player) {
+	}
+
+	@Override
+	public void onPlayerChangedDimension(EntityPlayer player) {
+	}
+
+	@Override
+	public void onPlayerRespawn(EntityPlayer player) {
+	}
 
 }
