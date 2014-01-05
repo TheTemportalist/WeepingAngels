@@ -26,7 +26,7 @@ public class ServerTickHandler implements ITickHandler {
 							WeepingAngelsMod.maxConvertTicks);
 				}
 				if (pData.getInteger("angelHealth") >= 20) {
-					WeepingAngelsMod.log.info("Kill Player now");
+					//WeepingAngelsMod.log.info("Kill Player now");
 					if (!player.capabilities.disableDamage ||
 							!player.capabilities.isCreativeMode) {
 						EntityWeepingAngel angel = new EntityWeepingAngel(
@@ -42,8 +42,8 @@ public class ServerTickHandler implements ITickHandler {
 					pData.setInteger("angelHealTick",
 							pData.getInteger("angelHealTick") - 1);
 				}
-				WeepingAngelsMod.log.info("Angel Convert Health: "
-						+ pData.getInteger("angelHealth"));
+				//WeepingAngelsMod.log.info("Angel Convert Health: "
+				//		+ pData.getInteger("angelHealth"));
 			}
 		}
 	}

@@ -614,7 +614,8 @@ public class EntityWeepingAngel extends EntityCreature {
 	// ~~~~~ Attacking ~~~~~
 	@Override
 	protected void attackEntity(Entity entity, float f) {
-
+		// TODO Bug, entity attacks at unknown, extended, radius
+		
 		if (entity != null && (entity instanceof EntityPlayer)
 				&& !this.canBeSeenMulti()) {
 			EntityPlayer entityPlayer = (EntityPlayer) entity;
