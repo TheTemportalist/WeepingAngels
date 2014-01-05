@@ -2,12 +2,15 @@ package WeepingAngels.Handlers;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -17,7 +20,7 @@ import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
 
 public class EventHandler implements IPickupNotifier, IPlayerTracker {
-
+	
 	// General Events
 	@ForgeSubscribe
 	public void entityJoinEvent(EntityJoinWorldEvent event) {
@@ -118,7 +121,7 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 			}
 		}
 	}
-
+	
 	// Achivements on Item Pickup
 	@Override
 	public void notifyPickup(EntityItem item, EntityPlayer player) {

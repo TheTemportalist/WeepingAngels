@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
@@ -23,6 +24,7 @@ import WeepingAngels.Entity.EntityStatue;
 import WeepingAngels.Entity.EntityWAPainting;
 import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.Handlers.EventHandler;
+import WeepingAngels.Handlers.HUDOverlay;
 import WeepingAngels.Items.ItemStatue;
 import WeepingAngels.Items.ItemWADebug;
 import WeepingAngels.Items.ItemWeepPaint;
@@ -84,7 +86,7 @@ public class WeepingAngelsMod {
 	public static Achievement angelAchieve;
 	public static int angelAchieveiD;
 
-	public static int maxConvertTicks = 20 * 3; // per 1/2 heart
+	public static int maxConvertTicks = 20 * 1; // per 1/2 heart
 
 	@Instance(Reference.MOD_ID)
 	public static WeepingAngelsMod instance;
@@ -267,12 +269,13 @@ public class WeepingAngelsMod {
 
 	@Mod.EventHandler
 	public static void postInit(FMLPostInitializationEvent event) {
-
+		MinecraftForge.EVENT_BUS.register(new HUDOverlay(Minecraft.getMinecraft()));
 	}
 
 	@Mod.EventHandler
 	public void onServerStarting(FMLServerStartingEvent event) {
 		GameRegistry.registerPlayerTracker(new EventHandler());
+		
 	}
 
 }

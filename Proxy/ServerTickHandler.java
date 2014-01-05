@@ -18,17 +18,18 @@ public class ServerTickHandler implements ITickHandler {
 				&& tickData[0] instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) tickData[0];
 			NBTTagCompound pData = player.getEntityData();
+			
+			if (player.capabilities.isCreativeMode) {
+				pData.setBoolean("angelConvertActive", false);
+				pData.setInteger("angelHealth", 0);
+				pData.setInteger("angelHealTick", 0);
+			}
+			
 			if (pData.getBoolean("angelConvertActive")) {
-				if (pData.getInteger("angelHealTick") <= 0) {
-					pData.setInteger("angelHealth",
-							pData.getInteger("angelHealth") + 1);
-					pData.setInteger("angelHealTick",
-							WeepingAngelsMod.maxConvertTicks);
-				}
 				if (pData.getInteger("angelHealth") >= 20) {
-					//WeepingAngelsMod.log.info("Kill Player now");
-					if (!player.capabilities.disableDamage ||
-							!player.capabilities.isCreativeMode) {
+					// WeepingAngelsMod.log.info("Kill Player now");
+					if (!player.capabilities.disableDamage
+							|| !player.capabilities.isCreativeMode) {
 						EntityWeepingAngel angel = new EntityWeepingAngel(
 								player.worldObj);
 						angel.setPositionAndRotation(player.posX, player.posY,
@@ -38,15 +39,21 @@ public class ServerTickHandler implements ITickHandler {
 								DamageSource.causeMobDamage(angel),
 								player.getMaxHealth());
 					}
+				} else if (pData.getInteger("angelHealTick") <= 0) {
+					pData.setInteger("angelHealth",
+							pData.getInteger("angelHealth") + 1);
+					pData.setInteger("angelHealTick",
+							WeepingAngelsMod.maxConvertTicks);
 				} else {
 					pData.setInteger("angelHealTick",
 							pData.getInteger("angelHealTick") - 1);
 				}
-				//WeepingAngelsMod.log.info("Angel Convert Health: "
-				//		+ pData.getInteger("angelHealth"));
-			}else{
-				//WeepingAngelsMod.log.info("angelConvertHealth == false");
+				WeepingAngelsMod.log.info("Angel Convert Health: "
+						+ pData.getInteger("angelHealth"));
+			} else {
+				// WeepingAngelsMod.log.info("angelConvertHealth == false");
 			}
+
 		}
 	}
 
