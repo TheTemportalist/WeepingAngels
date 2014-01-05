@@ -6,7 +6,6 @@ import WeepingAngels.Client.Render.RenderWAPainting;
 import WeepingAngels.Client.Render.RenderWeepingAngel;
 import WeepingAngels.Client.Render.RenderWeepingAngelStatue;
 import WeepingAngels.Client.Render.TileEntityPlinthRenderer;
-import WeepingAngels.Client.Sounds.WeepingAngelsMod_EventSounds;
 import WeepingAngels.Entity.EntityStatue;
 import WeepingAngels.Entity.EntityWAPainting;
 import WeepingAngels.Entity.EntityWeepingAngel;
@@ -35,8 +34,5 @@ public class ClientProxy extends ServerProxy{
 	}
 
 	public void preInit()
-	{
-		MinecraftForge.EVENT_BUS.register(this);
-		MinecraftForge.EVENT_BUS.register(new WeepingAngelsMod_EventSounds());
-	}
+	{}
 }

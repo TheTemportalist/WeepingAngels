@@ -618,18 +618,20 @@ public class EntityWeepingAngel extends EntityCreature {
 		if (entity != null && (entity instanceof EntityPlayer)
 				&& !this.canBeSeenMulti()) {
 			EntityPlayer entityPlayer = (EntityPlayer) entity;
-
+			
+			entityPlayer.getEntityData().setBoolean("angelConvertActive", true);
+			entityPlayer.getEntityData().setInteger("angelHeath", 1);
+			entityPlayer.getEntityData().setInteger("angelHealTick", WeepingAngelsMod.maxConvertTicks);
+			
+			
+			/*
 			// Always attack, but teleport sometimes as specified in the config
 			super.attackEntity(entity, f);
 
 			if (!entityPlayer.capabilities.isCreativeMode) {
 				if (rand.nextInt(100) < WeepingAngelsMod.poisonChance) {
-					if (entity instanceof EntityLivingBase) {
-						((EntityLivingBase) entity)
-								.addPotionEffect(new PotionEffect(
-										WeepingAngelsMod.angelConvert.id,
-										20 * WeepingAngelsMod.potionDuration, 1));
-					}
+					// TODO AngelConversion
+					entityPlayer.getEntityData().setBoolean("angelConvertActive", true);	
 				}
 				if (rand.nextInt(100) < WeepingAngelsMod.teleportChance) {
 					if (getDistancetoEntityToAttack() <= 2) {
@@ -643,6 +645,7 @@ public class EntityWeepingAngel extends EntityCreature {
 					}
 				}
 			}
+			*/
 		}
 	}
 

@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -105,39 +106,22 @@ public class EventHandler implements IPickupNotifier {
 		}
 	}
 
+	@ForgeSubscribe
 	public void entityDeathEvent(LivingDeathEvent event) {
 		if (event.entityLiving != null) {
 			EntityLivingBase ent = event.entityLiving;
-			if (ent.isPotionActive(WeepingAngelsMod.angelConvert)) {
-				EntityWeepingAngel angel = new EntityWeepingAngel(ent.worldObj);
-				angel.setPosition(ent.posX, ent.posY, ent.posZ);
-				ent.worldObj.spawnEntityInWorld(angel);
-			}
-
-		}
-	}
-
-	@ForgeSubscribe
-	public void onEntityUpdate(LivingUpdateEvent event) {
-		EntityLivingBase targetEntity = event.entityLiving;
-
-		if (targetEntity.isPotionActive(WeepingAngelsMod.angelConvert)) {
-
-			int duration = targetEntity.getActivePotionEffect(
-					WeepingAngelsMod.angelConvert).getDuration();
-
-			// id, duration, strength
-			targetEntity.removePotionEffect(Potion.blindness.id);
-			targetEntity.addPotionEffect(new PotionEffect(Potion.blindness.id,
-					duration, 1));
-			targetEntity.removePotionEffect(Potion.moveSlowdown.id);
-			targetEntity.addPotionEffect(new PotionEffect(
-					Potion.moveSlowdown.id, duration, 1));
-
-			if (duration == 0) {
-				targetEntity
-						.removePotionEffect(WeepingAngelsMod.angelConvert.id);
-				return;
+			if (ent instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer)ent;
+				if (player.getEntityData().getBoolean("angelConvertActive")) {
+					if (!player.worldObj.isRemote) {
+						EntityWeepingAngel angel = new EntityWeepingAngel(
+								player.worldObj);
+						angel.setPositionAndRotation(player.posX, player.posY,
+								player.posZ, player.rotationYaw,
+								player.rotationPitch);
+						player.worldObj.spawnEntityInWorld(angel);
+					}
+				}
 			}
 		}
 	}

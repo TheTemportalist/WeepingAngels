@@ -13,11 +13,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.stats.Achievement;
+import net.minecraft.stats.AchievementList;
 import net.minecraft.util.EnumArt;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.MinecraftForge;
+import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.Blocks.BlockPlinth;
 import WeepingAngels.Blocks.BlockWeepingAngelSpawn;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
@@ -30,6 +32,7 @@ import WeepingAngels.Items.ItemWADebug;
 import WeepingAngels.Items.ItemWeepPaint;
 import WeepingAngels.Proxy.PacketHandler;
 import WeepingAngels.Proxy.ServerProxy;
+import WeepingAngels.Proxy.ServerTickHandler;
 import WeepingAngels.lib.Reference;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Instance;
@@ -41,6 +44,8 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false, channels = { "statue" }, packetHandler = PacketHandler.class)
@@ -79,8 +84,10 @@ public class WeepingAngelsMod {
 	public static boolean pickOnly;
 	public static boolean worldSpawnAngels = true;
 
-	public static Potion angelConvert;
 	public static Achievement angelAchieve;
+	public static int	angelAchieveiD;
+	
+	public static int	maxConvertTicks = 20 * 3; // per 1/2 heart
 
 	@Instance(Reference.MOD_ID)
 	public static WeepingAngelsMod instance;
@@ -140,6 +147,7 @@ public class WeepingAngelsMod {
 				.get(Configuration.CATEGORY_GENERAL,
 						"How long the weeping angel poison will last (default 5 minutes, 60 seconds * 5)",
 						300).getInt();
+		WeepingAngelsMod.angelAchieveiD = config.get(Configuration.CATEGORY_GENERAL, "Scared of An Angel ID", 9000).getInt();
 
 		WeepingAngelsMod.pickOnly = config.get(Configuration.CATEGORY_GENERAL,
 				"Hurt Angel with PickAxe only", false).getBoolean(false);
@@ -152,54 +160,29 @@ public class WeepingAngelsMod {
 
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		GameRegistry.registerPickupHandler(new EventHandler());
-
-		Potion[] potionTypes = null;
-
-		for (Field f : Potion.class.getDeclaredFields()) {
-			f.setAccessible(true);
-			try {
-				if ((f.getName().equals("potionTypes"))
-						|| (f.getName().equals("field_76425_a"))) {
-					Field modfield = Field.class.getDeclaredField("modifiers");
-					modfield.setAccessible(true);
-					modfield.setInt(f, f.getModifiers() & 0xFFFFFFEF);
-
-					potionTypes = (Potion[]) (Potion[]) f.get(null);
-					Potion[] newPotionTypes = new Potion[256];
-					System.arraycopy(potionTypes, 0, newPotionTypes, 0,
-							potionTypes.length);
-					f.set(null, newPotionTypes);
-				}
-			} catch (Exception e) {
-				System.err
-						.println("Severe error, please report this to the mod author:");
-				System.err.println(e);
-			}
-
-		}
+		TickRegistry.registerTickHandler(new ServerTickHandler(), Side.SERVER);
 
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.registerRenderThings();
-
-		WeepingAngelsMod.angelConvert = new PotionConvert(40, true, 0)
-				.setPotionName("potion.angelconvert");
-		LanguageRegistry.instance().addStringLocalization(
-				"potion.angelconvert", "Angel Conversion");
 		
 		this.blocks();
 		this.items();
 		this.entities();
-
-		angelAchieve = new Achievement(3000, "AngelAchieve", -4, -7, statue,
-				null).setSpecial().registerAchievement();
-		LanguageRegistry.instance().addStringLocalization(
-				"achievement.AngelAchieve", "en_US", "Scared of an Angel");
-		LanguageRegistry.instance().addStringLocalization(
-				"achievement.AngelAchieve.desc", "en_US",
-				"The statue is coming. Don't Blink.");
+		
+		if (statue != null) {
+			WeepingAngelsMod.angelAchieve = new Achievement(WeepingAngelsMod.angelAchieveiD, "AngelAchieve", -4, -7, statue,
+					null).setSpecial().registerAchievement();
+			LanguageRegistry.instance().addStringLocalization(
+					"achievement.AngelAchieve", "en_US", "Scared of an Angel");
+			LanguageRegistry.instance().addStringLocalization(
+					"achievement.AngelAchieve.desc", "en_US",
+					"The statue is coming. Don't Blink.");
+		}
+		
+		
 	}
 
 	public void items() {
@@ -285,6 +268,7 @@ public class WeepingAngelsMod {
 
 	@Mod.EventHandler
 	public static void postInit(FMLPostInitializationEvent event) {
+		
 	}
 
 }

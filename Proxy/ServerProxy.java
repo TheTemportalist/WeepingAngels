@@ -1,7 +1,7 @@
 package WeepingAngels.Proxy;
 
-import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 public class ServerProxy {
 
