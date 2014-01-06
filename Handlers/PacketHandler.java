@@ -1,4 +1,4 @@
-package WeepingAngels.Proxy;
+package WeepingAngels.Handlers;
 
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;

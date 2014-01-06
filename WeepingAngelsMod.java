@@ -25,12 +25,12 @@ import WeepingAngels.Entity.EntityWAPainting;
 import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.Handlers.EventHandler;
 import WeepingAngels.Handlers.HUDOverlay;
+import WeepingAngels.Handlers.PacketHandler;
+import WeepingAngels.Handlers.ServerTickHandler;
 import WeepingAngels.Items.ItemStatue;
 import WeepingAngels.Items.ItemWADebug;
 import WeepingAngels.Items.ItemWeepPaint;
-import WeepingAngels.Proxy.PacketHandler;
 import WeepingAngels.Proxy.ServerProxy;
-import WeepingAngels.Proxy.ServerTickHandler;
 import WeepingAngels.lib.Reference;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Instance;
@@ -70,6 +70,8 @@ public class WeepingAngelsMod {
 	public static int entityWeepingAngelID;
 	public static int entityWAPaintingID;
 	public static int potionDuration;
+	
+	public static double maxHealth = 20.0D;
 
 	public static Item waPaint;
 	public static int waPaint_ID;
@@ -85,8 +87,10 @@ public class WeepingAngelsMod {
 
 	public static Achievement angelAchieve;
 	public static int angelAchieveiD;
+	public static Achievement angelAchieve2;
+	public static int angelAchieve2iD;
 
-	public static int maxConvertTicks = 20 * 1; // per 1/2 heart
+	public static int totalConvertTicks = 20 * 60 * 2;
 
 	@Instance(Reference.MOD_ID)
 	public static WeepingAngelsMod instance;
@@ -147,7 +151,10 @@ public class WeepingAngelsMod {
 						"How long the weeping angel poison will last (default 5 minutes, 60 seconds * 5)",
 						300).getInt();
 		WeepingAngelsMod.angelAchieveiD = config.get(
-				Configuration.CATEGORY_GENERAL, "Scared of An Angel ID", 9000)
+				Configuration.CATEGORY_GENERAL, "Scared of an Angel ID", 10000)
+				.getInt();
+		WeepingAngelsMod.angelAchieve2iD = config.get(
+				Configuration.CATEGORY_GENERAL, "Slayed by an Angel ID", 10001)
 				.getInt();
 
 		WeepingAngelsMod.pickOnly = config.get(Configuration.CATEGORY_GENERAL,
@@ -182,6 +189,15 @@ public class WeepingAngelsMod {
 			LanguageRegistry.instance().addStringLocalization(
 					"achievement.AngelAchieve.desc", "en_US",
 					"The statue is coming. Don't Blink.");
+			
+			WeepingAngelsMod.angelAchieve2 = new Achievement(
+					WeepingAngelsMod.angelAchieve2iD, "AngelAchieve2", -1, -7,
+					statue, WeepingAngelsMod.angelAchieve).setSpecial().registerAchievement();
+			LanguageRegistry.instance().addStringLocalization(
+					"achievement.AngelAchieve2", "en_US", "Slayed by an Angel");
+			LanguageRegistry.instance().addStringLocalization(
+					"achievement.AngelAchieve2.desc", "en_US",
+					"I'm so sorry. But. You blinked.");
 		}
 
 	}

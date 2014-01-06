@@ -21,6 +21,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import WeepingAngels.WeepingAngelsMod;
+import WeepingAngels.Handlers.Player.ExtendedPlayer;
 import WeepingAngels.lib.Reference;
 import WeepingAngels.lib.Util;
 
@@ -140,7 +141,7 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 
 		// Teleportation
-		
+
 		if (this.entityToAttack != null
 				&& this.entityToAttack instanceof EntityPlayer
 				&& (!this.canBeSeenMulti())) {
@@ -212,12 +213,21 @@ public class EntityWeepingAngel extends EntityCreature {
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
+		// Max Health - default 20.0D - min 0.0D - max Double.MAX_VALUE
+		this.getEntityAttribute(SharedMonsterAttributes.maxHealth)
+				.setAttribute(WeepingAngelsMod.maxHealth);
+		// Follow Range - default 32.0D - min 0.0D - max 2048.0D
+		//this.getEntityAttribute(SharedMonsterAttributes.followRange)
+		//		.setAttribute(32.0D);
+		// Knockback Resistance - default 0.0D - min 0.0D - max 1.0D
+		//this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance)
+		//		.setAttribute(0.0D);
+		// Movement Speed - default 0.699D - min 0.0D - max Double.MAX_VALUE
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
 				.setAttribute(this.minSpeed);
-		this.getAttributeMap().func_111150_b(
-				SharedMonsterAttributes.attackDamage);
-		// this.getEntityAttribute(SharedMonsterAttributes.attackDamage)
-		// .setAttribute(5D);
+		// Attack Damage - default 2.0D - min 0.0D - max Doubt.MAX_VALUE
+		//this.getEntityAttribute(SharedMonsterAttributes.attackDamage)
+		//		.setAttribute(2.0D);
 
 	}
 
@@ -610,43 +620,35 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 	}
 
-
 	// ~~~~~ Attacking ~~~~~
 	@Override
 	protected void attackEntity(Entity entity, float f) {
 		// TODO Bug, entity attacks at unknown, extended, radius
-		
+
 		if (entity != null && (entity instanceof EntityPlayer)
 				&& !this.canBeSeenMulti()) {
 			EntityPlayer entityPlayer = (EntityPlayer) entity;
-			
-			entityPlayer.getEntityData().setBoolean("angelConvertActive", true);
-			entityPlayer.getEntityData().setInteger("angelHeath", 1);
-			entityPlayer.getEntityData().setInteger("angelHealTick", WeepingAngelsMod.maxConvertTicks);
-			
-			
-			/*
-			// Always attack, but teleport sometimes as specified in the config
-			super.attackEntity(entity, f);
+			ExtendedPlayer playerProps = ExtendedPlayer.get(entityPlayer);
 
-			if (!entityPlayer.capabilities.isCreativeMode) {
-				if (rand.nextInt(100) < WeepingAngelsMod.poisonChance) {
-					// TODO AngelConversion
-					entityPlayer.getEntityData().setBoolean("angelConvertActive", true);	
-				}
-				if (rand.nextInt(100) < WeepingAngelsMod.teleportChance) {
-					if (getDistancetoEntityToAttack() <= 2) {
-						Util.teleportPlayer(entityPlayer.worldObj,
-								entityPlayer, 0,
-								WeepingAngelsMod.teleportRangeMax, true, true);
-						this.worldObj.playSoundAtEntity(entityPlayer,
-								Reference.BASE_TEX + "teleport_activate", 1.0F,
-								1.0F);
-						entity = null;
-					}
-				}
-			}
-			*/
+			playerProps.setConvert(1);
+			playerProps.setAngelHealth(1.0F);
+			playerProps.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
+
+			/*
+			 * // Always attack, but teleport sometimes as specified in the
+			 * config super.attackEntity(entity, f);
+			 * 
+			 * if (!entityPlayer.capabilities.isCreativeMode) { if
+			 * (rand.nextInt(100) < WeepingAngelsMod.poisonChance) { // TODO
+			 * AngelConversion
+			 * entityPlayer.getEntityData().setBoolean("angelConvertActive",
+			 * true); } if (rand.nextInt(100) < WeepingAngelsMod.teleportChance)
+			 * { if (getDistancetoEntityToAttack() <= 2) {
+			 * Util.teleportPlayer(entityPlayer.worldObj, entityPlayer, 0,
+			 * WeepingAngelsMod.teleportRangeMax, true, true);
+			 * this.worldObj.playSoundAtEntity(entityPlayer, Reference.BASE_TEX
+			 * + "teleport_activate", 1.0F, 1.0F); entity = null; } } }
+			 */
 		}
 	}
 

@@ -1,4 +1,4 @@
-package WeepingAngels.Proxy;
+package WeepingAngels.Handlers;
 
 import java.util.EnumSet;
 

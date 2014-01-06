@@ -2,20 +2,19 @@ package WeepingAngels.Handlers;
 
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Entity.EntityWeepingAngel;
+import WeepingAngels.Handlers.Player.ExtendedPlayer;
 import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
 
@@ -108,7 +107,8 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 			EntityLivingBase ent = event.entityLiving;
 			if (ent instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) ent;
-				if (player.getEntityData().getBoolean("angelConvertActive")) {
+				ExtendedPlayer playerProps = ExtendedPlayer.get(player);
+				if (playerProps.isConvertActive() == 1) {
 					if (!player.worldObj.isRemote) {
 						EntityWeepingAngel angel = new EntityWeepingAngel(
 								player.worldObj);
@@ -116,7 +116,11 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 								player.posZ, player.rotationYaw,
 								player.rotationPitch);
 						player.worldObj.spawnEntityInWorld(angel);
+						player.addStat(WeepingAngelsMod.angelAchieve2, 1);
 					}
+					playerProps.setConvert(0);
+					playerProps.setAngelHealth(0.0F);
+					playerProps.setTicksTillAngelHeal(0);
 				}
 			}
 		}
@@ -136,6 +140,8 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 	// Player tracker
 	@Override
 	public void onPlayerLogin(EntityPlayer player) {
+		/*
+		ExtendedPlayer playerProps = ExtendedPlayer.get(player);
 		boolean hasAllKeys = player.getEntityData()
 				.hasKey("angelConvertActive")
 				&& player.getEntityData().hasKey("angelHealth")
@@ -145,6 +151,7 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 			player.getEntityData().setInteger("angelHealth", 0);
 			player.getEntityData().setInteger("angelHealTick", 0);
 		}
+		*/
 	}
 
 	@Override
@@ -158,5 +165,12 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 	@Override
 	public void onPlayerRespawn(EntityPlayer player) {
 	}
-
+	
+	@ForgeSubscribe
+	public void onEntityConstructing(EntityConstructing event) {
+		if (event.entity instanceof EntityPlayer && ExtendedPlayer.get((EntityPlayer)event.entity) == null) {
+			ExtendedPlayer.register((EntityPlayer)event.entity);
+		}
+	}
+	
 }

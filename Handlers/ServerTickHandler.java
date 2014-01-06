@@ -1,4 +1,4 @@
-package WeepingAngels.Proxy;
+package WeepingAngels.Handlers;
 
 import java.util.EnumSet;
 
@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Entity.EntityWeepingAngel;
+import WeepingAngels.Handlers.Player.ExtendedPlayer;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
@@ -17,16 +18,16 @@ public class ServerTickHandler implements ITickHandler {
 		if (type.contains(TickType.PLAYER)
 				&& tickData[0] instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) tickData[0];
-			NBTTagCompound pData = player.getEntityData();
+			ExtendedPlayer playerProperties = ExtendedPlayer.get(player);
 			
 			if (player.capabilities.isCreativeMode) {
-				pData.setBoolean("angelConvertActive", false);
-				pData.setInteger("angelHealth", 0);
-				pData.setInteger("angelHealTick", 0);
+				playerProperties.setConvert(0);
+				playerProperties.setAngelHealth(0.0F);
+				playerProperties.setTicksTillAngelHeal(0);
 			}
 			
-			if (pData.getBoolean("angelConvertActive")) {
-				if (pData.getInteger("angelHealth") >= 20) {
+			if (playerProperties.isConvertActive() == 1) {
+				if (playerProperties.getAngelHealth() >= 20) {
 					// WeepingAngelsMod.log.info("Kill Player now");
 					if (!player.capabilities.disableDamage
 							|| !player.capabilities.isCreativeMode) {
@@ -39,17 +40,14 @@ public class ServerTickHandler implements ITickHandler {
 								DamageSource.causeMobDamage(angel),
 								player.getMaxHealth());
 					}
-				} else if (pData.getInteger("angelHealTick") <= 0) {
-					pData.setInteger("angelHealth",
-							pData.getInteger("angelHealth") + 1);
-					pData.setInteger("angelHealTick",
-							WeepingAngelsMod.maxConvertTicks);
+				} else if (playerProperties.getTicksTillAngelHeal() <= 0) {
+					playerProperties.setAngelHealth(playerProperties.getAngelHealth() + 1);
+					playerProperties.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
 				} else {
-					pData.setInteger("angelHealTick",
-							pData.getInteger("angelHealTick") - 1);
+					playerProperties.setTicksTillAngelHeal(playerProperties.getTicksTillAngelHeal() - 1);
 				}
 				WeepingAngelsMod.log.info("Angel Convert Health: "
-						+ pData.getInteger("angelHealth"));
+						+ playerProperties.getAngelHealth());
 			} else {
 				// WeepingAngelsMod.log.info("angelConvertHealth == false");
 			}

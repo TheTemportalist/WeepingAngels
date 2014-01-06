@@ -9,6 +9,7 @@ import WeepingAngels.Client.Render.TileEntityPlinthRenderer;
 import WeepingAngels.Entity.EntityStatue;
 import WeepingAngels.Entity.EntityWAPainting;
 import WeepingAngels.Entity.EntityWeepingAngel;
+import WeepingAngels.Handlers.ClientTickHandler;
 import WeepingAngels.Handlers.SoundEventHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
