@@ -3,6 +3,8 @@ package WeepingAngels.Entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -217,17 +219,19 @@ public class EntityWeepingAngel extends EntityCreature {
 		this.getEntityAttribute(SharedMonsterAttributes.maxHealth)
 				.setAttribute(WeepingAngelsMod.maxHealth);
 		// Follow Range - default 32.0D - min 0.0D - max 2048.0D
-		//this.getEntityAttribute(SharedMonsterAttributes.followRange)
-		//		.setAttribute(32.0D);
+		// this.getEntityAttribute(SharedMonsterAttributes.followRange)
+		// .setAttribute(32.0D);
 		// Knockback Resistance - default 0.0D - min 0.0D - max 1.0D
-		//this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance)
-		//		.setAttribute(0.0D);
+		// this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance)
+		// .setAttribute(0.0D);
 		// Movement Speed - default 0.699D - min 0.0D - max Double.MAX_VALUE
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
 				.setAttribute(this.minSpeed);
 		// Attack Damage - default 2.0D - min 0.0D - max Doubt.MAX_VALUE
-		//this.getEntityAttribute(SharedMonsterAttributes.attackDamage)
-		//		.setAttribute(2.0D);
+		this.getAttributeMap().func_111150_b(
+				SharedMonsterAttributes.attackDamage);
+		this.getEntityAttribute(SharedMonsterAttributes.attackDamage)
+				.setAttribute(6.0D);
 
 	}
 
@@ -623,33 +627,85 @@ public class EntityWeepingAngel extends EntityCreature {
 	// ~~~~~ Attacking ~~~~~
 	@Override
 	protected void attackEntity(Entity entity, float f) {
-		// TODO Bug, entity attacks at unknown, extended, radius
-
 		if (entity != null && (entity instanceof EntityPlayer)
-				&& !this.canBeSeenMulti()) {
+				&& (!this.canBeSeenMulti())) {
 			EntityPlayer entityPlayer = (EntityPlayer) entity;
-			ExtendedPlayer playerProps = ExtendedPlayer.get(entityPlayer);
+			if (!entityPlayer.capabilities.isCreativeMode
+					&& this.getDistancetoEntityToAttack() <= 2) {
+				if (Math.random() <= WeepingAngelsMod.poisonChance / 100) {
+					ExtendedPlayer playerProps = ExtendedPlayer
+							.get(entityPlayer);
+					playerProps.setConvert(1);
+					playerProps.setAngelHealth(0.0F);
+					playerProps
+							.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
+					if (WeepingAngelsMod.DEBUG)
+						WeepingAngelsMod.log.info("Infected Player");
+				} else if (Math.random() <= WeepingAngelsMod.teleportChance / 100) {
+					Util.teleportPlayer(entityPlayer.worldObj, entityPlayer, 0,
+							WeepingAngelsMod.teleportRangeMax, true, true);
+					this.worldObj.playSoundAtEntity(entityPlayer,
+							Reference.BASE_TEX + "teleport_activate", 1.0F,
+							1.0F);
+					entity = null;
+					if (WeepingAngelsMod.DEBUG)
+						WeepingAngelsMod.log.info("Teleported Player");
+				} else {
+					this.attackEntityAsMob(entity);
+					if (WeepingAngelsMod.DEBUG)
+						WeepingAngelsMod.log.info("Attacked Player");
+				}
 
-			playerProps.setConvert(1);
-			playerProps.setAngelHealth(1.0F);
-			playerProps.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
+			}
 
-			/*
-			 * // Always attack, but teleport sometimes as specified in the
-			 * config super.attackEntity(entity, f);
-			 * 
-			 * if (!entityPlayer.capabilities.isCreativeMode) { if
-			 * (rand.nextInt(100) < WeepingAngelsMod.poisonChance) { // TODO
-			 * AngelConversion
-			 * entityPlayer.getEntityData().setBoolean("angelConvertActive",
-			 * true); } if (rand.nextInt(100) < WeepingAngelsMod.teleportChance)
-			 * { if (getDistancetoEntityToAttack() <= 2) {
-			 * Util.teleportPlayer(entityPlayer.worldObj, entityPlayer, 0,
-			 * WeepingAngelsMod.teleportRangeMax, true, true);
-			 * this.worldObj.playSoundAtEntity(entityPlayer, Reference.BASE_TEX
-			 * + "teleport_activate", 1.0F, 1.0F); entity = null; } } }
-			 */
 		}
+	}
+
+	/**
+	 * From EntityMob.class
+	 */
+	public boolean attackEntityAsMob(Entity par1Entity) {
+		float f = (float) this.getEntityAttribute(
+				SharedMonsterAttributes.attackDamage).getAttributeValue();
+		int i = 0;
+
+		if (par1Entity instanceof EntityLivingBase) {
+			f += EnchantmentHelper.getEnchantmentModifierLiving(this,
+					(EntityLivingBase) par1Entity);
+			i += EnchantmentHelper.getKnockbackModifier(this,
+					(EntityLivingBase) par1Entity);
+		}
+
+		boolean flag = par1Entity.attackEntityFrom(
+				DamageSource.causeMobDamage(this), f);
+
+		if (flag) {
+			if (i > 0) {
+				par1Entity.addVelocity(
+						(double) (-MathHelper.sin(this.rotationYaw
+								* (float) Math.PI / 180.0F)
+								* (float) i * 0.5F),
+						0.1D,
+						(double) (MathHelper.cos(this.rotationYaw
+								* (float) Math.PI / 180.0F)
+								* (float) i * 0.5F));
+				this.motionX *= 0.6D;
+				this.motionZ *= 0.6D;
+			}
+
+			int j = EnchantmentHelper.getFireAspectModifier(this);
+
+			if (j > 0) {
+				par1Entity.setFire(j * 4);
+			}
+
+			if (par1Entity instanceof EntityLivingBase) {
+				EnchantmentThorns.func_92096_a(this,
+						(EntityLivingBase) par1Entity, this.rand);
+			}
+		}
+
+		return flag;
 	}
 
 	public boolean attackEntityFrom(DamageSource source, float damage) {

@@ -19,10 +19,11 @@ import cpw.mods.fml.common.IPickupNotifier;
 import cpw.mods.fml.common.IPlayerTracker;
 
 public class EventHandler implements IPickupNotifier, IPlayerTracker {
-	
+
 	// General Events
 	@ForgeSubscribe
 	public void entityJoinEvent(EntityJoinWorldEvent event) {
+		/*
 		Entity ent = event.entity;
 		if (ent instanceof EntityPainting) {
 			EntityPainting painting = (EntityPainting) ent;
@@ -48,9 +49,10 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 				} else {
 					// side to +x -x +z -z
 					/*
-					 * side = meta = direction 0 = 2 = +z 1 = 5 = -x 2 = 3 = -z
-					 * 3 = 4 = +x
-					 */
+		 * side = meta = direction 0 = 2 = +z 1 = 5 = -x 2 = 3 = -z
+		 * 3 = 4 = +x
+		 */
+		/*
 					double x = painting.posX, y = painting.posY, z = painting.posZ;
 					double i = x, k = z;
 					switch (painting.hangingDirection) {
@@ -99,6 +101,7 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 			}
 			// }
 		}
+		 */
 	}
 
 	@ForgeSubscribe
@@ -125,7 +128,7 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 			}
 		}
 	}
-	
+
 	// Achivements on Item Pickup
 	@Override
 	public void notifyPickup(EntityItem item, EntityPlayer player) {
@@ -151,7 +154,7 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 			player.getEntityData().setInteger("angelHealth", 0);
 			player.getEntityData().setInteger("angelHealTick", 0);
 		}
-		*/
+		 */
 	}
 
 	@Override
@@ -165,12 +168,12 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 	@Override
 	public void onPlayerRespawn(EntityPlayer player) {
 	}
-	
+
 	@ForgeSubscribe
 	public void onEntityConstructing(EntityConstructing event) {
 		if (event.entity instanceof EntityPlayer && ExtendedPlayer.get((EntityPlayer)event.entity) == null) {
 			ExtendedPlayer.register((EntityPlayer)event.entity);
 		}
 	}
-	
+
 }

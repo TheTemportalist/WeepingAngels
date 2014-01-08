@@ -70,14 +70,14 @@ public class WeepingAngelsMod {
 	public static int entityWeepingAngelID;
 	public static int entityWAPaintingID;
 	public static int potionDuration;
-	
+
 	public static double maxHealth = 20.0D;
 
 	public static Item waPaint;
 	public static int waPaint_ID;
-	public static boolean waP_Enable = false;
+	public static boolean waP_Enable = true;
 
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static Item debugItem;
 	public static int debugItemiD;
 	public static String debugItemName = "Debugger";
@@ -176,51 +176,37 @@ public class WeepingAngelsMod {
 	public void init(FMLInitializationEvent event) {
 		proxy.registerRenderThings();
 
-		this.blocks();
 		this.items();
+		this.blocks();
 		this.entities();
+		this.craftSmelt();
 
-		if (statue != null) {
-			WeepingAngelsMod.angelAchieve = new Achievement(
-					WeepingAngelsMod.angelAchieveiD, "AngelAchieve", -4, -7,
-					statue, null).setSpecial().registerAchievement();
-			LanguageRegistry.instance().addStringLocalization(
-					"achievement.AngelAchieve", "en_US", "Scared of an Angel");
-			LanguageRegistry.instance().addStringLocalization(
-					"achievement.AngelAchieve.desc", "en_US",
-					"The statue is coming. Don't Blink.");
-			
-			WeepingAngelsMod.angelAchieve2 = new Achievement(
-					WeepingAngelsMod.angelAchieve2iD, "AngelAchieve2", -1, -7,
-					statue, WeepingAngelsMod.angelAchieve).setSpecial().registerAchievement();
-			LanguageRegistry.instance().addStringLocalization(
-					"achievement.AngelAchieve2", "en_US", "Slayed by an Angel");
-			LanguageRegistry.instance().addStringLocalization(
-					"achievement.AngelAchieve2.desc", "en_US",
-					"I'm so sorry. But. You blinked.");
-		}
+		WeepingAngelsMod.angelAchieve = new Achievement(
+				WeepingAngelsMod.angelAchieveiD, "AngelAchieve", -4, -7,
+				statue, null).setSpecial().registerAchievement();
+		LanguageRegistry.instance().addStringLocalization(
+				"achievement.AngelAchieve", "en_US", "Scared of an Angel");
+		LanguageRegistry.instance().addStringLocalization(
+				"achievement.AngelAchieve.desc", "en_US",
+				"The statue is coming. Don't Blink.");
+
+		WeepingAngelsMod.angelAchieve2 = new Achievement(
+				WeepingAngelsMod.angelAchieve2iD, "AngelAchieve2", -1, -7,
+				statue, WeepingAngelsMod.angelAchieve).setSpecial()
+				.registerAchievement();
+		LanguageRegistry.instance().addStringLocalization(
+				"achievement.AngelAchieve2", "en_US", "Slayed by an Angel");
+		LanguageRegistry.instance().addStringLocalization(
+				"achievement.AngelAchieve2.desc", "en_US",
+				"I'm sorry. I'm so sorry But, you blinked.");
 
 	}
 
 	public void items() {
-		if (WeepingAngelsMod.statueItemID != 0) {
-			plinthBlock = (new BlockPlinth(plinthBlockID,
-					TileEntityPlinth.class, Material.rock)).setHardness(2.0F)
-					.setResistance(10F).setStepSound(Block.soundStoneFootstep)
-					.setUnlocalizedName("Plinth");
-			GameRegistry.registerTileEntity(TileEntityPlinth.class,
-					"TileEntityPlinth");
-			statue = (new ItemStatue(statueItemID, EntityStatue.class))
-					.setUnlocalizedName("Statue")
-					.setCreativeTab(CreativeTabs.tabMisc).setMaxStackSize(64);
-			GameRegistry.registerBlock(plinthBlock, "Plinth");
-			LanguageRegistry.addName(plinthBlock, "Plinth");
-			LanguageRegistry.addName(statue, "Weeping Angel Statue");
-			GameRegistry.addRecipe(new ItemStack(
-					WeepingAngelsMod.blockWeepingAngelSpawn, 1), new Object[] {
-					"xxx", "xcx", "xxx", 'x', Block.stone, 'c',
-					WeepingAngelsMod.statue });
-		}
+		statue = (new ItemStatue(statueItemID, EntityStatue.class))
+				.setUnlocalizedName("Statue")
+				.setCreativeTab(CreativeTabs.tabMisc).setMaxStackSize(64);
+		LanguageRegistry.addName(statue, "Weeping Angel Statue");
 
 		if (WeepingAngelsMod.DEBUG)
 			WeepingAngelsMod.debugItem = new ItemWADebug(
@@ -230,6 +216,15 @@ public class WeepingAngelsMod {
 	}
 
 	public void blocks() {
+		plinthBlock = (new BlockPlinth(plinthBlockID, TileEntityPlinth.class,
+				Material.rock)).setHardness(2.0F).setResistance(10F)
+				.setStepSound(Block.soundStoneFootstep)
+				.setUnlocalizedName("Plinth");
+		GameRegistry.registerBlock(plinthBlock, "Plinth");
+		LanguageRegistry.addName(plinthBlock, "Plinth");
+		GameRegistry.registerTileEntity(TileEntityPlinth.class,
+				"TileEntityPlinth");
+
 		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn(spawnBlockID, 1)
 				.setHardness(0.5F).setUnlocalizedName("weepingangelspawn")
 				.setCreativeTab(CreativeTabs.tabMisc);
@@ -283,15 +278,23 @@ public class WeepingAngelsMod {
 		}
 	}
 
+	public void craftSmelt() {
+		GameRegistry.addRecipe(new ItemStack(
+				WeepingAngelsMod.blockWeepingAngelSpawn, 1), new Object[] {
+				"xxx", "xcx", "xxx", 'x', Block.stone, 'c',
+				WeepingAngelsMod.statue });
+	}
+
 	@Mod.EventHandler
 	public static void postInit(FMLPostInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new HUDOverlay(Minecraft.getMinecraft()));
+		MinecraftForge.EVENT_BUS.register(new HUDOverlay(Minecraft
+				.getMinecraft()));
 	}
 
 	@Mod.EventHandler
 	public void onServerStarting(FMLServerStartingEvent event) {
 		GameRegistry.registerPlayerTracker(new EventHandler());
-		
+
 	}
 
 }

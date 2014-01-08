@@ -5,6 +5,8 @@ import java.util.Iterator;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -27,6 +29,7 @@ public class HUDOverlay extends Gui {
 	private static final int BUFF_ICON_BASE_U_OFFSET = 0;
 	private static final int BUFF_ICON_BASE_V_OFFSET = 198;
 	private static final int BUFF_ICONS_PER_ROW = 8;
+	public static final int maxHUDHealth = 20;
 
 	public HUDOverlay(Minecraft mc) {
 		super();
@@ -37,7 +40,7 @@ public class HUDOverlay extends Gui {
 			Reference.MOD_ID_LOWERCASE, "textures/gui/angelHealth.png");
 
 	@ForgeSubscribe(priority = EventPriority.NORMAL)
-	public void angelConvertHUDOverlay(RenderGameOverlayEvent.Post event) {
+	public void renderGameOverlay(RenderGameOverlayEvent.Post event) {
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE) {
 			return;
 		}
@@ -46,17 +49,21 @@ public class HUDOverlay extends Gui {
 		int xPos = (int) (width / 2 * 0.04) + width / 2;
 		int height = event.resolution.getScaledHeight();
 		int yPos = (height / 2 + height / 4) + (int) (height / 4 * 0.19);
+		ScaledResolution scaledresolution = new ScaledResolution(
+				this.mc.gameSettings, this.mc.displayWidth,
+				this.mc.displayHeight);
+		int k = scaledresolution.getScaledWidth();
+		int l = scaledresolution.getScaledHeight();
 
 		ExtendedPlayer playerProperties = ExtendedPlayer.get(this.mc.thePlayer);
 		float angelHealth = playerProperties.getAngelHealth();
 		if (angelHealth > 0.0F) {
-			// angelHealth = 5;
 
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			GL11.glDisable(GL11.GL_LIGHTING);
 			this.mc.getTextureManager().bindTexture(health);
 
-			for (int i = 0; i < WeepingAngelsMod.maxHealth / 2; i++) {
+			for (int i = 0; i < this.maxHUDHealth / 2; i++) {
 				this.drawTexturedModalRect(xPos + (i * 9), yPos, 0, 9,
 						BUFF_ICON_SIZE, BUFF_ICON_SIZE);
 			}
@@ -78,10 +85,34 @@ public class HUDOverlay extends Gui {
 							+ ((i + 1) * 9), yPos, 9, 0, BUFF_ICON_SIZE,
 							BUFF_ICON_SIZE);
 			}
-			// this.drawTexturedModalRect(xPos, yPos, 0, 0, BUFF_ICON_SIZE,
-			// BUFF_ICON_SIZE);
 
+			this.renderBlur(k, l, angelHealth / (float)(this.maxHUDHealth));
 		}
+	}
+
+	protected static final ResourceLocation blackBlur = new ResourceLocation(
+			Reference.MOD_ID_LOWERCASE, "textures/gui/blackBlur.png");
+
+	protected void renderBlur(int x, int y, float alpha) {
+
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthMask(false);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, alpha);
+		GL11.glDisable(GL11.GL_ALPHA_TEST);
+
+		this.mc.getTextureManager().bindTexture(blackBlur);
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+		tessellator.addVertexWithUV(0.0D, (double) y, -90.0D, 0.0D, 1.0D);
+		tessellator.addVertexWithUV((double) x, (double) y, -90.0D, 1.0D, 1.0D);
+		tessellator.addVertexWithUV((double) x, 0.0D, -90.0D, 1.0D, 0.0D);
+		tessellator.addVertexWithUV(0.0D, 0.0D, -90.0D, 0.0D, 0.0D);
+		tessellator.draw();
+
+		GL11.glDisable(GL11.GL_BLEND);
+
 	}
 
 }

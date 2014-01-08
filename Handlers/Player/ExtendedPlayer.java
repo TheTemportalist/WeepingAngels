@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import WeepingAngels.WeepingAngelsMod;
+import WeepingAngels.Handlers.HUDOverlay;
 
 public class ExtendedPlayer implements IExtendedEntityProperties {
 
@@ -15,7 +16,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 	public static final int isConvertActiveiD = 20;
 	public static final int angelHealthiD = 21;
 	public static final int ticksiD = 22;
-	public static final int ticksPerHalfHeart = (int) (WeepingAngelsMod.totalConvertTicks / WeepingAngelsMod.maxHealth);
+	public static final int ticksPerHalfHeart = (int) (WeepingAngelsMod.totalConvertTicks / HUDOverlay.maxHUDHealth);
 
 	public ExtendedPlayer(EntityPlayer player) {
 		this.player = player;
