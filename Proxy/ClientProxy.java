@@ -2,12 +2,10 @@ package WeepingAngels.Proxy;
 
 import net.minecraftforge.common.MinecraftForge;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import WeepingAngels.Client.Render.RenderWAPainting;
 import WeepingAngels.Client.Render.RenderWeepingAngel;
 import WeepingAngels.Client.Render.RenderWeepingAngelStatue;
 import WeepingAngels.Client.Render.TileEntityPlinthRenderer;
 import WeepingAngels.Entity.EntityStatue;
-import WeepingAngels.Entity.EntityWAPainting;
 import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.Handlers.ClientTickHandler;
 import WeepingAngels.Handlers.SoundEventHandler;
@@ -25,7 +23,6 @@ public class ClientProxy extends ServerProxy{
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityWeepingAngel.class, new RenderWeepingAngel(0.5f));
 		RenderingRegistry.registerEntityRenderingHandler(EntityStatue.class, new RenderWeepingAngelStatue());
-		RenderingRegistry.registerEntityRenderingHandler(EntityWAPainting.class, new RenderWAPainting());		
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPlinth.class, new TileEntityPlinthRenderer());
 		//ModLoader.registerTileEntity(TileEntityPlinth.class, "TileEntityPlinth", new TileEntityPlinthRenderer());

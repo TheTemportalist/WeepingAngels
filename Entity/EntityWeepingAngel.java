@@ -231,7 +231,7 @@ public class EntityWeepingAngel extends EntityCreature {
 		this.getAttributeMap().func_111150_b(
 				SharedMonsterAttributes.attackDamage);
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage)
-				.setAttribute(6.0D);
+				.setAttribute(WeepingAngelsMod.attackStrength);
 
 	}
 

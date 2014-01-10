@@ -1,18 +1,12 @@
 package WeepingAngels.Items;
 
-import java.util.Random;
-
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import CountryGamer_Core.ItemBase;
-import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Handlers.Player.ExtendedPlayer;
-import WeepingAngels.lib.Util;
 
 public class ItemWADebug extends ItemBase {
 
@@ -28,6 +22,7 @@ public class ItemWADebug extends ItemBase {
 		playerProps.setConvert(1);
 		playerProps.setAngelHealth(0.0F);
 		playerProps.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
+		
 		return itemStack;
 	}
 

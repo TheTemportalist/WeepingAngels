@@ -12,16 +12,13 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
-import net.minecraft.util.EnumArt;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.MinecraftForge;
 import WeepingAngels.Blocks.BlockPlinth;
 import WeepingAngels.Blocks.BlockWeepingAngelSpawn;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
 import WeepingAngels.Entity.EntityStatue;
-import WeepingAngels.Entity.EntityWAPainting;
 import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.Handlers.EventHandler;
 import WeepingAngels.Handlers.HUDOverlay;
@@ -29,7 +26,6 @@ import WeepingAngels.Handlers.PacketHandler;
 import WeepingAngels.Handlers.ServerTickHandler;
 import WeepingAngels.Items.ItemStatue;
 import WeepingAngels.Items.ItemWADebug;
-import WeepingAngels.Items.ItemWeepPaint;
 import WeepingAngels.Proxy.ServerProxy;
 import WeepingAngels.lib.Reference;
 import cpw.mods.fml.common.Mod;
@@ -73,10 +69,6 @@ public class WeepingAngelsMod {
 
 	public static double maxHealth = 20.0D;
 
-	public static Item waPaint;
-	public static int waPaint_ID;
-	public static boolean waP_Enable = true;
-
 	public static final boolean DEBUG = true;
 	public static Item debugItem;
 	public static int debugItemiD;
@@ -97,16 +89,9 @@ public class WeepingAngelsMod {
 
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
 	public static ServerProxy proxy;
-
-	public static final String wapNAME = "WeepingAngelArt";
-	/*
-	 * EntityPainting wap = new EntityPainting( world, 0, 0, 0, 0,
-	 * "WeepingAngelArt");
-	 */
-	public static EnumArt waa = EnumHelper.addArt(
-			WeepingAngelsMod.wapNAME.toLowerCase(), WeepingAngelsMod.wapNAME,
-			16, 16, 0, 0);
-
+	
+	
+	
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		proxy.preInit();
@@ -115,24 +100,30 @@ public class WeepingAngelsMod {
 				event.getSuggestedConfigurationFile());
 		config.load(); // load configs from its file
 
+		// Entities
 		entityWeepingAngelID = config.get(Configuration.CATEGORY_GENERAL,
 				"EntityWeepingAngelID", 300).getInt();
 		entityWAPaintingID = config.get(Configuration.CATEGORY_GENERAL,
 				"EntityWAPaintingID", 301).getInt();
-
+		// Achievements
+		WeepingAngelsMod.angelAchieveiD = config.get(
+				Configuration.CATEGORY_GENERAL, "Scared of an Angel ID", 10000)
+				.getInt();
+		WeepingAngelsMod.angelAchieve2iD = config.get(
+				Configuration.CATEGORY_GENERAL, "Slayed by an Angel ID", 10001)
+				.getInt();
+		// Blocks
+		plinthBlockID = config.get(Configuration.CATEGORY_BLOCK,
+				"PlinthBlockID", 3023).getInt();
+		spawnBlockID = config.get(Configuration.CATEGORY_BLOCK, "SpawnBlockID",
+				3024).getInt();
+		// Items
 		statueItemID = config.get(Configuration.CATEGORY_ITEM, "StatueItemID",
 				12034).getInt();
 		if (WeepingAngelsMod.DEBUG)
 			WeepingAngelsMod.debugItemiD = config.get(
 					Configuration.CATEGORY_ITEM, debugItemName, 12035).getInt();
-
-		plinthBlockID = config.get(Configuration.CATEGORY_BLOCK,
-				"PlinthBlockID", 3023).getInt();
-		spawnBlockID = config.get(Configuration.CATEGORY_BLOCK, "SpawnBlockID",
-				3024).getInt();
-
-		attackStrength = config.get(Configuration.CATEGORY_GENERAL,
-				"AttackStrength", 2).getInt();
+		// Stats
 		WeepingAngelsMod.poisonChance = config.get(
 				Configuration.CATEGORY_GENERAL, "Poison Chance Percentage", 5)
 				.getInt();
@@ -140,31 +131,23 @@ public class WeepingAngelsMod {
 				"Teleport Chance Percentage", 20).getInt();
 		teleportRangeMax = config.get(Configuration.CATEGORY_GENERAL,
 				"TeleportRangeMax", 60).getInt();
-		maxSpawn = config.get(Configuration.CATEGORY_GENERAL,
-				"MaxSpawnedPerInstance", 2).getInt();
+		attackStrength = config.get(Configuration.CATEGORY_GENERAL,
+				"AttackStrength", 6).getInt();
+		WeepingAngelsMod.pickOnly = config.get(Configuration.CATEGORY_GENERAL,
+				"Hurt Angel with PickAxe only", false).getBoolean(false);
+		// Other
 		spawnRate = config.get(Configuration.CATEGORY_GENERAL, "SpawnRate", 2)
 				.getInt();
+		maxSpawn = config.get(Configuration.CATEGORY_GENERAL,
+				"MaxSpawnedPerWorldInstance", 2).getInt();
 		maxSpawnHeight = config.get(Configuration.CATEGORY_GENERAL,
 				"Max Spawn Y-Level", 40).getInt();
 		potionDuration = config
 				.get(Configuration.CATEGORY_GENERAL,
 						"How long the weeping angel poison will last (default 5 minutes, 60 seconds * 5)",
 						300).getInt();
-		WeepingAngelsMod.angelAchieveiD = config.get(
-				Configuration.CATEGORY_GENERAL, "Scared of an Angel ID", 10000)
-				.getInt();
-		WeepingAngelsMod.angelAchieve2iD = config.get(
-				Configuration.CATEGORY_GENERAL, "Slayed by an Angel ID", 10001)
-				.getInt();
 
-		WeepingAngelsMod.pickOnly = config.get(Configuration.CATEGORY_GENERAL,
-				"Hurt Angel with PickAxe only", false).getBoolean(false);
-		WeepingAngelsMod.waPaint_ID = config.get(Configuration.CATEGORY_ITEM,
-				"Weeping angel Painting", 3025).getInt();
-
-		if (config.hasChanged()) {
-			config.save(); // Configs saved to its file
-		}
+		config.save();
 
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		GameRegistry.registerPickupHandler(new EventHandler());
@@ -264,18 +247,7 @@ public class WeepingAngelsMod {
 		}
 		LanguageRegistry.instance().addStringLocalization(
 				"entity.WeepingAngels.Weeping Angel.name", "Weeping Angel");
-		LanguageRegistry.instance().addStringLocalization(
-				"entity.WeepingAngels.Weeping Angel Painting.name",
-				"Weeping Angel Painting");
-		if (false) {// WeepingAngelsMod.waP_Enable) {
-			WeepingAngelsMod.waPaint = new ItemWeepPaint(
-					WeepingAngelsMod.waPaint_ID, EntityWAPainting.class)
-					.setUnlocalizedName("waPaint");
-			LanguageRegistry.addName(WeepingAngelsMod.waPaint,
-					"Weeping Angel Painting");
-			WeepingAngelsMod.waPaint
-					.setCreativeTab(CreativeTabs.tabDecorations);
-		}
+		
 	}
 
 	public void craftSmelt() {
