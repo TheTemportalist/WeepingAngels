@@ -259,8 +259,7 @@ public class WeepingAngelsMod {
 
 	@Mod.EventHandler
 	public static void postInit(FMLPostInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new HUDOverlay(Minecraft
-				.getMinecraft()));
+		
 	}
 
 	@Mod.EventHandler

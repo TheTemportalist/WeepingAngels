@@ -23,6 +23,11 @@ public class ItemWADebug extends ItemBase {
 		playerProps.setAngelHealth(0.0F);
 		playerProps.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
 		
+		if (player.isInvisible()) {
+			player.setInvisible(false);
+		}else
+			player.setInvisible(true);
+		
 		return itemStack;
 	}
 
