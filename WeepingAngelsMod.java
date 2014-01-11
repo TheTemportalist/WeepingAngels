@@ -4,7 +4,6 @@ import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
@@ -15,21 +14,21 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+import CountryGamer_Core.ItemBase;
 import WeepingAngels.Blocks.BlockPlinth;
 import WeepingAngels.Blocks.BlockWeepingAngelSpawn;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
 import WeepingAngels.Entity.EntityStatue;
 import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.Handlers.EventHandler;
-import WeepingAngels.Handlers.HUDOverlay;
 import WeepingAngels.Handlers.PacketHandler;
 import WeepingAngels.Handlers.ServerTickHandler;
 import WeepingAngels.Items.ItemStatue;
+import WeepingAngels.Items.ItemVortex;
 import WeepingAngels.Items.ItemWADebug;
 import WeepingAngels.Proxy.ServerProxy;
 import WeepingAngels.lib.Reference;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -47,51 +46,50 @@ import cpw.mods.fml.relauncher.Side;
 public class WeepingAngelsMod {
 
 	public static final Logger log = Logger.getLogger("WeepingAngels");
+	public static WeepingAngelsMod instance;
+	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
+	public static ServerProxy proxy;
 
+	// Blocks
 	public static Block plinthBlock;
-	public static Block blockWeepingAngelSpawn;
-	public static Item statue;
-
-	public static int spawnRate;
-	public static int maxSpawn;
-	public static int attackStrength;
-	public static int teleportChance;
-	public static int poisonChance;
-	public static int maxSpawnHeight;
-
-	public static int teleportRangeMax;
 	public static int plinthBlockID;
+	public static Block blockWeepingAngelSpawn;
 	public static int spawnBlockID;
-	public static int statueItemID;
-	public static int entityWeepingAngelID;
-	public static int entityWAPaintingID;
-	public static int potionDuration;
 
-	public static double maxHealth = 20.0D;
+	// Items
+	public static Item statue;
+	public static int statueItemID;
+	public static Item chrononDust;
+	public static int chrononDustID;
+	public static String chrononDustName = "Chronon Dust";
+	public static Item vortexMan;
+	public static int vortexManID;
+	public static String vortexManName = "Vortex Manipulator";
 
 	public static final boolean DEBUG = true;
 	public static Item debugItem;
 	public static int debugItemiD;
 	public static String debugItemName = "Debugger";
 
+	// Entity
+	public static int entityWeepingAngelID;
+	public static int maxSpawn;
+	public static int spawnRate;
+	public static int maxSpawnHeight;
+	public static double maxHealth = 20.0D;
+	public static int attackStrength;
+	public static int teleportChance;
+	public static int teleportRangeMax;
+	public static int poisonChance;
+	public static int totalConvertTicks = 20 * 60 * 2;
 	public static boolean pickOnly;
-	public static boolean worldSpawnAngels = true;
 
+	// Achievements
 	public static Achievement angelAchieve;
 	public static int angelAchieveiD;
 	public static Achievement angelAchieve2;
 	public static int angelAchieve2iD;
 
-	public static int totalConvertTicks = 20 * 60 * 2;
-
-	@Instance(Reference.MOD_ID)
-	public static WeepingAngelsMod instance;
-
-	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
-	public static ServerProxy proxy;
-	
-	
-	
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		proxy.preInit();
@@ -103,8 +101,6 @@ public class WeepingAngelsMod {
 		// Entities
 		entityWeepingAngelID = config.get(Configuration.CATEGORY_GENERAL,
 				"EntityWeepingAngelID", 300).getInt();
-		entityWAPaintingID = config.get(Configuration.CATEGORY_GENERAL,
-				"EntityWAPaintingID", 301).getInt();
 		// Achievements
 		WeepingAngelsMod.angelAchieveiD = config.get(
 				Configuration.CATEGORY_GENERAL, "Scared of an Angel ID", 10000)
@@ -120,9 +116,14 @@ public class WeepingAngelsMod {
 		// Items
 		statueItemID = config.get(Configuration.CATEGORY_ITEM, "StatueItemID",
 				12034).getInt();
+		WeepingAngelsMod.chrononDustID = config.get(
+				Configuration.CATEGORY_ITEM, WeepingAngelsMod.chrononDustName,
+				12035).getInt();
+		WeepingAngelsMod.vortexManID = config.get(Configuration.CATEGORY_ITEM,
+				WeepingAngelsMod.vortexManName, 12036).getInt();
 		if (WeepingAngelsMod.DEBUG)
 			WeepingAngelsMod.debugItemiD = config.get(
-					Configuration.CATEGORY_ITEM, debugItemName, 12035).getInt();
+					Configuration.CATEGORY_ITEM, debugItemName, 12037).getInt();
 		// Stats
 		WeepingAngelsMod.poisonChance = config.get(
 				Configuration.CATEGORY_GENERAL, "Poison Chance Percentage", 5)
@@ -142,10 +143,6 @@ public class WeepingAngelsMod {
 				"MaxSpawnedPerWorldInstance", 2).getInt();
 		maxSpawnHeight = config.get(Configuration.CATEGORY_GENERAL,
 				"Max Spawn Y-Level", 40).getInt();
-		potionDuration = config
-				.get(Configuration.CATEGORY_GENERAL,
-						"How long the weeping angel poison will last (default 5 minutes, 60 seconds * 5)",
-						300).getInt();
 
 		config.save();
 
@@ -186,10 +183,20 @@ public class WeepingAngelsMod {
 	}
 
 	public void items() {
-		statue = (new ItemStatue(statueItemID, EntityStatue.class))
-				.setUnlocalizedName("Statue")
+		statue = (new ItemStatue(statueItemID, Reference.MOD_ID_LOWERCASE,
+				"statue", EntityStatue.class)).setUnlocalizedName("Statue")
 				.setCreativeTab(CreativeTabs.tabMisc).setMaxStackSize(64);
-		LanguageRegistry.addName(statue, "Weeping Angel Statue");
+		// LanguageRegistry.addName(statue, "Weeping Angel Statue");
+
+		WeepingAngelsMod.chrononDust = new ItemBase(
+				WeepingAngelsMod.chrononDustID, Reference.MOD_ID_LOWERCASE,
+				WeepingAngelsMod.chrononDustName);
+		WeepingAngelsMod.chrononDust.setCreativeTab(CreativeTabs.tabMaterials);
+
+		WeepingAngelsMod.vortexMan = new ItemVortex(
+				WeepingAngelsMod.vortexManID, Reference.MOD_ID_LOWERCASE,
+				WeepingAngelsMod.vortexManName);
+		WeepingAngelsMod.vortexMan.setCreativeTab(CreativeTabs.tabTools);
 
 		if (WeepingAngelsMod.DEBUG)
 			WeepingAngelsMod.debugItem = new ItemWADebug(
@@ -218,13 +225,7 @@ public class WeepingAngelsMod {
 
 	}
 
-	@SuppressWarnings("unused")
 	public void entities() {
-		// EntityRegistry.registerModEntity(EntityWAPainting.class,
-		// "Weeping Angel Painting", entityWAPaintingID, this, 80, 3, false);
-		// EntityList.IDtoClassMapping.put(entityWAPaintingID,
-		// EntityWAPainting.class);
-
 		// Register all entities, blocks and items to game
 		// Weeping Angel Entity
 		EntityRegistry.registerModEntity(EntityWeepingAngel.class,
@@ -247,7 +248,7 @@ public class WeepingAngelsMod {
 		}
 		LanguageRegistry.instance().addStringLocalization(
 				"entity.WeepingAngels.Weeping Angel.name", "Weeping Angel");
-		
+
 	}
 
 	public void craftSmelt() {
@@ -255,11 +256,16 @@ public class WeepingAngelsMod {
 				WeepingAngelsMod.blockWeepingAngelSpawn, 1), new Object[] {
 				"xxx", "xcx", "xxx", 'x', Block.stone, 'c',
 				WeepingAngelsMod.statue });
+		GameRegistry
+				.addRecipe(new ItemStack(WeepingAngelsMod.vortexMan),
+						new Object[] { "vcv", "cxc", "vcv", 'x',
+								Item.pocketSundial, 'c', Item.ingotIron, 'v',
+								WeepingAngelsMod.chrononDust });
 	}
 
 	@Mod.EventHandler
 	public static void postInit(FMLPostInitializationEvent event) {
-		
+
 	}
 
 	@Mod.EventHandler

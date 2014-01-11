@@ -9,19 +9,23 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import cpw.mods.fml.common.FMLLog;
 
 public class Util {
 
-	public static void teleportPlayer(World world,
-			EntityPlayer player, int minimumRange, int maximumRange, boolean fallDamage, boolean particles) {
-		double[] newPos = Util.teleportBase(world, player, minimumRange, maximumRange);
+	public static void teleportPlayer(World world, EntityPlayer player,
+			int minimumRange, int maximumRange, boolean fallDamage,
+			boolean particles) {
+		double[] newPos = Util.teleportBase(world, player, minimumRange,
+				maximumRange);
 		newPos[1] -= 2;
 		if (!fallDamage)
 			player.fallDistance = 0.0F;
 		// Set the location of the player, on the final position.
+
 		player.setLocationAndAngles(newPos[0], newPos[1], newPos[2],
 				player.rotationYaw, player.rotationPitch);
-		// FMLLog.info("Succesfully teleported to: "+(int)player.posX+" "+(int)player.posY+" "+(int)player.posZ);
+		//FMLLog.info("Succesfully teleported to: "+(int)player.posX+" "+(int)player.posY+" "+(int)player.posZ);
 		Random rand = new Random();
 		double d3 = newPos[0];
 		double d4 = newPos[1];
@@ -33,12 +37,14 @@ public class Util {
 				float f = (rand.nextFloat() - 0.5F) * 0.2F;
 				float f1 = (rand.nextFloat() - 0.5F) * 0.2F;
 				float f2 = (rand.nextFloat() - 0.5F) * 0.2F;
-				double d7 = d3 + (player.posX - d3) * d6 + (rand.nextDouble() - 0.5D)
-						* (double) player.width * 2D;
+				double d7 = d3 + (player.posX - d3) * d6
+						+ (rand.nextDouble() - 0.5D) * (double) player.width
+						* 2D;
 				double d8 = d4 + (player.posY - d4) * d6 + rand.nextDouble()
 						* (double) player.height;
-				double d9 = d5 + (player.posZ - d5) * d6 + (rand.nextDouble() - 0.5D)
-						* (double) player.width * 2D;
+				double d9 = d5 + (player.posZ - d5) * d6
+						+ (rand.nextDouble() - 0.5D) * (double) player.width
+						* 2D;
 				world.spawnParticle("portal", d7, d8 - 1, d9, f, f1, f2);
 			}
 		}
@@ -129,15 +135,18 @@ public class Util {
 		int blockIdUnder = world.getBlockId(MathHelper.floor_double(newX),
 				MathHelper.floor_double(newY), MathHelper.floor_double(newZ));
 		int blockIdAt = world.getBlockId(MathHelper.floor_double(newX),
-				MathHelper.floor_double(newY+1), MathHelper.floor_double(newZ));
+				MathHelper.floor_double(newY + 1),
+				MathHelper.floor_double(newZ));
 		int blockIdAbove = world.getBlockId(MathHelper.floor_double(newX),
-				MathHelper.floor_double(newY+2), MathHelper.floor_double(newZ));
+				MathHelper.floor_double(newY + 2),
+				MathHelper.floor_double(newZ));
 		ArrayList<Integer> blocks = new ArrayList<Integer>();
 		blocks.add(Block.lavaStill.blockID);
 		blocks.add(Block.lavaMoving.blockID);
 		blocks.add(Block.waterStill.blockID);
 		blocks.add(Block.waterMoving.blockID);
-		if (blocks.contains(blockIdUnder) || blocks.contains(blockIdAt) || blocks.contains(blockIdAbove)) {
+		if (blocks.contains(blockIdUnder) || blocks.contains(blockIdAt)
+				|| blocks.contains(blockIdAbove)) {
 			return Util.teleportBase(world, player, minimumRange, maximumRange);
 		}
 		// if (world.getBlockId((int)newX, (int)newY, (int)newZ) == 0 ||
