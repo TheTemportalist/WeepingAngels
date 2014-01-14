@@ -3,8 +3,6 @@ package WeepingAngels.Client.Gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import WeepingAngels.Inventory.ContainerVortex;
-import WeepingAngels.Inventory.InventoryVortex;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
