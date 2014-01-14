@@ -13,19 +13,15 @@ import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Handlers.Player.ExtendedPlayer;
 import WeepingAngels.lib.Reference;
-import WeepingAngels.lib.Util;
 
 public class EntityWeepingAngel extends EntityCreature {
 
@@ -164,7 +160,8 @@ public class EntityWeepingAngel extends EntityCreature {
 				this.dataWatcher.updateObject(18, 0);
 			}
 			if (this.getLightValue() > 1.0D && !this.canSeeSkyAndDay
-					&& this.dataWatcher.getWatchableObjectInt(18) <= 0) {
+					&& this.dataWatcher.getWatchableObjectInt(18) <= 0
+					&& this.entityToAttack != null) {
 				if (this.findNearestTorch()) { // if torch destroy worked
 					this.dataWatcher.updateObject(18, maxTorchTicks); // reset
 					// torchTicks
@@ -292,43 +289,9 @@ public class EntityWeepingAngel extends EntityCreature {
 	public boolean attackEntityAsMob(Entity par1Entity) {
 		float f = (float) this.getEntityAttribute(
 				SharedMonsterAttributes.attackDamage).getAttributeValue();
-		int i = 0;
-
-		if (par1Entity instanceof EntityLivingBase) {
-			f += EnchantmentHelper.getEnchantmentModifierLiving(this,
-					(EntityLivingBase) par1Entity);
-			i += EnchantmentHelper.getKnockbackModifier(this,
-					(EntityLivingBase) par1Entity);
-		}
 
 		boolean flag = par1Entity.attackEntityFrom(
 				DamageSource.causeMobDamage(this), f);
-
-		if (flag) {
-			if (i > 0) {
-				par1Entity.addVelocity(
-						(double) (-MathHelper.sin(this.rotationYaw
-								* (float) Math.PI / 180.0F)
-								* (float) i * 0.5F),
-						0.1D,
-						(double) (MathHelper.cos(this.rotationYaw
-								* (float) Math.PI / 180.0F)
-								* (float) i * 0.5F));
-				this.motionX *= 0.6D;
-				this.motionZ *= 0.6D;
-			}
-
-			int j = EnchantmentHelper.getFireAspectModifier(this);
-
-			if (j > 0) {
-				par1Entity.setFire(j * 4);
-			}
-
-			if (par1Entity instanceof EntityLivingBase) {
-				EnchantmentThorns.func_92096_a(this,
-						(EntityLivingBase) par1Entity, this.rand);
-			}
-		}
 
 		return flag;
 	}
@@ -368,7 +331,8 @@ public class EntityWeepingAngel extends EntityCreature {
 			EntityPlayer entityPlayer = (EntityPlayer) entity;
 			if (!entityPlayer.capabilities.isCreativeMode
 					&& this.getDistancetoEntityToAttack() <= 2) {
-				if (Math.random() <= WeepingAngelsMod.poisonChance / 100) {
+				if (WeepingAngelsMod.canPoison
+						&& Math.random() * 100 <= WeepingAngelsMod.poisonChance / 100) {
 					ExtendedPlayer playerProps = ExtendedPlayer
 							.get(entityPlayer);
 					playerProps.setConvert(1);
@@ -377,8 +341,9 @@ public class EntityWeepingAngel extends EntityCreature {
 							.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
 					if (WeepingAngelsMod.DEBUG)
 						WeepingAngelsMod.log.info("Infected Player");
-				} else if (Math.random() <= WeepingAngelsMod.teleportChance / 100) {
-					Util.teleportPlayer(entityPlayer.worldObj, entityPlayer, 0,
+				} else if (WeepingAngelsMod.canTeleport
+						&& Math.random() * 100 <= WeepingAngelsMod.teleportChance / 100) {
+					CoreUtil.teleportPlayer(entityPlayer, 0,
 							WeepingAngelsMod.teleportRangeMax, true, true);
 					this.worldObj.playSoundAtEntity(entityPlayer,
 							Reference.BASE_TEX + "teleport_activate", 1.0F,

@@ -1,19 +1,21 @@
 package WeepingAngels.Items;
 
-import WeepingAngels.lib.Util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import CountryGamer_Core.ItemBase;
+import CountryGamer_Core.lib.CoreUtil;
+import WeepingAngels.WeepingAngelsMod;
 
 public class ItemVortex extends ItemBase {
 
-	public String modeTag = "MODE", teleX = "NEWPOSX", teleY = "NEWPOSY", teleZ = "NEWPOSZ";
+	public static String modeTag = "MODE";
 
 	public ItemVortex(int id, String modid, String name) {
 		super(id, modid, name);
+		this.setMaxStackSize(1);
 	}
 
 	public ItemStack onItemRightClick(ItemStack itemStack, World world,
@@ -21,7 +23,7 @@ public class ItemVortex extends ItemBase {
 
 		// prevents null pointers if player scrolls too fast
 		if (itemStack.itemID == this.itemID) {
-			NBTTagCompound tagCom = this.getTagCom(itemStack);
+			NBTTagCompound tagCom = itemStack.getTagCompound();
 			boolean mode = tagCom.getBoolean(this.modeTag);
 			if (player.isSneaking()) {
 				boolean newMode = !mode;
@@ -38,10 +40,12 @@ public class ItemVortex extends ItemBase {
 			} else {
 				// TODO teleportation types
 				if (mode) { // Random
-					Util.teleportPlayer(world, player, 10, 100, true, true);
+					CoreUtil.teleportPlayer(player, 10, 100, true, true);
 				} else { // Controlled
 					// Open GUI
-					
+					player.openGui(WeepingAngelsMod.instance, 0, world,
+							(int) player.posX, (int) player.posY,
+							(int) player.posZ);
 				}
 			}
 		}
@@ -55,19 +59,10 @@ public class ItemVortex extends ItemBase {
 			if (!itemStack.hasTagCompound()) {
 				NBTTagCompound tagCom = new NBTTagCompound();
 				tagCom.setBoolean(this.modeTag, true);
-				tagCom.setDouble(this.teleX, 0.0D);
-				tagCom.setDouble(this.teleY, 0.0D);
-				tagCom.setDouble(this.teleZ, 0.0D);
 				itemStack.setTagCompound(tagCom);
 			}
 		}
 	}
-
-	private NBTTagCompound getTagCom(ItemStack itemStack) {
-		if (itemStack.hasTagCompound())
-			return (NBTTagCompound) itemStack.getTagCompound().copy();
-		else
-			return null;
-	}
-
+	
+	
 }
