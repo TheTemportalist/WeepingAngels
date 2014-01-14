@@ -65,7 +65,7 @@ public class WeepingAngelsMod {
 	public static Item statue;
 	public static int statueItemID;
 
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static Item debugItem;
 	public static int debugItemiD;
 	public static String debugItemName = "Debugger";

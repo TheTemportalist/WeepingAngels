@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import CountryGamer_Core.Client.ParticleEffects;
 import CountryGamer_Core.Items.ItemBase;
 import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
@@ -23,6 +24,7 @@ public class ItemVortex extends ItemBase {
 
 		// prevents null pointers if player scrolls too fast
 		if (itemStack.itemID == this.itemID) {
+
 			NBTTagCompound tagCom = itemStack.getTagCompound();
 			boolean mode = tagCom.getBoolean(this.modeTag);
 			if (player.isSneaking()) {
@@ -48,6 +50,7 @@ public class ItemVortex extends ItemBase {
 							(int) player.posZ);
 				}
 			}
+
 		}
 		return itemStack;
 	}
@@ -63,6 +66,5 @@ public class ItemVortex extends ItemBase {
 			}
 		}
 	}
-	
-	
+
 }
