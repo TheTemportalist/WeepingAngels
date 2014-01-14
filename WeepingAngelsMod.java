@@ -14,7 +14,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
-import CountryGamer_Core.ItemBase;
+import CountryGamer_Core.Items.ItemMetadataBase;
 import WeepingAngels.Blocks.BlockPlinth;
 import WeepingAngels.Blocks.BlockWeepingAngelSpawn;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
@@ -84,12 +84,14 @@ public class WeepingAngelsMod {
 	public static int poisonChance;
 	public static int totalConvertTicks = 20 * 60 * 2;
 	public static boolean pickOnly;
-	
+
 	// Addons
 	public static boolean addonVortex;
-	public static Item chrononDust;
-	public static int chrononDustID;
+	public static Item chronon;
+	public static int chrononID;
 	public static String chrononDustName = "Chronon Dust";
+	public static String chrononDiamondName = "Chronon Diamond";
+	public static String chrononMetalName = "Chronon Metal";
 	public static Item vortexMan;
 	public static int vortexManID;
 	public static String vortexManName = "Vortex Manipulator";
@@ -129,7 +131,7 @@ public class WeepingAngelsMod {
 		// Items
 		WeepingAngelsMod.statueItemID = config.get(itemId, "StatueItemID",
 				12034).getInt();
-		WeepingAngelsMod.chrononDustID = config.get(itemId,
+		WeepingAngelsMod.chrononID = config.get(itemId,
 				WeepingAngelsMod.chrononDustName, 12035).getInt();
 		WeepingAngelsMod.vortexManID = config.get(itemId,
 				WeepingAngelsMod.vortexManName, 12036).getInt();
@@ -212,10 +214,13 @@ public class WeepingAngelsMod {
 				"statue", EntityStatue.class)).setUnlocalizedName("Statue")
 				.setCreativeTab(CreativeTabs.tabMisc).setMaxStackSize(64);
 		// LanguageRegistry.addName(statue, "Weeping Angel Statue");
-		
+
+		if (this.addonVortex) {
+			this.chronon();
+		}
 		if (this.addonVortex)
-			this.vortexItems();
-		
+			this.vortex();
+
 		if (WeepingAngelsMod.DEBUG)
 			WeepingAngelsMod.debugItem = new ItemWADebug(
 					WeepingAngelsMod.debugItemiD, Reference.MOD_ID,
@@ -223,16 +228,35 @@ public class WeepingAngelsMod {
 
 	}
 
-	public void vortexItems() {
-		WeepingAngelsMod.chrononDust = new ItemBase(
-				WeepingAngelsMod.chrononDustID, Reference.MOD_ID_LOWERCASE,
-				WeepingAngelsMod.chrononDustName);
-		WeepingAngelsMod.chrononDust.setCreativeTab(CreativeTabs.tabMaterials);
+	private void chronon() {
+		WeepingAngelsMod.chronon = new ItemMetadataBase(
+				WeepingAngelsMod.chrononID, Reference.MOD_ID_LOWERCASE,
+				new String[] { WeepingAngelsMod.chrononDustName,
+						WeepingAngelsMod.chrononDiamondName,
+						WeepingAngelsMod.chrononMetalName });
+		WeepingAngelsMod.chronon.setCreativeTab(CreativeTabs.tabMaterials);
+		// Chronon Diamond
+		GameRegistry.addShapelessRecipe(new ItemStack(WeepingAngelsMod.chronon,
+				1, 1), new Object[] { Item.diamond,
+				new ItemStack(WeepingAngelsMod.chronon, 1, 0),
+				new ItemStack(WeepingAngelsMod.chronon, 1, 0) });
+		// Chronon Metal
+		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.chronon, 1, 2),
+				new Object[] { "xxx", "ccc", "xxx", 'x', Item.ingotIron, 'c',
+						// Chronon Diamond
+						new ItemStack(WeepingAngelsMod.chronon, 1, 1) });
 
+	}
+
+	private void vortex() {
 		WeepingAngelsMod.vortexMan = new ItemVortex(
 				WeepingAngelsMod.vortexManID, Reference.MOD_ID_LOWERCASE,
 				WeepingAngelsMod.vortexManName);
 		WeepingAngelsMod.vortexMan.setCreativeTab(CreativeTabs.tabTools);
+		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.vortexMan),
+				new Object[] { "xxx", "xcx", "xxx", 'x',
+						new ItemStack(WeepingAngelsMod.chronon, 1, 2), 'c',
+						Item.eyeOfEnder });
 	}
 
 	public void blocks() {
@@ -286,11 +310,7 @@ public class WeepingAngelsMod {
 				WeepingAngelsMod.blockWeepingAngelSpawn, 1), new Object[] {
 				"xxx", "xcx", "xxx", 'x', Block.stone, 'c',
 				WeepingAngelsMod.statue });
-		GameRegistry
-				.addRecipe(new ItemStack(WeepingAngelsMod.vortexMan),
-						new Object[] { "vcv", "cxc", "vcv", 'x',
-								Item.pocketSundial, 'c', Item.ingotIron, 'v',
-								WeepingAngelsMod.chrononDust });
+
 	}
 
 	@Mod.EventHandler

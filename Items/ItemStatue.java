@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import CountryGamer_Core.ItemBase;
+import CountryGamer_Core.Items.ItemBase;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
 import WeepingAngels.Entity.EntityStatue;

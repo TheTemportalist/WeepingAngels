@@ -4,7 +4,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import CountryGamer_Core.ItemBase;
+import CountryGamer_Core.Items.ItemBase;
 import WeepingAngels.Handlers.Player.ExtendedPlayer;
 
 public class ItemWADebug extends ItemBase {

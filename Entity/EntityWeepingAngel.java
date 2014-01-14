@@ -411,7 +411,7 @@ public class EntityWeepingAngel extends EntityCreature {
 	}
 
 	protected void dropRareDrop(int par1) {
-		this.dropItem(WeepingAngelsMod.chrononDust.itemID, 1);
+		this.dropItem(WeepingAngelsMod.chronon.itemID, 1);
 	}
 
 	// Boolean Methods
