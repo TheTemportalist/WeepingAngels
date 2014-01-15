@@ -14,7 +14,9 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Property;
 import CountryGamer_Core.Items.ItemMetadataBase;
+import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.Blocks.BlockPlinth;
 import WeepingAngels.Blocks.BlockWeepingAngelSpawn;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
@@ -116,54 +118,54 @@ public class WeepingAngelsMod {
 		config.load(); // load configs from its file
 
 		// Entities
-		WeepingAngelsMod.entityWeepingAngelID = config.get(general,
-				"EntityWeepingAngelID", 300).getInt();
+		WeepingAngelsMod.entityWeepingAngelID = CoreUtil.getAndComment(config,
+				general, "EntityWeepingAngelID", "", 300);
 		// Achievements
-		WeepingAngelsMod.angelAchieveiD = config.get(achievement,
-				"Scared of an Angel ID", 10000).getInt();
-		WeepingAngelsMod.angelAchieve2iD = config.get(achievement,
-				"Slayed by an Angel ID", 10001).getInt();
+		WeepingAngelsMod.angelAchieveiD = CoreUtil.getAndComment(config,
+				achievement, "Scared of an Angel ID", "", 10000);
+		WeepingAngelsMod.angelAchieve2iD = CoreUtil.getAndComment(config,
+				achievement, "Slayed by an Angel ID", "", 10001);
 		// Blocks
-		WeepingAngelsMod.plinthBlockID = config.get(blockId, "PlinthBlockID",
-				3023).getInt();
-		WeepingAngelsMod.spawnBlockID = config.get(blockId, "SpawnBlockID",
-				3024).getInt();
+		WeepingAngelsMod.plinthBlockID = CoreUtil.getAndComment(config,
+				blockId, "PlinthBlockID", "", 3023);
+		WeepingAngelsMod.spawnBlockID = CoreUtil.getAndComment(config, blockId,
+				"SpawnBlockID", "", 3024);
 		// Items
-		WeepingAngelsMod.statueItemID = config.get(itemId, "StatueItemID",
-				12034).getInt();
-		WeepingAngelsMod.chrononID = config.get(itemId,
-				WeepingAngelsMod.chrononDustName, 12035).getInt();
-		WeepingAngelsMod.vortexManID = config.get(itemId,
-				WeepingAngelsMod.vortexManName, 12036).getInt();
+		WeepingAngelsMod.statueItemID = CoreUtil.getAndComment(config, itemId,
+				"StatueItemID", "", 12034);
+		WeepingAngelsMod.chrononID = CoreUtil.getAndComment(config, itemId,
+				WeepingAngelsMod.chrononDustName, "", 12035);
+		WeepingAngelsMod.vortexManID = CoreUtil.getAndComment(config, itemId,
+				WeepingAngelsMod.vortexManName, "", 12036);
 		if (WeepingAngelsMod.DEBUG)
-			WeepingAngelsMod.debugItemiD = config.get(itemId, debugItemName,
-					12037).getInt();
+			WeepingAngelsMod.debugItemiD = CoreUtil.getAndComment(config,
+					itemId, WeepingAngelsMod.debugItemName, "", 12037);
+
 		// Stats
-		WeepingAngelsMod.canPoison = config.get(angelStat, "Angel Can Poison",
-				true).getBoolean(true);
-		WeepingAngelsMod.poisonChance = config.get(angelStat,
-				"Poison Chance Percentage", 5).getInt();
-		WeepingAngelsMod.canTeleport = config.get(angelStat,
-				"Angel Can Cause Teleport", true).getBoolean(true);
-		WeepingAngelsMod.teleportChance = config.get(angelStat,
-				"Teleport Chance Percentage", 20).getInt();
-		WeepingAngelsMod.teleportRangeMax = config.get(angelStat,
-				"TeleportRangeMax", 60).getInt();
-		WeepingAngelsMod.attackStrength = config.get(angelStat,
-				"AttackStrength", 6).getInt();
-		WeepingAngelsMod.pickOnly = config.get(angelStat,
-				"Hurt Angel with PickAxe only", false).getBoolean(false);
+		WeepingAngelsMod.canPoison = CoreUtil.getAndComment(config, angelStat,
+				"Angel Can Poison", "", true);
+		WeepingAngelsMod.poisonChance = CoreUtil.getAndComment(config,
+				angelStat, "Poison Chance Percentage", "", 5);
+		WeepingAngelsMod.canTeleport = CoreUtil.getAndComment(config,
+				angelStat, "Angel Can Cause Teleport", "", true);
+		WeepingAngelsMod.teleportChance = CoreUtil.getAndComment(config,
+				angelStat, "Teleport Chance Percentage", "", 20);
+		WeepingAngelsMod.teleportRangeMax = CoreUtil.getAndComment(config,
+				angelStat, "TeleportRangeMax", "", 60);
+		WeepingAngelsMod.attackStrength = CoreUtil.getAndComment(config,
+				angelStat, "AttackStrength", "", 6);
+		WeepingAngelsMod.pickOnly = CoreUtil.getAndComment(config, angelStat,
+				"Hurt Angel with PickAxe only", "", false);
 		// Other
-		WeepingAngelsMod.spawnRate = config.get(angelSpawn, "SpawnRate", 2)
-				.getInt();
-		WeepingAngelsMod.maxSpawn = config.get(angelSpawn,
-				"MaxSpawnedPerWorldInstance", 2).getInt();
-		WeepingAngelsMod.maxSpawnHeight = config.get(angelSpawn,
-				"Max Spawn Y-Level", 40).getInt();
+		WeepingAngelsMod.spawnRate = CoreUtil.getAndComment(config, angelSpawn,
+				"SpawnRate", "", 2);
+		WeepingAngelsMod.maxSpawn = CoreUtil.getAndComment(config, angelSpawn,
+				"MaxSpawnedPerWorldInstance", "", 2);
+		WeepingAngelsMod.maxSpawnHeight = CoreUtil.getAndComment(config,
+				angelSpawn, "Max Spawn Y-Level", "", 40);
 		// Addons
-		WeepingAngelsMod.addonVortex = config.get(addon,
-				"Enable " + WeepingAngelsMod.vortexManName, true).getBoolean(
-				false);
+		WeepingAngelsMod.addonVortex = CoreUtil.getAndComment(config, addon,
+				"Enable " + WeepingAngelsMod.vortexManName, "", true);
 
 		config.save();
 
