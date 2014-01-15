@@ -31,7 +31,7 @@ public class RenderWeepingAngel extends RenderLiving
     	//if(WeepingAngelsMod.DEBUG)
     		//WeepingAngelsMod.log.info(
     		//	"Render: Angry byte = " + angry);
-    	if(angry == 0) {
+    	if(angry <= 0) {
     		//if(WeepingAngelsMod.DEBUG)
     			//WeepingAngelsMod.log.info(
     			//	"Render: Is not angry");

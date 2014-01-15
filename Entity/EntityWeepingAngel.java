@@ -13,6 +13,7 @@ import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -39,6 +40,9 @@ public class EntityWeepingAngel extends EntityCreature {
 	private double distanceToSeen = 5D;
 	private double minLight = 1.0;
 
+	private boolean isQuantumLocked;
+	private boolean isLockedByAngel;
+
 	public EntityWeepingAngel(World world) {
 		super(world);
 		this.experienceValue = 50;
@@ -46,6 +50,8 @@ public class EntityWeepingAngel extends EntityCreature {
 
 		this.targetTasks.addTask(0, new EntityAIHurtByTarget(this, true));
 
+		this.isQuantumLocked = false;
+		this.isLockedByAngel = false;
 	}
 
 	// Init & Attribute Methods
@@ -130,68 +136,73 @@ public class EntityWeepingAngel extends EntityCreature {
 			else
 				this.canSeeSkyAndDay = false;
 		}
-
-		// Find an entity to target
-		EntityPlayer player = this.getClosestPlayer(); // find closest player
-		if (player != null) {
-			this.entityToAttack = player; // set player to target
-		}
-
-		// Speed setting
-		if (this.entityToAttack != null) // if angel has target
-			this.moveSpeed = this.maxSpeed; // set speed to the max
-		else
-			this.moveSpeed = this.minSpeed; // set speed to the minimum
-
-		// Check for Quantum Lock from players
-		if (this.canBeSeenMulti()) {
-			// if(WeepingAngelsMod.DEBUG)
-			// WeepingAngelsMod.log.info("Angel can be seen");
-			if (this.worldObj.getFullBlockLightValue(
+		
+		if (this.worldObj.getFullBlockLightValue(
 					MathHelper.floor_double(this.posX),
 					MathHelper.floor_double(this.posY),
-					MathHelper.floor_double(this.posZ)) > 1.0) {
-				this.moveSpeed = 0.0F; // quantum lock angel
+					MathHelper.floor_double(this.posZ)) > 1.0)
+			this.isQuantumLocked = this.canBeSeenMulti();
+
+		if (!this.isLockedByAngel) {
+			// Find an entity to target
+			EntityPlayer player = this.getClosestPlayer(); // find closest
+			// player
+			if (player != null) {
+				this.entityToAttack = player; // set player to target
 			}
 
-			// If seen, try to destroy light sources
-			int maxTorchTicks = 20 * 10;
-			if (this.dataWatcher.getWatchableObjectInt(18) < 0) { // zero check
-				this.dataWatcher.updateObject(18, 0);
-			}
-			if (this.getLightValue() > 1.0D && !this.canSeeSkyAndDay
-					&& this.dataWatcher.getWatchableObjectInt(18) <= 0
-					&& this.entityToAttack != null) {
-				if (this.findNearestTorch()) { // if torch destroy worked
-					this.dataWatcher.updateObject(18, maxTorchTicks); // reset
-					// torchTicks
-				} else {
-					// if (WeepingAngelsMod.DEBUG)
-					// WeepingAngelsMod.log.info("No Torches Found");
-				}
-			}
-			// torchTick countdown
-			if (this.dataWatcher.getWatchableObjectInt(18) > 0) {
-				this.dataWatcher.updateObject(18,
-						this.dataWatcher.getWatchableObjectInt(18) - 1);
-			}
-
-			// if (WeepingAngelsMod.DEBUG) // Torch Tick to Console
-			// WeepingAngelsMod.log.info("Torch Ticks: "
-			// + this.dataWatcher.getWatchableObjectInt(18));
-
+			// Speed setting
+			if (this.entityToAttack != null) // if angel has target
+				this.moveSpeed = this.maxSpeed; // set speed to the max
+			else
+				this.moveSpeed = this.minSpeed; // set speed to the minimum
 		}
+
+		if (this.isQuantumLocked)
+
+			// Check for Quantum Lock from players
+			if (this.isQuantumLocked) {
+				this.moveSpeed = 0.0F; // quantum lock angel
+				if (!this.isLockedByAngel) {
+					// If seen, try to destroy light sources
+					int maxTorchTicks = 20 * 10;
+					// zero check
+					if (this.dataWatcher.getWatchableObjectInt(18) < 0) {
+						this.dataWatcher.updateObject(18, 0);
+					}
+					if (this.getLightValue() > 1.0D && !this.canSeeSkyAndDay
+							&& this.dataWatcher.getWatchableObjectInt(18) <= 0
+							&& this.entityToAttack != null) {
+						// if torch destroy worked
+						if (this.findNearestTorch()) {
+							// reset torchTicks
+							this.dataWatcher.updateObject(18, maxTorchTicks);
+						} else {
+							// if (WeepingAngelsMod.DEBUG)
+							// WeepingAngelsMod.log.info("No Torches Found");
+						}
+					}
+					// torchTick countdown
+					if (this.dataWatcher.getWatchableObjectInt(18) > 0) {
+						this.dataWatcher.updateObject(18,
+								this.dataWatcher.getWatchableObjectInt(18) - 1);
+					}
+
+					// if (WeepingAngelsMod.DEBUG) // Torch Tick to Console
+					// WeepingAngelsMod.log.info("Torch Ticks: "
+					// + this.dataWatcher.getWatchableObjectInt(18));
+				}
+
+			}
 
 		// Teleportation
-
-		if (this.entityToAttack != null
-				&& this.entityToAttack instanceof EntityPlayer
-				&& (!this.canBeSeenMulti())) {
-			if (this.getDistancetoEntityToAttack() > 3D) {
-				worldObj.playSoundAtEntity(this, Reference.BASE_TEX + "stone",
-						this.getSoundVolume(), 1.0F);
-			}
-		}
+		/*
+		 * if (this.entityToAttack != null && this.entityToAttack instanceof
+		 * EntityPlayer && (!this.isQuantumLocked)) { if
+		 * (this.getDistancetoEntityToAttack() > 3D) {
+		 * worldObj.playSoundAtEntity(this, Reference.BASE_TEX + "stone",
+		 * this.getSoundVolume(), 1.0F); } }
+		 */
 
 		// set the speed of the angel to the calcualted new speed
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
@@ -243,7 +254,7 @@ public class EntityWeepingAngel extends EntityCreature {
 						this.dataWatcher.updateObject(16,
 								Byte.valueOf((byte) 1));
 						this.dataWatcher.updateObject(17,
-								Byte.valueOf((byte) 1));
+								Byte.valueOf((byte) 2));
 					}
 				}
 			}
@@ -393,12 +404,12 @@ public class EntityWeepingAngel extends EntityCreature {
 		return this.worldObj.getBlockLightValue(i, j, k);
 	}
 
-	public boolean getAngry() {
-		return this.dataWatcher.getWatchableObjectByte(16) == 1;
+	public int angryState() {
+		return this.dataWatcher.getWatchableObjectByte(16);
 	}
 
-	public boolean getArmMovement() {
-		return this.dataWatcher.getWatchableObjectByte(17) == 1;
+	public int armState() {
+		return this.dataWatcher.getWatchableObjectByte(17);
 	}
 
 	private EntityPlayer getClosestPlayer() {
@@ -441,20 +452,26 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 	}
 
-	private boolean isInFieldOfVision(EntityLivingBase player) {
-		if (player == null)
+	private boolean isInFieldOfVision(EntityLivingBase entity) {
+		if (entity == null)
 			return false;
-		Vec3 vec3 = player.getLookVec();
-		Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(
-				this.posX - player.posX,
-				this.boundingBox.minY + (double) (this.height)
-						- (player.posY + (double) player.getEyeHeight()),
-				this.posZ - player.posZ);
-		double d0 = vec31.lengthVector();
-		vec31 = vec31.normalize();
-		double d1 = vec3.dotProduct(vec31);
-		return d1 > ((1.0D - 0.025D) / d0) ? player.canEntityBeSeen(this)
-				: false;
+
+		if (entity instanceof EntityPlayer) {
+			Vec3 vec3 = entity.getLookVec();
+			Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(
+					this.posX - entity.posX,
+					this.boundingBox.minY + (double) (this.height)
+							- (entity.posY + (double) entity.getEyeHeight()),
+					this.posZ - entity.posZ);
+			double d0 = vec31.lengthVector();
+			vec31 = vec31.normalize();
+			double d1 = vec3.dotProduct(vec31);
+			return d1 > ((1.0D - 0.025D) / d0) ? entity.canEntityBeSeen(this)
+					: false;
+		} else if (entity instanceof EntityWeepingAngel) {
+
+		}
+		return false;
 	}
 
 	private boolean canBeSeenMulti() {
