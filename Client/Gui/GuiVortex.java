@@ -18,6 +18,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import CountryGamer_Core.Client.Gui.GuiButtonArrow;
+import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.lib.Reference;
 import WeepingAngels.lib.Util;
@@ -421,12 +422,7 @@ public class GuiVortex extends GuiScreen {
 	}
 
 	private boolean loadNextIndex(int current, int i) {
-		if (i == 0)
-			i = 1;
-		else if (i >> 31 != 0)
-			i = -1;
-		else
-			i = 1;
+		i = CoreUtil.posOrNeg(i);
 		if (this.vortexStack != null && this.vortexStack.hasTagCompound()) {
 			int nextIndex = current + i;
 			if (nextIndex < 0)

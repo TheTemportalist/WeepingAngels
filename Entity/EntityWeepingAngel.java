@@ -3,8 +3,6 @@ package WeepingAngels.Entity;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentThorns;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,7 +11,6 @@ import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -136,11 +133,11 @@ public class EntityWeepingAngel extends EntityCreature {
 			else
 				this.canSeeSkyAndDay = false;
 		}
-		
+
 		if (this.worldObj.getFullBlockLightValue(
-					MathHelper.floor_double(this.posX),
-					MathHelper.floor_double(this.posY),
-					MathHelper.floor_double(this.posZ)) > 1.0)
+				MathHelper.floor_double(this.posX),
+				MathHelper.floor_double(this.posY),
+				MathHelper.floor_double(this.posZ)) > 1.0)
 			this.isQuantumLocked = this.canBeSeenMulti();
 
 		if (!this.isLockedByAngel) {
@@ -487,6 +484,49 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 		if (playersWatching > 0)
 			return true;
+		return false;
+	}
+
+	private boolean canBeSeenByAngel() {
+		List list = worldObj.getEntitiesWithinAABB(EntityWeepingAngel.class,
+				boundingBox.expand(this.closestPlayerRadius, 20D,
+						this.closestPlayerRadius));
+		int angelsWatching = 0;
+		for (int j = 0; j < list.size(); j++) {
+			EntityWeepingAngel angel = (EntityWeepingAngel) list.get(j);
+			boolean same = angel.posX == this.posX && angel.posY == this.posY
+					&& angel.posZ == this.posZ;
+			if (!same && this.isEntityFacing(angel)) {
+				if (this.isInFieldOfVision(angel)) {
+					angelsWatching++;
+				}
+			}
+		}
+		if (angelsWatching > 0)
+			return true;
+		return false;
+	}
+
+	private boolean isEntityFacing(EntityLivingBase entity) {
+		int directionOfEntity = MathHelper
+				.floor_double((double) (entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+		// 0 = south (+Z)
+		// 1 = west (-X)
+		// 2 = north (-Z)
+		// 3 = east (+X)
+		double thisZ = this.posZ;
+		double thisX = this.posX;
+		double entZ = entity.posZ;
+		double entX = entity.posX;
+		if (directionOfEntity == 0 && thisZ > entZ)
+			return true;
+		if (directionOfEntity == 1 && thisX < entX)
+			return true;
+		if (directionOfEntity == 2 && thisZ < entZ)
+			return true;
+		if (directionOfEntity == 3 && thisX > entX)
+			return true;
+
 		return false;
 	}
 
