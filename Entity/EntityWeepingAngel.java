@@ -147,11 +147,13 @@ public class EntityWeepingAngel extends EntityCreature {
 		// this.isQuantumLocked = true;
 		// }
 
-		// Find an entity to target
-		EntityPlayer player = this.getClosestPlayer(); // find closest
-		// player
-		if (player != null) {
-			this.entityToAttack = player; // set player to target
+		if (this.entityToAttack == null) {
+			// Find an entity to target
+			EntityPlayer player = this.getClosestPlayer(); // find closest
+			// player
+			if (player != null) {
+				this.entityToAttack = player; // set player to target
+			}
 		}
 
 		// Speed setting
@@ -214,7 +216,7 @@ public class EntityWeepingAngel extends EntityCreature {
 			}
 		}
 
-		// TODO Visual arm and face render setting
+		// Visual arm and face render setting
 		this.renderMovement();
 
 		super.onUpdate(); // run the extended classes onUpdate()
@@ -403,7 +405,8 @@ public class EntityWeepingAngel extends EntityCreature {
 	}
 
 	protected void dropRareDrop(int par1) {
-		this.dropItem(WeepingAngelsMod.chronon.itemID, 1);
+		if (WeepingAngelsMod.addonVortex)
+			this.dropItem(WeepingAngelsMod.chronon.itemID, 1);
 	}
 
 	// Boolean Methods
@@ -491,13 +494,12 @@ public class EntityWeepingAngel extends EntityCreature {
 		int angelsWatching = 0;
 		// WeepingAngelsMod.log.info("" + list.size());
 		for (int j = 0; j < list.size(); j++) {
-			if (list.get(j) instanceof EntityWeepingAngel) {
-				EntityWeepingAngel angel = (EntityWeepingAngel) list.get(j);
-				boolean same = this.posX == angel.posX
-						&& this.posY == angel.posY && this.posZ == angel.posZ;
-				if (!same && angel.canSeeAngel(this)) {
-					angelsWatching++;
-				}
+			EntityWeepingAngel angel = (EntityWeepingAngel) list.get(j);
+			boolean same = this.posX == angel.posX && this.posY == angel.posY
+					&& this.posZ == angel.posZ;
+			same = angel == this;
+			if (!same && angel.canSeeAngel(this)) {
+				angelsWatching++;
 			}
 		}
 		return angelsWatching > 0;
@@ -509,11 +511,10 @@ public class EntityWeepingAngel extends EntityCreature {
 				MathHelper.floor_double(this.posY),
 				MathHelper.floor_double(this.posZ)) <= 1.0) {
 			return false;
-		}
-		if (this.dataWatcher.getWatchableObjectByte(17) >= 2) {
+		} else if (this.dataWatcher.getWatchableObjectByte(17) >= 2) {
 			return entity.isInFieldOfVision(this);
-		}
-		return false;
+		} else
+			return false;
 	}
 
 	private boolean isEntityFacing(EntityLivingBase entity) {
