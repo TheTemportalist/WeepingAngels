@@ -2,22 +2,15 @@ package WeepingAngels.lib;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.util.ArrayList;
-import java.util.Random;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import CountryGamer_Core.lib.TeleporterCore;
-import WeepingAngels.WeepingAngelsMod;
+import WeepingAngels.Entity.EntityStatue;
 import WeepingAngels.Handlers.Packet.PacketHandler;
+import cpw.mods.fml.common.FMLLog;
 
 public class Util {
 
@@ -57,6 +50,26 @@ public class Util {
 		return packet;
 	}
 
-	
+	public static EntityStatue getEntityStatue(World world, Class statue) {
+		try {
+			return (EntityStatue) statue.getDeclaredConstructors()[0]
+					.newInstance(new Object[] { world });
+		} catch (InstantiationException instantiationexception) {
+			FMLLog.log(Level.SEVERE, instantiationexception.getMessage());
+		} catch (IllegalAccessException illegalaccessexception) {
+			FMLLog.getLogger().log(Level.SEVERE,
+					illegalaccessexception.getMessage());
+		} catch (IllegalArgumentException illegalargumentexception) {
+			FMLLog.getLogger().log(Level.SEVERE,
+					illegalargumentexception.getMessage());
+		} catch (InvocationTargetException invocationtargetexception) {
+			FMLLog.getLogger().log(Level.SEVERE,
+					invocationtargetexception.getMessage());
+		} catch (SecurityException securityexception) {
+			FMLLog.getLogger()
+					.log(Level.SEVERE, securityexception.getMessage());
+		}
+		return null;
+	}
 
 }

@@ -1,9 +1,5 @@
 package WeepingAngels.Items;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
-
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -12,10 +8,7 @@ import CountryGamer_Core.Items.ItemBase;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
 import WeepingAngels.Entity.EntityStatue;
-import WeepingAngels.lib.Reference;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import WeepingAngels.lib.Util;
 
 public class ItemStatue extends ItemBase {
 	private Class statue;
@@ -68,32 +61,17 @@ public class ItemStatue extends ItemBase {
 			world.setBlock(i, j, k, WeepingAngelsMod.plinthBlock.blockID, l, 3);
 		}
 		EntityStatue entitystatue = null;
-		try {
-			entitystatue = (EntityStatue) statue.getDeclaredConstructors()[0]
-					.newInstance(new Object[] { world });
-		} catch (InstantiationException instantiationexception) {
-			FMLLog.log(Level.SEVERE, instantiationexception.getMessage());
-		} catch (IllegalAccessException illegalaccessexception) {
-			FMLLog.getLogger().log(Level.SEVERE,
-					illegalaccessexception.getMessage());
-		} catch (IllegalArgumentException illegalargumentexception) {
-			FMLLog.getLogger().log(Level.SEVERE,
-					illegalargumentexception.getMessage());
-		} catch (InvocationTargetException invocationtargetexception) {
-			FMLLog.getLogger().log(Level.SEVERE,
-					invocationtargetexception.getMessage());
-		} catch (SecurityException securityexception) {
-			FMLLog.getLogger()
-					.log(Level.SEVERE, securityexception.getMessage());
+		entitystatue = Util.getEntityStatue(world, statue);
+		if (entitystatue != null) {
+			TileEntityPlinth tileentityplinth = (TileEntityPlinth) world
+					.getBlockTileEntity(i, j, k);
+			tileentityplinth.setRotation(statueYaw);
+			tileentityplinth.statueType = entitystatue.dropId;
+			itemstack.stackSize--;
+			if (WeepingAngelsMod.DEBUG)
+				WeepingAngelsMod.log.info("l: " + l + " yaw: " + statueYaw
+						+ " playerYaw: " + entityplayer.rotationYaw);
 		}
-		TileEntityPlinth tileentityplinth = (TileEntityPlinth) world
-				.getBlockTileEntity(i, j, k);
-		tileentityplinth.setRotation(statueYaw);
-		tileentityplinth.statueType = entitystatue.dropId;
-		itemstack.stackSize--;
-		if (WeepingAngelsMod.DEBUG)
-			WeepingAngelsMod.log.info("l: " + l + " yaw: " + statueYaw
-					+ " playerYaw: " + entityplayer.rotationYaw);
 		/*
 		 * if(tileentityplinth != null) {
 		 * ModLoader.getMinecraftInstance().displayGuiScreen(new
