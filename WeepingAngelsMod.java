@@ -26,6 +26,7 @@ import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.Handlers.EventHandler;
 import WeepingAngels.Handlers.ServerTickHandler;
 import WeepingAngels.Handlers.Packet.PacketHandler;
+import WeepingAngels.Items.ItemSonic;
 import WeepingAngels.Items.ItemStatue;
 import WeepingAngels.Items.ItemVortex;
 import WeepingAngels.Items.ItemWADebug;
@@ -93,6 +94,7 @@ public class WeepingAngelsMod {
 
 	// Addons
 	public static boolean addonVortex;
+	public static boolean addonSonic;
 	public static Item chronon;
 	public static int chrononID;
 	public static String chrononDustName = "Chronon Dust";
@@ -101,6 +103,9 @@ public class WeepingAngelsMod {
 	public static Item vortexMan;
 	public static int vortexManID;
 	public static String vortexManName = "Vortex Manipulator";
+	public static Item sonicScrew;
+	public static int sonicScrewID;
+	public static String sonicScrewName = "Sonic Screwdriver";
 
 	// Achievements
 	public static Achievement angelAchieve;
@@ -137,13 +142,31 @@ public class WeepingAngelsMod {
 		// Items
 		WeepingAngelsMod.statueItemID = CoreUtil.getAndComment(config, itemId,
 				"StatueItemID", "", 12034);
-		WeepingAngelsMod.chrononID = CoreUtil.getAndComment(config, itemId,
-				WeepingAngelsMod.chrononDustName, "", 12035);
-		WeepingAngelsMod.vortexManID = CoreUtil.getAndComment(config, itemId,
-				WeepingAngelsMod.vortexManName, "", 12036);
+		WeepingAngelsMod.chrononID = CoreUtil
+				.getAndComment(
+						config,
+						itemId,
+						"Chronon Items",
+						"The item id for all chronon items.\nOnly active if an add-on is enabled.",
+						12035);
+		WeepingAngelsMod.vortexManID = CoreUtil
+				.getAndComment(
+						config,
+						itemId,
+						WeepingAngelsMod.vortexManName,
+						"The item id for the Vortex Manipulator.\nOnly active if add-on 'Vortex Manipulator' is enabled.",
+						12036);
+		WeepingAngelsMod.sonicScrewID = CoreUtil
+				.getAndComment(
+						config,
+						itemId,
+						WeepingAngelsMod.sonicScrewName,
+						"The item id for the Sonic Screwdriver.\nOnly active if add-on 'Sonic Screwdriver' is enabled.",
+						12037);
 		if (WeepingAngelsMod.DEBUG)
 			WeepingAngelsMod.debugItemiD = CoreUtil.getAndComment(config,
-					itemId, WeepingAngelsMod.debugItemName, "", 12037);
+					itemId, WeepingAngelsMod.debugItemName,
+					"Only active in a development environment", 12038);
 
 		// Stats
 		WeepingAngelsMod.canPoison = CoreUtil.getAndComment(config, angelStat,
@@ -169,7 +192,11 @@ public class WeepingAngelsMod {
 				angelSpawn, "Max Spawn Y-Level", "", 40);
 		// Addons
 		WeepingAngelsMod.addonVortex = CoreUtil.getAndComment(config, addon,
-				"Enable " + WeepingAngelsMod.vortexManName, "", true);
+				"Enable " + WeepingAngelsMod.vortexManName,
+				"Enable the add-on for the Vortex Manipulator.", true);
+		WeepingAngelsMod.addonSonic = CoreUtil.getAndComment(config, addon,
+				"Enable " + WeepingAngelsMod.sonicScrewName,
+				"Enable the add-on for the Sonic Screwdriver.", true);
 
 		config.save();
 
@@ -221,15 +248,17 @@ public class WeepingAngelsMod {
 
 	public void items() {
 		statue = (new ItemStatue(statueItemID, Reference.MOD_ID_LOWERCASE,
-				"statue", EntityStatue.class)).setUnlocalizedName("Statue")
-				.setCreativeTab(CreativeTabs.tabMisc).setMaxStackSize(64);
+				"Weeping Angel Statue", EntityStatue.class)).setCreativeTab(
+				CreativeTabs.tabMisc).setMaxStackSize(64);
 		// LanguageRegistry.addName(statue, "Weeping Angel Statue");
 
-		if (this.addonVortex) {
+		if (this.addonVortex || this.addonSonic) {
 			this.chronon();
 		}
 		if (this.addonVortex)
 			this.vortex();
+		if (this.addonSonic)
+			this.sonic();
 
 		if (WeepingAngelsMod.DEBUG)
 			WeepingAngelsMod.debugItem = new ItemWADebug(
@@ -260,13 +289,21 @@ public class WeepingAngelsMod {
 
 	private void vortex() {
 		WeepingAngelsMod.vortexMan = new ItemVortex(
-				WeepingAngelsMod.vortexManID, Reference.MOD_ID_LOWERCASE,
+				WeepingAngelsMod.vortexManID, Reference.MOD_ID,
 				WeepingAngelsMod.vortexManName);
 		WeepingAngelsMod.vortexMan.setCreativeTab(CreativeTabs.tabTools);
 		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.vortexMan),
 				new Object[] { "xxx", "xcx", "xxx", 'x',
 						new ItemStack(WeepingAngelsMod.chronon, 1, 2), 'c',
 						Item.eyeOfEnder });
+	}
+
+	private void sonic() {
+		WeepingAngelsMod.sonicScrew = new ItemSonic(
+				WeepingAngelsMod.sonicScrewID, Reference.MOD_ID,
+				WeepingAngelsMod.sonicScrewName);
+		WeepingAngelsMod.sonicScrew.setCreativeTab(CreativeTabs.tabTools);
+		
 	}
 
 	public void blocks() {

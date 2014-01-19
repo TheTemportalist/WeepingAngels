@@ -8,6 +8,8 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -44,8 +46,6 @@ public class EntityWeepingAngel extends EntityCreature {
 		super(world);
 		this.experienceValue = 50;
 		this.isImmuneToFire = true;
-
-		// this.targetTasks.addTask(0, new EntityAIHurtByTarget(this, true));
 
 		this.isQuantumLocked = false;
 		this.isLockedByAngel = false;
@@ -93,6 +93,10 @@ public class EntityWeepingAngel extends EntityCreature {
 
 	protected String getDeathSound() {
 		return Reference.BASE_TEX + "crumble";
+	}
+
+	protected boolean isAIEnabled() {
+		return false;
 	}
 
 	// Update Methods
@@ -147,10 +151,10 @@ public class EntityWeepingAngel extends EntityCreature {
 		// this.isQuantumLocked = true;
 		// }
 
-		if (this.entityToAttack == null) {
-			// Find an entity to target
-			EntityPlayer player = this.getClosestPlayer(); // find closest
-			// player
+		if (this.entityToAttack == null) { // Find an entity to target
+			// find closest player
+			EntityPlayer player = (EntityPlayer) this
+					.getClosestPlayer(EntityPlayer.class);
 			if (player != null) {
 				this.entityToAttack = player; // set player to target
 			}
@@ -320,39 +324,39 @@ public class EntityWeepingAngel extends EntityCreature {
 
 	@Override
 	protected void attackEntity(Entity entity, float f) {
-		if (entity != null && (entity instanceof EntityPlayer)
-				&& (!this.canBeSeenMulti())) {
-			EntityPlayer entityPlayer = (EntityPlayer) entity;
-			if (!entityPlayer.capabilities.isCreativeMode
-					&& this.getDistancetoEntityToAttack() <= 2) {
-				if (WeepingAngelsMod.canPoison
-						&& Math.random() * 100 <= WeepingAngelsMod.poisonChance / 100) {
-					ExtendedPlayer playerProps = ExtendedPlayer
-							.get(entityPlayer);
-					playerProps.setConvert(1);
-					playerProps.setAngelHealth(0.0F);
-					playerProps
-							.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
-					if (WeepingAngelsMod.DEBUG)
-						WeepingAngelsMod.log.info("Infected Player");
-				} else if (WeepingAngelsMod.canTeleport
-						&& Math.random() * 100 <= WeepingAngelsMod.teleportChance / 100) {
-					CoreUtil.teleportPlayer(entityPlayer, 0,
-							WeepingAngelsMod.teleportRangeMax, true, true);
-					this.worldObj.playSoundAtEntity(entityPlayer,
-							Reference.BASE_TEX + "teleport_activate", 1.0F,
-							1.0F);
-					entity = null;
-					if (WeepingAngelsMod.DEBUG)
-						WeepingAngelsMod.log.info("Teleported Player");
-				} else {
-					this.attackEntityAsMob(entity);
-					if (WeepingAngelsMod.DEBUG)
-						WeepingAngelsMod.log.info("Attacked Player");
+		if (entity != null && (!this.canBeSeenMulti())) {
+			if (entity instanceof EntityPlayer) {
+				EntityPlayer entityPlayer = (EntityPlayer) entity;
+				if (!entityPlayer.capabilities.isCreativeMode
+						&& this.getDistancetoEntityToAttack() <= 2) {
+					if (WeepingAngelsMod.canPoison
+							&& Math.random() * 100 <= WeepingAngelsMod.poisonChance / 100) {
+						ExtendedPlayer playerProps = ExtendedPlayer
+								.get(entityPlayer);
+						playerProps.setConvert(1);
+						playerProps.setAngelHealth(0.0F);
+						playerProps
+								.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
+						if (WeepingAngelsMod.DEBUG)
+							WeepingAngelsMod.log.info("Infected Player");
+					} else if (WeepingAngelsMod.canTeleport
+							&& Math.random() * 100 <= WeepingAngelsMod.teleportChance / 100) {
+						CoreUtil.teleportPlayer(entityPlayer, 0,
+								WeepingAngelsMod.teleportRangeMax, true, true);
+						this.worldObj.playSoundAtEntity(entityPlayer,
+								Reference.BASE_TEX + "teleport_activate", 1.0F,
+								1.0F);
+						entity = null;
+						if (WeepingAngelsMod.DEBUG)
+							WeepingAngelsMod.log.info("Teleported Player");
+					} else {
+						this.attackEntityAsMob(entity);
+						if (WeepingAngelsMod.DEBUG)
+							WeepingAngelsMod.log.info("Attacked Player");
+					}
+
 				}
-
 			}
-
 		}
 	}
 
@@ -395,12 +399,11 @@ public class EntityWeepingAngel extends EntityCreature {
 		return this.dataWatcher.getWatchableObjectByte(17);
 	}
 
-	private EntityPlayer getClosestPlayer() {
-		List list = worldObj.getEntitiesWithinAABB(EntityPlayer.class,
-				boundingBox.expand(this.closestPlayerRadius, 20D,
-						this.closestPlayerRadius));
+	private Entity getClosestPlayer(Class entity) {
+		List list = worldObj.getEntitiesWithinAABB(entity, boundingBox.expand(
+				this.closestPlayerRadius, 20D, this.closestPlayerRadius));
 		if (!list.isEmpty())
-			return (EntityPlayer) list.get(0);
+			return (Entity) list.get(0);
 		return null;
 	}
 
