@@ -4,23 +4,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockPistonBase;
-import net.minecraft.block.BlockPistonMoving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityPiston;
-import net.minecraft.util.Facing;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Entity.EntityStatue;
+import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.Handlers.Packet.PacketHandler;
 import WeepingAngels.World.Structure.ComponentAngelDungeon;
 import cpw.mods.fml.common.FMLLog;
@@ -93,7 +93,8 @@ public class Util {
 				1 + xOffset, 4 + yOffset, 2 + zOffset, 0, 0, com, box);
 		CoreUtil.placeBlock(world, 0 + xOffset, 1 + yOffset, 1 + zOffset,
 				WeepingAngelsMod.plinthBlock.blockID, 1, com, box);
-		CoreUtil.placeBlock(world, 0, 4, 0, Block.dirt.blockID, 0, com, box);
+		if (WeepingAngelsMod.DEBUG)
+			CoreUtil.placeBlock(world, 0, 4, 0, Block.dirt.blockID, 0, com, box);
 		// 0 == left, 1 == right, 2 == back, 3 == front
 		CoreUtil.placeBlock(world, -1 + xOffset, +0 + yOffset, +1 + zOffset,
 				Block.stairsCobblestone.blockID, 0, com, box);
@@ -177,7 +178,7 @@ public class Util {
 				Block.trapdoor.blockID, 5 | 8, com, box);
 
 	}
-	
+
 	private void redstoneSonicStuff(World world, int x, int y, int z) {
 		if (world.getBlockId(x, y, z) == Block.redstoneWire.blockID) {
 			int meta = world.getBlockMetadata(x, y, z);
@@ -200,7 +201,62 @@ public class Util {
 						world.getBlockId(x, y, z));
 			}
 		}
-		
+
+	}
+
+	// Angel Watcher Methods
+	public static boolean canBeSeenMulti(World world,
+			AxisAlignedBB boundingBox, double closestPlayerRadius,
+			EntityLivingBase thisEntity) {
+		List list = thisEntity.worldObj.getEntitiesWithinAABB(EntityPlayer.class, boundingBox
+				.expand(closestPlayerRadius, 20D, closestPlayerRadius));
+		int playersWatching = 0;
+		for (int j = 0; j < list.size(); j++) {
+			EntityPlayer player = (EntityPlayer) list.get(j);
+			if (Util.isInFieldOfVision(world, thisEntity, player)) {
+				playersWatching++;
+			}
+		}
+		if (playersWatching > 0)
+			return true;
+		return false;
+	}
+
+	public static boolean isInFieldOfVision(World world,
+			EntityLivingBase thisEntity, EntityLivingBase thatEntity) {
+		if (thatEntity == null)
+			return false;
+
+		if (thatEntity instanceof EntityPlayer) {
+			Vec3 vec3 = thatEntity.getLookVec();
+			Vec3 vec31 = thisEntity.worldObj.getWorldVec3Pool().getVecFromPool(
+					thisEntity.posX - thatEntity.posX,
+					thisEntity.boundingBox.minY
+							+ (double) (thisEntity.height)
+							- (thatEntity.posY + (double) thatEntity
+									.getEyeHeight()),
+					thisEntity.posZ - thatEntity.posZ);
+			double d0 = vec31.lengthVector();
+			vec31 = vec31.normalize();
+			double d1 = vec3.dotProduct(vec31);
+			return d1 > ((1.0D - 0.025D) / d0) ? thatEntity
+					.canEntityBeSeen(thisEntity) : false;
+		} else if (thatEntity instanceof EntityWeepingAngel) {
+			Vec3 vec3 = thatEntity.getLookVec();
+			Vec3 vec31 = thisEntity.worldObj.getWorldVec3Pool().getVecFromPool(
+					thisEntity.posX - thatEntity.posX,
+					thisEntity.boundingBox.minY
+							+ (double) (thisEntity.height)
+							- (thatEntity.posY + (double) thatEntity
+									.getEyeHeight()),
+					thisEntity.posZ - thatEntity.posZ);
+			double d0 = vec31.lengthVector();
+			vec31 = vec31.normalize();
+			double d1 = vec3.dotProduct(vec31);
+			return d1 > ((1.0D - 0.025D) / d0) ? thatEntity
+					.canEntityBeSeen(thisEntity) : false;
+		}
+		return false;
 	}
 
 }

@@ -30,6 +30,7 @@ import WeepingAngels.Items.ItemSonic;
 import WeepingAngels.Items.ItemStatue;
 import WeepingAngels.Items.ItemVortex;
 import WeepingAngels.Items.ItemWADebug;
+import WeepingAngels.Morph.MorphAbilityTimeLock;
 import WeepingAngels.Proxy.ServerProxy;
 import WeepingAngels.World.WorldGenerator;
 import WeepingAngels.World.Structure.ComponentAngelDungeon;
@@ -112,6 +113,9 @@ public class WeepingAngelsMod {
 	public static int angelAchieveiD;
 	public static Achievement angelAchieve2;
 	public static int angelAchieve2iD;
+	
+	// Mod Compatibility
+	public static boolean morphLoaded = false;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -182,7 +186,7 @@ public class WeepingAngelsMod {
 		WeepingAngelsMod.attackStrength = CoreUtil.getAndComment(config,
 				angelStat, "AttackStrength", "", 6);
 		WeepingAngelsMod.pickOnly = CoreUtil.getAndComment(config, angelStat,
-				"Hurt Angel with PickAxe only", "", false);
+				"Hurt Angel with PickAxe only", "", true);
 		// Other
 		WeepingAngelsMod.spawnRate = CoreUtil.getAndComment(config, angelSpawn,
 				"SpawnRate", "", 2);
@@ -237,6 +241,8 @@ public class WeepingAngelsMod {
 				Reference.MOD_ID + ":AngelDungeon");
 		VillagerRegistry.instance().registerVillageCreationHandler(
 				new VillageHandlerAngelDungeon());
+		
+		this.iChun_Morph();
 	}
 
 	@Mod.EventHandler
@@ -303,7 +309,10 @@ public class WeepingAngelsMod {
 				WeepingAngelsMod.sonicScrewID, Reference.MOD_ID,
 				WeepingAngelsMod.sonicScrewName);
 		WeepingAngelsMod.sonicScrew.setCreativeTab(CreativeTabs.tabTools);
-		
+		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.sonicScrew),
+				new Object[] { " ge", "lig", "rl ", 'g', Item.ingotGold, 'e',
+						Item.emerald, 'l', Item.leather, 'i', Item.ingotIron,
+						'r', Item.redstone });
 	}
 
 	public void blocks() {
@@ -365,5 +374,19 @@ public class WeepingAngelsMod {
 		GameRegistry.registerPlayerTracker(new EventHandler());
 
 	}
-
+	
+	private void iChun_Morph() {
+		if (CoreUtil.isModLoaded(Reference.MOD_ID, "Morph")) {
+			WeepingAngelsMod.morphLoaded = true;
+			morph.api.Ability.registerAbility("timelock", MorphAbilityTimeLock.class);
+			
+			morph.api.Ability.mapAbilities(EntityWeepingAngel.class, 
+					new MorphAbilityTimeLock(),
+					new morph.common.ability.AbilityStep(3.0F),
+					new morph.common.ability.AbilityHostile(),
+					new morph.common.ability.AbilityFireImmunity());
+			
+		}
+	}
+	
 }

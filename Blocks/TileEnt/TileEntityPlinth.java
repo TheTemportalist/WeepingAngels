@@ -55,7 +55,8 @@ public class TileEntityPlinth extends TileEntity {
 			angel = (EntityWeepingAngel) list.get(0);
 
 		if (player != null && angel != null) {
-			this.ComeToLife(this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+			this.ComeToLife(this.worldObj, this.xCoord, this.yCoord,
+					this.zCoord);
 		}
 
 		super.updateEntity();
@@ -172,7 +173,8 @@ public class TileEntityPlinth extends TileEntity {
 			}
 			entityliving.setPositionAndRotation(i + 0.5, j + 0.5, k + 0.5,
 					(float) (tileentityplinth.getRotation() * 360) / 16f, 0.0F);
-			world.spawnEntityInWorld(entityliving);
+			if (!world.isRemote)
+				world.spawnEntityInWorld(entityliving);
 			tileentityplinth.setActivated(false);
 			tileentityplinth.validate();
 			world.setBlockTileEntity(i, j, k, tileentityplinth);

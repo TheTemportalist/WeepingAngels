@@ -7,21 +7,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Handlers.Player.ExtendedPlayer;
 import WeepingAngels.lib.Reference;
+import WeepingAngels.lib.Util;
 
 public class EntityWeepingAngel extends EntityCreature {
 
@@ -143,7 +139,8 @@ public class EntityWeepingAngel extends EntityCreature {
 				MathHelper.floor_double(this.posX),
 				MathHelper.floor_double(this.posY),
 				MathHelper.floor_double(this.posZ)) > 1.0)
-			this.isQuantumLocked = this.canBeSeenMulti();
+			this.isQuantumLocked = Util.canBeSeenMulti(this.worldObj,
+					this.boundingBox, this.closestPlayerRadius, this);
 
 		// if (this.canBeSeenByAngel()) {
 		// WeepingAngelsMod.log.info("Seen by angel");
@@ -299,24 +296,32 @@ public class EntityWeepingAngel extends EntityCreature {
 			return false;
 		}
 		if (source.getSourceOfDamage() instanceof EntityPlayer) {
-			if (!WeepingAngelsMod.pickOnly)
-				super.attackEntityFrom(source, damage);
-			else {
-				EntityPlayer entityplayer = (EntityPlayer) source
-						.getSourceOfDamage();
-				ItemStack itemstack = entityplayer.inventory.getCurrentItem();
-				if (worldObj.difficultySetting > 2) {
-					if (itemstack != null
-							&& (itemstack.itemID == Item.pickaxeDiamond.itemID || itemstack
-									.canHarvestBlock(Block.obsidian))) {
-						super.attackEntityFrom(source, damage);
-					}
-				} else if (itemstack != null
-						&& (itemstack.itemID == Item.pickaxeDiamond.itemID
-								|| itemstack.itemID == Item.pickaxeIron.itemID || (itemstack
-								.canHarvestBlock(Block.oreDiamond) && (itemstack.itemID != Item.pickaxeGold.itemID)))) {
-					super.attackEntityFrom(source, damage);
+			boolean canHurt = false;
+			EntityPlayer entityplayer = (EntityPlayer) source
+					.getSourceOfDamage();
+			ItemStack itemStack = entityplayer.inventory.getCurrentItem();
+
+			if (itemStack != null
+					&& itemStack.itemID == WeepingAngelsMod.sonicScrew.itemID) {
+				super.attackEntityFrom(source, 0.25F * this.getMaxHealth());
+				return true;
+			}
+
+			if (WeepingAngelsMod.pickOnly) {
+				if (itemStack == null)
+					canHurt = false;
+				else {
+					canHurt = itemStack.canHarvestBlock(Block.obsidian);
+					if (this.worldObj.difficultySetting <= 2)
+						canHurt = canHurt
+								|| itemStack.canHarvestBlock(Block.oreGold);
 				}
+			} else
+				canHurt = true;
+
+			if (canHurt) {
+				super.attackEntityFrom(source, damage);
+				return true;
 			}
 		}
 		return false;
@@ -324,7 +329,9 @@ public class EntityWeepingAngel extends EntityCreature {
 
 	@Override
 	protected void attackEntity(Entity entity, float f) {
-		if (entity != null && (!this.canBeSeenMulti())) {
+		if (entity != null
+				&& (!Util.canBeSeenMulti(this.worldObj, this.boundingBox,
+						this.closestPlayerRadius, this))) {
 			if (entity instanceof EntityPlayer) {
 				EntityPlayer entityPlayer = (EntityPlayer) entity;
 				if (!entityPlayer.capabilities.isCreativeMode
@@ -439,54 +446,6 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 	}
 
-	private boolean isInFieldOfVision(EntityLivingBase entity) {
-		if (entity == null)
-			return false;
-
-		if (entity instanceof EntityPlayer) {
-			Vec3 vec3 = entity.getLookVec();
-			Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(
-					this.posX - entity.posX,
-					this.boundingBox.minY + (double) (this.height)
-							- (entity.posY + (double) entity.getEyeHeight()),
-					this.posZ - entity.posZ);
-			double d0 = vec31.lengthVector();
-			vec31 = vec31.normalize();
-			double d1 = vec3.dotProduct(vec31);
-			return d1 > ((1.0D - 0.025D) / d0) ? entity.canEntityBeSeen(this)
-					: false;
-		} else if (entity instanceof EntityWeepingAngel) {
-			Vec3 vec3 = entity.getLookVec();
-			Vec3 vec31 = this.worldObj.getWorldVec3Pool().getVecFromPool(
-					this.posX - entity.posX,
-					this.boundingBox.minY + (double) (this.height)
-							- (entity.posY + (double) entity.getEyeHeight()),
-					this.posZ - entity.posZ);
-			double d0 = vec31.lengthVector();
-			vec31 = vec31.normalize();
-			double d1 = vec3.dotProduct(vec31);
-			return d1 > ((1.0D - 0.025D) / d0) ? entity.canEntityBeSeen(this)
-					: false;
-		}
-		return false;
-	}
-
-	private boolean canBeSeenMulti() {
-		List list = worldObj.getEntitiesWithinAABB(EntityPlayer.class,
-				boundingBox.expand(this.closestPlayerRadius, 20D,
-						this.closestPlayerRadius));
-		int playersWatching = 0;
-		for (int j = 0; j < list.size(); j++) {
-			EntityPlayer player = (EntityPlayer) list.get(j);
-			if (this.isInFieldOfVision(player)) {
-				playersWatching++;
-			}
-		}
-		if (playersWatching > 0)
-			return true;
-		return false;
-	}
-
 	private List getAngelsNear() {
 		return worldObj.getEntitiesWithinAABB(EntityWeepingAngel.class,
 				boundingBox.expand(20D, 20D, 20D));
@@ -515,7 +474,7 @@ public class EntityWeepingAngel extends EntityCreature {
 				MathHelper.floor_double(this.posZ)) <= 1.0) {
 			return false;
 		} else if (this.dataWatcher.getWatchableObjectByte(17) >= 2) {
-			return entity.isInFieldOfVision(this);
+			return Util.isInFieldOfVision(this.worldObj, entity, this);
 		} else
 			return false;
 	}
