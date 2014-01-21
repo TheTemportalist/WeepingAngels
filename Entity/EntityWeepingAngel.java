@@ -337,7 +337,7 @@ public class EntityWeepingAngel extends EntityCreature {
 				if (!entityPlayer.capabilities.isCreativeMode
 						&& this.getDistancetoEntityToAttack() <= 2) {
 					if (WeepingAngelsMod.canPoison
-							&& Math.random() * 100 <= WeepingAngelsMod.poisonChance / 100) {
+							&& this.rand.nextInt(100) < WeepingAngelsMod.poisonChance) {
 						ExtendedPlayer playerProps = ExtendedPlayer
 								.get(entityPlayer);
 						playerProps.setConvert(1);
@@ -347,7 +347,7 @@ public class EntityWeepingAngel extends EntityCreature {
 						if (WeepingAngelsMod.DEBUG)
 							WeepingAngelsMod.log.info("Infected Player");
 					} else if (WeepingAngelsMod.canTeleport
-							&& Math.random() * 100 <= WeepingAngelsMod.teleportChance / 100) {
+							&& this.rand.nextInt(100) < WeepingAngelsMod.teleportChance) {
 						CoreUtil.teleportPlayer(entityPlayer, 0,
 								WeepingAngelsMod.teleportRangeMax, true, true);
 						this.worldObj.playSoundAtEntity(entityPlayer,

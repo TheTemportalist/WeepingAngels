@@ -385,7 +385,6 @@ public class WeepingAngelsMod {
 					new morph.common.ability.AbilityStep(3.0F),
 					new morph.common.ability.AbilityHostile(),
 					new morph.common.ability.AbilityFireImmunity());
-			
 		}
 	}
 	
