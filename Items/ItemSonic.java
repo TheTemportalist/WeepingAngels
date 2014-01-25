@@ -5,6 +5,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,7 @@ import CountryGamer_Core.Items.ItemBase;
 import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
+import WeepingAngels.Entity.EntityWeepingAngel;
 
 public class ItemSonic extends ItemBase {
 
@@ -119,4 +121,12 @@ public class ItemSonic extends ItemBase {
 			}
 		}
 	}
+
+	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player,
+			Entity entity) {
+		if (entity instanceof EntityWeepingAngel)
+			return false;
+		return true;
+	}
+
 }

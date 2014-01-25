@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class MorphAbilityTimeLock extends Ability {
 
-	private float moveSpeed;
+	private double moveSpeed;
 	private final double basePlayerSpeed = 0.10000000149011612D;
 
 	@Override
@@ -42,10 +42,10 @@ public class MorphAbilityTimeLock extends Ability {
 				this.getParent().boundingBox, 64D, this.getParent());
 		// Set
 		if (isWatched) {
-			this.moveSpeed = 0.0F;
+			this.moveSpeed = 0.0D;
 		} else {
 			//this.moveSpeed = 1.0F;
-			this.moveSpeed = (float) (this.basePlayerSpeed * 2);
+			this.moveSpeed = 0.2D;
 		}
 		this.getParent()
 				.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
