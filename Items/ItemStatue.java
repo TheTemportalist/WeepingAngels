@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import CountryGamer_Core.CG_Core;
 import CountryGamer_Core.Items.ItemBase;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
@@ -68,9 +69,11 @@ public class ItemStatue extends ItemBase {
 			tileentityplinth.setRotation(statueYaw);
 			tileentityplinth.statueType = entitystatue.dropId;
 			itemstack.stackSize--;
-			if (WeepingAngelsMod.DEBUG)
+			/*
+			if (CG_Core.DEBUG)
 				WeepingAngelsMod.log.info("l: " + l + " yaw: " + statueYaw
 						+ " playerYaw: " + entityplayer.rotationYaw);
+			*/
 		}
 		/*
 		 * if(tileentityplinth != null) {

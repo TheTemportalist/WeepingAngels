@@ -17,6 +17,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import CountryGamer_Core.CG_Core;
 import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Entity.EntityStatue;
@@ -93,8 +94,8 @@ public class Util {
 				1 + xOffset, 4 + yOffset, 2 + zOffset, 0, 0, com, box);
 		CoreUtil.placeBlock(world, 0 + xOffset, 1 + yOffset, 1 + zOffset,
 				WeepingAngelsMod.plinthBlock.blockID, 1, com, box);
-		if (WeepingAngelsMod.DEBUG)
-			CoreUtil.placeBlock(world, 0, 4, 0, Block.dirt.blockID, 0, com, box);
+		//if (CG_Core.DEBUG)
+		//	CoreUtil.placeBlock(world, 0, 4, 0, Block.dirt.blockID, 0, com, box);
 		// 0 == left, 1 == right, 2 == back, 3 == front
 		CoreUtil.placeBlock(world, -1 + xOffset, +0 + yOffset, +1 + zOffset,
 				Block.stairsCobblestone.blockID, 0, com, box);

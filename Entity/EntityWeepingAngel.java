@@ -13,6 +13,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import CountryGamer_Core.CG_Core;
 import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Handlers.Player.ExtendedPlayer;
@@ -20,33 +21,33 @@ import WeepingAngels.lib.Reference;
 import WeepingAngels.lib.Util;
 
 public class EntityWeepingAngel extends EntityCreature {
-
-	private boolean canSeeSkyAndDay;
-	private int torchTimer;
-	private int torchNextBreak;
-	private boolean breakOnePerTick;
-	private boolean didBreak;
-	public boolean armMovement;
-	public boolean aggressiveArmMovement;
-
-	private float moveSpeed;
-	private float maxSpeed = 50.0F, minSpeed = 0.3F;
-	private final double closestPlayerRadius = 64D;
-	private double distanceToSeen = 5D;
-	private double minLight = 1.0;
-
-	private boolean isQuantumLocked;
-	private boolean isLockedByAngel;
-
+	
+	private boolean			canSeeSkyAndDay;
+	private int				torchTimer;
+	private int				torchNextBreak;
+	private boolean			breakOnePerTick;
+	private boolean			didBreak;
+	public boolean			armMovement;
+	public boolean			aggressiveArmMovement;
+	
+	private float			moveSpeed;
+	private float			maxSpeed			= 50.0F, minSpeed = 0.3F;
+	private final double	closestPlayerRadius	= 64D;
+	private double			distanceToSeen		= 5D;
+	private double			minLight			= 1.0;
+	
+	private boolean			isQuantumLocked;
+	private boolean			isLockedByAngel;
+	
 	public EntityWeepingAngel(World world) {
 		super(world);
 		this.experienceValue = 50;
 		this.isImmuneToFire = true;
-
+		
 		this.isQuantumLocked = false;
 		this.isLockedByAngel = false;
 	}
-
+	
 	// Init & Attribute Methods
 	@Override
 	protected void entityInit() {
@@ -55,7 +56,7 @@ public class EntityWeepingAngel extends EntityCreature {
 		this.dataWatcher.addObject(17, Byte.valueOf((byte) 0)); // ArmMovement
 		this.dataWatcher.addObject(18, 0); // TorchTicks
 	}
-
+	
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
@@ -76,51 +77,51 @@ public class EntityWeepingAngel extends EntityCreature {
 				SharedMonsterAttributes.attackDamage);
 		this.getEntityAttribute(SharedMonsterAttributes.attackDamage)
 				.setAttribute(WeepingAngelsMod.attackStrength);
-
+		
 	}
-
+	
 	protected String getLivingSound() {
 		return Reference.BASE_TEX + "stone";
 	}
-
+	
 	protected String getHurtSound() {
 		return Reference.BASE_TEX + "light";
 	}
-
+	
 	protected String getDeathSound() {
 		return Reference.BASE_TEX + "crumble";
 	}
-
+	
 	protected boolean isAIEnabled() {
 		return false;
 	}
-
+	
 	// Update Methods
 	@Override
 	public void onLivingUpdate() {
 		this.updateArmSwingProgress();
 		float f = this.getBrightness(1.0F);
-
+		
 		if (f > 0.5F) {
 			this.entityAge += 2;
 		}
-
+		
 		super.onLivingUpdate();
 	}
-
+	
 	@Override
 	public void onUpdate() {
 		// Kill angel if conditions are right
 		if (!this.worldObj.isRemote && this.worldObj.difficultySetting == 0) {
 			this.setDead();
 		}
-
+		
 		// Set angel to slowest speed
 		this.moveStrafing = (this.moveForward = 0.0F);
 		this.moveSpeed = this.minSpeed;
 		this.isJumping = false;
 		// this.setJumping(false);
-
+		
 		// Check for daytime and if the angel can see the sky
 		if (this.worldObj.isDaytime()) {
 			float f = getBrightness(1.0F);
@@ -134,20 +135,20 @@ public class EntityWeepingAngel extends EntityCreature {
 			else
 				this.canSeeSkyAndDay = false;
 		}
-
+		
 		if (this.worldObj.getFullBlockLightValue(
 				MathHelper.floor_double(this.posX),
 				MathHelper.floor_double(this.posY),
 				MathHelper.floor_double(this.posZ)) > 1.0)
 			this.isQuantumLocked = Util.canBeSeenMulti(this.worldObj,
 					this.boundingBox, this.closestPlayerRadius, this);
-
+		
 		// if (this.canBeSeenByAngel()) {
 		// WeepingAngelsMod.log.info("Seen by angel");
 		// this.isLockedByAngel = true;
 		// this.isQuantumLocked = true;
 		// }
-
+		
 		if (this.entityToAttack == null) { // Find an entity to target
 			// find closest player
 			EntityPlayer player = (EntityPlayer) this
@@ -156,13 +157,13 @@ public class EntityWeepingAngel extends EntityCreature {
 				this.entityToAttack = player; // set player to target
 			}
 		}
-
+		
 		// Speed setting
 		if (this.entityToAttack != null) // if angel has target
 			this.moveSpeed = this.maxSpeed; // set speed to the max
 		else
 			this.moveSpeed = this.minSpeed; // set speed to the minimum
-
+			
 		// Check for Quantum Lock from players
 		if (this.isQuantumLocked) {
 			this.moveSpeed = 0.0F; // quantum lock angel
@@ -190,7 +191,7 @@ public class EntityWeepingAngel extends EntityCreature {
 					this.dataWatcher.updateObject(18,
 							this.dataWatcher.getWatchableObjectInt(18) - 1);
 				}
-
+				
 				// if (WeepingAngelsMod.DEBUG) // Torch Tick to Console
 				// WeepingAngelsMod.log.info("Torch Ticks: "
 				// + this.dataWatcher.getWatchableObjectInt(18));
@@ -198,11 +199,11 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 		if (this.entityToAttack != null && !this.isQuantumLocked)
 			this.faceEntity(this.entityToAttack, 100F, 100F);
-
+		
 		// set the speed of the angel to the calcualted new speed
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
 				.setAttribute(this.moveSpeed);
-
+		
 		// if any lava block is within radius r of angel, heal angel 0.5 heart
 		int r = 10;
 		double x = this.posX, y = this.posY, z = this.posZ;
@@ -216,13 +217,13 @@ public class EntityWeepingAngel extends EntityCreature {
 				}
 			}
 		}
-
+		
 		// Visual arm and face render setting
 		this.renderMovement();
-
+		
 		super.onUpdate(); // run the extended classes onUpdate()
 	}
-
+	
 	private boolean findNearestTorch() {
 		int i = (int) this.posX;
 		int j = (int) this.posY;
@@ -252,7 +253,7 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 		return false;
 	}
-
+	
 	private void renderMovement() {
 		if (!this.isQuantumLocked) {
 			if (this.getAngelsNear().size() > 0) {
@@ -260,23 +261,24 @@ public class EntityWeepingAngel extends EntityCreature {
 			}
 			if (this.entityToAttack == null) {
 				return;
-			} else if (this.entityToAttack instanceof EntityPlayer) {
-				double distance = this.getDistancetoEntityToAttack();
-				if (distance <= 5.0D) {
-					this.dataWatcher.updateObject(16, (byte) 1);
-					this.dataWatcher.updateObject(17, (byte) 2);
-				} else {
-					this.dataWatcher.updateObject(16, (byte) 0);
-					this.dataWatcher.updateObject(17, (byte) 0);
-					if (this.rand.nextInt(100) > 80) {
-						this.dataWatcher.updateObject(17, (byte) 1);
+			} else
+				if (this.entityToAttack instanceof EntityPlayer) {
+					double distance = this.getDistancetoEntityToAttack();
+					if (distance <= 5.0D) {
+						this.dataWatcher.updateObject(16, (byte) 1);
+						this.dataWatcher.updateObject(17, (byte) 2);
+					} else {
+						this.dataWatcher.updateObject(16, (byte) 0);
+						this.dataWatcher.updateObject(17, (byte) 0);
+						if (this.rand.nextInt(100) > 80) {
+							this.dataWatcher.updateObject(17, (byte) 1);
+						}
 					}
 				}
-			}
-
+			
 		}
 	}
-
+	
 	// Attack Methods
 	/**
 	 * From EntityMob.class
@@ -284,13 +286,13 @@ public class EntityWeepingAngel extends EntityCreature {
 	public boolean attackEntityAsMob(Entity par1Entity) {
 		float f = (float) this.getEntityAttribute(
 				SharedMonsterAttributes.attackDamage).getAttributeValue();
-
+		
 		boolean flag = par1Entity.attackEntityFrom(
 				DamageSource.causeMobDamage(this), f);
-
+		
 		return flag;
 	}
-
+	
 	public boolean attackEntityFrom(DamageSource source, float damage) {
 		if (source == null) {
 			return false;
@@ -300,13 +302,13 @@ public class EntityWeepingAngel extends EntityCreature {
 			EntityPlayer entityplayer = (EntityPlayer) source
 					.getSourceOfDamage();
 			ItemStack itemStack = entityplayer.inventory.getCurrentItem();
-
+			
 			if (itemStack != null
 					&& itemStack.itemID == WeepingAngelsMod.sonicScrew.itemID) {
 				super.attackEntityFrom(source, 0.25F * this.getMaxHealth());
 				return true;
 			}
-
+			
 			if (WeepingAngelsMod.pickOnly) {
 				if (itemStack == null)
 					canHurt = false;
@@ -318,7 +320,7 @@ public class EntityWeepingAngel extends EntityCreature {
 				}
 			} else
 				canHurt = true;
-
+			
 			if (canHurt) {
 				super.attackEntityFrom(source, damage);
 				return true;
@@ -326,7 +328,7 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 		return false;
 	}
-
+	
 	@Override
 	protected void attackEntity(Entity entity, float f) {
 		if (entity != null
@@ -344,68 +346,70 @@ public class EntityWeepingAngel extends EntityCreature {
 						playerProps.setAngelHealth(0.0F);
 						playerProps
 								.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
-						if (WeepingAngelsMod.DEBUG)
-							WeepingAngelsMod.log.info("Infected Player");
-					} else if (WeepingAngelsMod.canTeleport
-							&& this.rand.nextInt(100) < WeepingAngelsMod.teleportChance) {
-						CoreUtil.teleportPlayer(entityPlayer, 0,
-								WeepingAngelsMod.teleportRangeMax, true, true);
-						this.worldObj.playSoundAtEntity(entityPlayer,
-								Reference.BASE_TEX + "teleport_activate", 1.0F,
-								1.0F);
-						entity = null;
-						if (WeepingAngelsMod.DEBUG)
-							WeepingAngelsMod.log.info("Teleported Player");
-					} else {
-						this.attackEntityAsMob(entity);
-						if (WeepingAngelsMod.DEBUG)
-							WeepingAngelsMod.log.info("Attacked Player");
-					}
-
+						//if (CG_Core.DEBUG)
+						//	WeepingAngelsMod.log.info("Infected Player");
+					} else
+						if (WeepingAngelsMod.canTeleport
+								&& this.rand.nextInt(100) < WeepingAngelsMod.teleportChance) {
+							CoreUtil.teleportPlayer(entityPlayer, 0,
+									WeepingAngelsMod.teleportRangeMax, true,
+									true);
+							this.worldObj.playSoundAtEntity(entityPlayer,
+									Reference.BASE_TEX + "teleport_activate",
+									1.0F, 1.0F);
+							entity = null;
+							//if (CG_Core.DEBUG)
+							//	WeepingAngelsMod.log.info("Teleported Player");
+						} else {
+							this.attackEntityAsMob(entity);
+							//if (CG_Core.DEBUG)
+							//	WeepingAngelsMod.log.info("Attacked Player");
+						}
+					
 				}
 			}
 		}
 	}
-
+	
 	// Get Methods
 	public float getBlockPathWeight(int par1, int par2, int par3) {
 		return 0.5F - this.worldObj.getLightBrightness(par1, par2, par3);
 	}
-
+	
 	public boolean getCanSpawnHere() {
 		if (WeepingAngelsMod.spawnRate == 0)
 			return false;
-
+		
 		boolean validYLevel = false;
 		int x = MathHelper.floor_double(this.posX);
 		int j2 = MathHelper.floor_double(this.boundingBox.minY);
 		int y = MathHelper.floor_double(this.posY + j2);
 		int z = MathHelper.floor_double(this.posZ);
-
+		
 		if (y <= WeepingAngelsMod.maxSpawnHeight)
 			validYLevel = true;
-
+		
 		boolean entityMobCanSpawn = this.worldObj.difficultySetting > 0
 				&& this.isValidLightLevel() && super.getCanSpawnHere();
-
+		
 		return entityMobCanSpawn && validYLevel;
 	}
-
+	
 	private double getLightValue() {
 		int i = MathHelper.floor_double(this.posX);
 		int j = MathHelper.floor_double(this.boundingBox.minY);
 		int k = MathHelper.floor_double(this.posZ);
 		return this.worldObj.getBlockLightValue(i, j, k);
 	}
-
+	
 	public int angryState() {
 		return this.dataWatcher.getWatchableObjectByte(16);
 	}
-
+	
 	public int armState() {
 		return this.dataWatcher.getWatchableObjectByte(17);
 	}
-
+	
 	private Entity getClosestPlayer(Class entity) {
 		List list = worldObj.getEntitiesWithinAABB(entity, boundingBox.expand(
 				this.closestPlayerRadius, 20D, this.closestPlayerRadius));
@@ -413,12 +417,12 @@ public class EntityWeepingAngel extends EntityCreature {
 			return (Entity) list.get(0);
 		return null;
 	}
-
+	
 	protected void dropRareDrop(int par1) {
 		if (WeepingAngelsMod.addonVortex)
 			this.dropItem(WeepingAngelsMod.chronon.itemID, 1);
 	}
-
+	
 	// Boolean Methods
 	/**
 	 * Checks to make sure the light is not too bright where the mob is spawning
@@ -428,29 +432,29 @@ public class EntityWeepingAngel extends EntityCreature {
 		int i = MathHelper.floor_double(this.posX);
 		int j = MathHelper.floor_double(this.boundingBox.minY);
 		int k = MathHelper.floor_double(this.posZ);
-
+		
 		if (this.worldObj.getSavedLightValue(EnumSkyBlock.Sky, i, j, k) > this.rand
 				.nextInt(32)) {
 			return false;
 		} else {
 			int l = this.worldObj.getBlockLightValue(i, j, k);
-
+			
 			if (this.worldObj.isThundering()) {
 				int i1 = this.worldObj.skylightSubtracted;
 				this.worldObj.skylightSubtracted = 10;
 				l = this.worldObj.getBlockLightValue(i, j, k);
 				this.worldObj.skylightSubtracted = i1;
 			}
-
+			
 			return l <= this.rand.nextInt(8);
 		}
 	}
-
+	
 	private List getAngelsNear() {
 		return worldObj.getEntitiesWithinAABB(EntityWeepingAngel.class,
 				boundingBox.expand(20D, 20D, 20D));
 	}
-
+	
 	private boolean canBeSeenByAngel() {
 		List list = this.getAngelsNear();
 		int angelsWatching = 0;
@@ -466,19 +470,20 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 		return angelsWatching > 0;
 	}
-
+	
 	private boolean canSeeAngel(EntityWeepingAngel entity) {
 		if (this.worldObj.getFullBlockLightValue(
 				MathHelper.floor_double(this.posX),
 				MathHelper.floor_double(this.posY),
 				MathHelper.floor_double(this.posZ)) <= 1.0) {
 			return false;
-		} else if (this.dataWatcher.getWatchableObjectByte(17) >= 2) {
-			return Util.isInFieldOfVision(this.worldObj, entity, this);
 		} else
-			return false;
+			if (this.dataWatcher.getWatchableObjectByte(17) >= 2) {
+				return Util.isInFieldOfVision(this.worldObj, entity, this);
+			} else
+				return false;
 	}
-
+	
 	private boolean isEntityFacing(EntityLivingBase entity) {
 		int directionOfEntity = MathHelper
 				.floor_double((double) (entity.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
@@ -498,10 +503,10 @@ public class EntityWeepingAngel extends EntityCreature {
 			return true;
 		if (directionOfEntity == 3 && thisX > entX)
 			return true;
-
+		
 		return false;
 	}
-
+	
 	// Utility Methods
 	public double getDistance(int i, int j, int k, int l, int i1, int j1) {
 		int k1 = l - i;
@@ -509,7 +514,7 @@ public class EntityWeepingAngel extends EntityCreature {
 		int i2 = j1 - k;
 		return Math.sqrt(k1 * k1 + l1 * l1 + i2 * i2);
 	}
-
+	
 	public double getDistancetoEntityToAttack() {
 		if (entityToAttack instanceof EntityPlayer) {
 			double d = entityToAttack.posX - posX;
@@ -528,5 +533,5 @@ public class EntityWeepingAngel extends EntityCreature {
 			return 40000D;
 		}
 	}
-
+	
 }

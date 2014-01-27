@@ -15,6 +15,7 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import CountryGamer_Core.CG_Core;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Entity.EntityWeepingAngel;
 import cpw.mods.fml.common.FMLLog;
@@ -93,9 +94,9 @@ public class TileEntityPlinth extends TileEntity {
 		if (nbttagcompound.hasKey("entityStored")) {
 			this.statueEntity.readFromNBT(nbttagcompound);
 		}
-		if (WeepingAngelsMod.DEBUG)
-			WeepingAngelsMod.log.info("rotation: " + this.rotation
-					+ " Active: " + this.canBeActivated);
+		//if (CG_Core.DEBUG)
+		//	WeepingAngelsMod.log.info("rotation: " + this.rotation
+		//			+ " Active: " + this.canBeActivated);
 	}
 
 	/**

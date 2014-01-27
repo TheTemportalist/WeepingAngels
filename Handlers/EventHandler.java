@@ -7,6 +7,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import CountryGamer_Core.CG_Core;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Entity.EntityWeepingAngel;
 import WeepingAngels.Handlers.Player.ExtendedPlayer;
@@ -59,9 +60,9 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 	// Achivements on Item Pickup
 	@Override
 	public void notifyPickup(EntityItem item, EntityPlayer player) {
-		if (WeepingAngelsMod.DEBUG)
-			WeepingAngelsMod.log.info(item.getEntityItem().itemID + ":"
-					+ WeepingAngelsMod.statue.itemID);
+		//if (CG_Core.DEBUG)
+		//	WeepingAngelsMod.log.info(item.getEntityItem().itemID + ":"
+		//			+ WeepingAngelsMod.statue.itemID);
 		if (item.getEntityItem().itemID == WeepingAngelsMod.statue.itemID) {
 			player.addStat(WeepingAngelsMod.angelAchieve, 1);
 		}

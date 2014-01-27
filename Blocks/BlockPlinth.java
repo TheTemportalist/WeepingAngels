@@ -1,20 +1,16 @@
 package WeepingAngels.Blocks;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
-import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import CountryGamer_Core.CG_Core;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import WeepingAngels.Entity.EntityWeepingAngel;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -59,8 +55,8 @@ public class BlockPlinth extends BlockContainer {
 			TileEntity tileEnt = world.getBlockTileEntity(i, j, k);
 			if (tileEnt != null && tileEnt instanceof TileEntityPlinth) {
 				TileEntityPlinth tileEntP = (TileEntityPlinth) tileEnt;
-				if (WeepingAngelsMod.DEBUG)
-					WeepingAngelsMod.log.info("Powered");
+				//if (CG_Core.DEBUG)
+				//	WeepingAngelsMod.log.info("Powered");
 				tileEntP.ComeToLife(world, i, j, k);
 				idDrop = 0;
 			}
@@ -73,9 +69,9 @@ public class BlockPlinth extends BlockContainer {
 
 	@Override
 	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
-		if (WeepingAngelsMod.DEBUG)
-			WeepingAngelsMod.log.info("BlockPlinth broken at i: " + i + " j: "
-					+ j + " k: " + k);
+		//if (CG_Core.DEBUG)
+		//	WeepingAngelsMod.log.info("BlockPlinth broken at i: " + i + " j: "
+		//			+ j + " k: " + k);
 		TileEntityPlinth tileentityplinth = (TileEntityPlinth) world
 				.getBlockTileEntity(i, j, k);
 		int var = 0;
@@ -83,8 +79,8 @@ public class BlockPlinth extends BlockContainer {
 			var = tileentityplinth.getBlockMetadata();
 		if (var == 1) {
 			idDrop = tileentityplinth.statueType;
-			if (WeepingAngelsMod.DEBUG)
-				WeepingAngelsMod.log.info("Dropped item: " + idDrop);
+			//if (CG_Core.DEBUG)
+			//	WeepingAngelsMod.log.info("Dropped item: " + idDrop);
 		} else
 			idDrop = 0;
 		super.breakBlock(world, i, j, k, par5, par6);

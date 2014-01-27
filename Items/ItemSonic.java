@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import CountryGamer_Core.CG_Core;
 import CountryGamer_Core.Items.ItemBase;
 import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
@@ -51,12 +52,14 @@ public class ItemSonic extends ItemBase {
 			for (int i = 0; i <= 3; i++) {
 				metadata.add(i + 4);
 			}
-			if (WeepingAngelsMod.DEBUG) {
+			/*
+			if (CG_Core.DEBUG) {
 				WeepingAngelsMod.log.info("0:" + metadata.get(0) + "|" + "1:"
 						+ metadata.get(1) + "|" + "2:" + metadata.get(2) + "|"
 						+ "3:" + metadata.get(3) + "|");
 			}
-
+			*/
+			
 			BlockDoor door = (BlockDoor) Block.doorIron;
 			int meta = door.getFullMetadata(world, x, y, z);
 			if (meta < 0 || meta > 7)

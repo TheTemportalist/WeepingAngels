@@ -12,7 +12,7 @@ import net.minecraft.world.gen.structure.ComponentVillage;
 import net.minecraft.world.gen.structure.ComponentVillageStartPiece;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponent;
-import CountryGamer_Core.lib.CoreUtil;
+import CountryGamer_Core.CG_Core;
 import WeepingAngels.WeepingAngelsMod;
 import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
 import WeepingAngels.Entity.EntityStatue;
@@ -59,7 +59,7 @@ public class ComponentAngelDungeon extends ComponentVillage {
 
 		// place generation house code here
 		Util.generateAngelDungeon(world, this, boundBox, 5,
-				WeepingAngelsMod.DEBUG ? 20 : 0, 0);
+				CG_Core.DEBUG ? 20 : 0, 0);
 
 		return true;
 	}
