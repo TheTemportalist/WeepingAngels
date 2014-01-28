@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import CountryGamer_Core.CG_Core;
@@ -33,6 +34,8 @@ import WeepingAngels.Items.ItemWADebug;
 import WeepingAngels.Morph.MorphAbilityTimeLock;
 import WeepingAngels.Proxy.ServerProxy;
 import WeepingAngels.World.WorldGenerator;
+import WeepingAngels.World.Structure.ComponentAngelDungeon;
+import WeepingAngels.World.Structure.VillageHandlerAngelDungeon;
 import WeepingAngels.lib.Reference;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Instance;
@@ -47,6 +50,7 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.common.registry.VillagerRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION)
@@ -233,10 +237,10 @@ public class WeepingAngelsMod {
 		NetworkRegistry.instance().registerGuiHandler(
 				WeepingAngelsMod.instance, new GuiHandler());
 		GameRegistry.registerWorldGenerator(new WorldGenerator());
-		//MapGenStructureIO.func_143031_a(ComponentAngelDungeon.class,
-		//		Reference.MOD_ID + ":AngelDungeon");
-		//VillagerRegistry.instance().registerVillageCreationHandler(
-		//		new VillageHandlerAngelDungeon());
+		MapGenStructureIO.func_143031_a(ComponentAngelDungeon.class,
+				Reference.MOD_ID + ":AngelDungeon");
+		VillagerRegistry.instance().registerVillageCreationHandler(
+				new VillageHandlerAngelDungeon());
 		
 		this.iChun_Morph();
 	}

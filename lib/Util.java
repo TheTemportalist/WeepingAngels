@@ -176,7 +176,7 @@ public class Util {
 					Block.ladder.blockID, 2, com, box);
 		}
 		CoreUtil.placeBlock(world, 0 + xOffset, 0 + yOffset, 1 + zOffset,
-				Block.trapdoor.blockID, 5 | 8, com, box);
+				Block.trapdoor.blockID, (5+4) | 8, com, box);
 
 	}
 

@@ -346,24 +346,25 @@ public class EntityWeepingAngel extends EntityCreature {
 						playerProps.setAngelHealth(0.0F);
 						playerProps
 								.setTicksTillAngelHeal(ExtendedPlayer.ticksPerHalfHeart);
-						//if (CG_Core.DEBUG)
-						//	WeepingAngelsMod.log.info("Infected Player");
+						// if (CG_Core.DEBUG)
+						// WeepingAngelsMod.log.info("Infected Player");
 					} else
 						if (WeepingAngelsMod.canTeleport
 								&& this.rand.nextInt(100) < WeepingAngelsMod.teleportChance) {
 							CoreUtil.teleportPlayer(entityPlayer, 0,
-									WeepingAngelsMod.teleportRangeMax, true,
+									WeepingAngelsMod.teleportRangeMax,
+									entityPlayer.posX, entityPlayer.posZ, true,
 									true);
 							this.worldObj.playSoundAtEntity(entityPlayer,
 									Reference.BASE_TEX + "teleport_activate",
 									1.0F, 1.0F);
 							entity = null;
-							//if (CG_Core.DEBUG)
-							//	WeepingAngelsMod.log.info("Teleported Player");
+							// if (CG_Core.DEBUG)
+							// WeepingAngelsMod.log.info("Teleported Player");
 						} else {
 							this.attackEntityAsMob(entity);
-							//if (CG_Core.DEBUG)
-							//	WeepingAngelsMod.log.info("Attacked Player");
+							// if (CG_Core.DEBUG)
+							// WeepingAngelsMod.log.info("Attacked Player");
 						}
 					
 				}

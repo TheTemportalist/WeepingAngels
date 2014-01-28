@@ -12,28 +12,28 @@ import CountryGamer_Core.lib.CoreUtil;
 import WeepingAngels.WeepingAngelsMod;
 
 public class ItemVortex extends ItemBase {
-
-	public static String modeTag = "MODE";
-
+	
+	public static String	modeTag	= "MODE";
+	
 	public ItemVortex(int id, String modid, String name) {
 		super(id, modid, name);
 		this.setMaxStackSize(1);
 	}
-
+	
 	public ItemStack onItemRightClick(ItemStack itemStack, World world,
 			EntityPlayer player) {
-
+		
 		// prevents null pointers if player scrolls too fast
 		if (itemStack.itemID == this.itemID) {
-
+			
 			NBTTagCompound tagCom = itemStack.getTagCompound();
 			boolean mode = tagCom.getBoolean(this.modeTag);
 			if (player.isSneaking()) {
 				boolean newMode = !mode;
-
+				
 				tagCom.setBoolean(this.modeTag, newMode);
 				itemStack.setTagCompound(tagCom);
-
+				
 				String message = "The Vortex Manipulator is now in ";
 				if (!world.isRemote)
 					if (newMode)
@@ -43,7 +43,8 @@ public class ItemVortex extends ItemBase {
 			} else {
 				// TODO teleportation types
 				if (mode) { // Random
-					CoreUtil.teleportPlayer(player, 10, 100, true, true);
+					CoreUtil.teleportPlayer(player, 10, 100, player.posX,
+							player.posZ, true, true);
 				} else { // Controlled
 					// Open GUI
 					player.openGui(WeepingAngelsMod.instance, 0, world,
@@ -51,11 +52,11 @@ public class ItemVortex extends ItemBase {
 							(int) player.posZ);
 				}
 			}
-
+			
 		}
 		return itemStack;
 	}
-
+	
 	@Override
 	public void onUpdate(ItemStack itemStack, World world, Entity entity,
 			int par4, boolean isCurrentItem) {
@@ -67,5 +68,5 @@ public class ItemVortex extends ItemBase {
 			}
 		}
 	}
-
+	
 }
