@@ -44,7 +44,7 @@ public class EventHandler implements IPickupNotifier, IPlayerTracker {
 
 	@ForgeSubscribe
 	public void hurtEvent(LivingHurtEvent event) {
-		if (WeepingAngelsMod.morphLoaded) {
+		if (CG_Core.isMorphLoaded()) {
 			if (event.entityLiving instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer)event.entityLiving;
 				boolean angelMorphed = morph.api.Api.hasMorph(player.username, false);
