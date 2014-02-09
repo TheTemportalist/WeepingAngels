@@ -1,10 +1,12 @@
-package WeepingAngels.Client.Model;
+package com.countrygamer.weepingangels.Client.Model;
 
-import WeepingAngels.Entity.EntityWeepingAngel;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
+
+import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

@@ -1,25 +1,21 @@
-package WeepingAngels.Handlers;
-
-import java.util.Collection;
-import java.util.Iterator;
+package com.countrygamer.weepingangels.Handlers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.event.EventPriority;
-import net.minecraftforge.event.ForgeSubscribe;
 
 import org.lwjgl.opengl.GL11;
 
-import WeepingAngels.WeepingAngelsMod;
-import WeepingAngels.Handlers.Player.ExtendedPlayer;
-import WeepingAngels.lib.Reference;
+import com.countrygamer.weepingangels.Handlers.Player.ExtendedPlayer;
+import com.countrygamer.weepingangels.lib.Reference;
+
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class HUDOverlay extends Gui {
 
@@ -37,9 +33,9 @@ public class HUDOverlay extends Gui {
 	}
 
 	private static final ResourceLocation health = new ResourceLocation(
-			Reference.MOD_ID_LOWERCASE, "textures/gui/angelHealth.png");
+			Reference.MOD_ID, "textures/gui/angelHealth.png");
 
-	@ForgeSubscribe(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.NORMAL)
 	public void renderGameOverlay(RenderGameOverlayEvent.Post event) {
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE) {
 			return;
@@ -56,6 +52,10 @@ public class HUDOverlay extends Gui {
 		int l = scaledresolution.getScaledHeight();
 
 		ExtendedPlayer playerProperties = ExtendedPlayer.get(this.mc.thePlayer);
+		if (playerProperties == null) {
+			ExtendedPlayer.register((EntityPlayer) this.mc.thePlayer);
+			playerProperties = ExtendedPlayer.get(this.mc.thePlayer);
+		}
 		float angelHealth = playerProperties.getAngelHealth();
 		if (angelHealth > 0.0F) {
 
@@ -91,7 +91,7 @@ public class HUDOverlay extends Gui {
 	}
 
 	protected static final ResourceLocation blackBlur = new ResourceLocation(
-			Reference.MOD_ID_LOWERCASE, "textures/gui/blackBlur.png");
+			Reference.MOD_ID, "textures/gui/blackBlur.png");
 
 	protected void renderBlur(int x, int y, float alpha) {
 

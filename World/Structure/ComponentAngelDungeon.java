@@ -1,4 +1,4 @@
-package WeepingAngels.World.Structure;
+package com.countrygamer.weepingangels.World.Structure;
 
 import java.util.List;
 import java.util.Random;
@@ -8,16 +8,13 @@ import net.minecraft.block.BlockDirectional;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Facing;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.ComponentVillage;
-import net.minecraft.world.gen.structure.ComponentVillageStartPiece;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponent;
-import CountryGamer_Core.CG_Core;
-import CountryGamer_Core.lib.CoreUtil;
-import WeepingAngels.WeepingAngelsMod;
-import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import WeepingAngels.Entity.EntityStatue;
-import WeepingAngels.lib.Util;
+
+import com.countrygamer.weepingangels.WeepingAngelsMod;
+import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
+import com.countrygamer.weepingangels.Entity.EntityStatue;
+import com.countrygamer.weepingangels.lib.Util;
 
 public class ComponentAngelDungeon extends ComponentVillage {
 	

@@ -1,15 +1,15 @@
-package WeepingAngels.Proxy;
+package com.countrygamer.weepingangels.proxy;
 
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
+import com.countrygamer.weepingangels.WeepingAngelsMod;
+import com.countrygamer.weepingangels.Handlers.Packet.ServerPacketHandler;
 
 public class ServerProxy {
 
 	public void registerRenderThings() {
-		
 
 	}
 
 	public void preInit() {
+		WeepingAngelsMod.packetChannel.register(new ServerPacketHandler());
 	}
 }

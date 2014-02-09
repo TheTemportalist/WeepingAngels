@@ -1,128 +1,137 @@
-package WeepingAngels;
+package com.countrygamer.weepingangels;
 
 import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityEggInfo;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import CountryGamer_Core.CG_Core;
-import CountryGamer_Core.Items.ItemMetadataBase;
-import CountryGamer_Core.lib.CoreUtil;
-import WeepingAngels.Blocks.BlockPlinth;
-import WeepingAngels.Blocks.BlockWeepingAngelSpawn;
-import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import WeepingAngels.Client.Gui.GuiHandler;
-import WeepingAngels.Entity.EntityStatue;
-import WeepingAngels.Entity.EntityWeepingAngel;
-import WeepingAngels.Handlers.EventHandler;
-import WeepingAngels.Handlers.ServerTickHandler;
-import WeepingAngels.Handlers.Packet.PacketHandler;
-import WeepingAngels.Items.ItemSonic;
-import WeepingAngels.Items.ItemStatue;
-import WeepingAngels.Items.ItemVortex;
-import WeepingAngels.Items.ItemWADebug;
-import WeepingAngels.Morph.MorphAbilityTimeLock;
-import WeepingAngels.Proxy.ServerProxy;
-import WeepingAngels.lib.Reference;
+
+import com.countrygamer.countrygamer_core.Core;
+import com.countrygamer.countrygamer_core.Items.ItemMetadataBase;
+import com.countrygamer.countrygamer_core.lib.CoreUtil;
+import com.countrygamer.weepingangels.Blocks.BlockPlinth;
+import com.countrygamer.weepingangels.Blocks.BlockWeepingAngelSpawn;
+import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
+import com.countrygamer.weepingangels.Client.Gui.GuiHandler;
+import com.countrygamer.weepingangels.Entity.EntityStatue;
+import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
+import com.countrygamer.weepingangels.Handlers.EventHandler;
+import com.countrygamer.weepingangels.Items.ItemSonic;
+import com.countrygamer.weepingangels.Items.ItemStatue;
+import com.countrygamer.weepingangels.Items.ItemVortex;
+import com.countrygamer.weepingangels.Items.ItemWADebug;
+import com.countrygamer.weepingangels.World.WorldGenerator;
+import com.countrygamer.weepingangels.lib.Reference;
+import com.countrygamer.weepingangels.proxy.ServerProxy;
+
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION)
-@NetworkMod(clientSideRequired = true, serverSideRequired = true, channels = {
-		"WepAng_statue", "WepAng_teleport", "WepAng_vortex" }, packetHandler = PacketHandler.class)
+// @NetworkMod(clientSideRequired = true, serverSideRequired = true, channels =
+// {
+// "WepAng_statue", "WepAng_teleport", "WepAng_vortex" }, packetHandler =
+// PacketHandler.class)
 public class WeepingAngelsMod {
-	
-	public static final Logger		log					= Logger.getLogger("WeepingAngels");
+
+	public static final Logger log = Logger.getLogger("WeepingAngels");
 	@Instance(Reference.MOD_ID)
-	public static WeepingAngelsMod	instance;
+	public static WeepingAngelsMod instance;
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
-	public static ServerProxy		proxy;
-	
+	public static ServerProxy proxy;
+
+	// Packet
+	public static FMLEventChannel packetChannel;
+
 	// Blocks
-	public static Block				plinthBlock;
-	public static int				plinthBlockID;
-	public static Block				blockWeepingAngelSpawn;
-	public static int				spawnBlockID;
-	
+	public static Block plinthBlock;
+	public static Block blockWeepingAngelSpawn;
+
 	// Items
-	public static Item				statue;
-	public static int				statueItemID;
-	
-	public static Item				debugItem;
-	public static int				debugItemiD;
-	public static String			debugItemName		= "Debugger";
-	
+	public static Item statue;
+	public static Item debugItem;
+	public static String debugItemName = "Debugger";
+
 	// Entity
-	public static int				entityWeepingAngelID;
-	public static int				maxSpawn;
-	public static int				spawnRate;
-	public static int				maxSpawnHeight;
-	public static double			maxHealth			= 20.0D;
-	public static int				attackStrength;
-	public static boolean			canTeleport;
-	public static int				teleportChance;
-	public static int				teleportRangeMax;
-	public static boolean			canPoison;
-	public static int				poisonChance;
-	public static int				totalConvertTicks	= 20 * 60 * 2;
-	public static boolean			pickOnly;
-	
+	public static int entityWeepingAngelID;
+	public static int maxSpawn;
+	public static int spawnRate;
+	public static int maxSpawnHeight;
+	public static double maxHealth = 20.0D;
+	public static int attackStrength;
+	public static boolean canTeleport;
+	public static int teleportChance;
+	public static int teleportRangeMax;
+	public static boolean canPoison;
+	public static int poisonChance;
+	public static int totalConvertTicks = 20 * 60 * 2;
+	public static boolean pickOnly;
+
 	// Addons
-	public static boolean			addonVortex;
-	public static boolean			addonSonic;
-	public static Item				chronon;
-	public static int				chrononID;
-	public static String			chrononDustName		= "Chronon Dust";
-	public static String			chrononDiamondName	= "Chronon Diamond";
-	public static String			chrononMetalName	= "Chronon Metal";
-	public static Item				vortexMan;
-	public static int				vortexManID;
-	public static String			vortexManName		= "Vortex Manipulator";
-	public static Item				sonicScrew;
-	public static int				sonicScrewID;
-	public static String			sonicScrewName		= "Sonic Screwdriver";
-	
+	public static boolean addonVortex;
+	public static boolean addonSonic;
+	public static Item chronon;
+	public static String chrononDustName = "Chronon Dust";
+	public static String chrononDiamondName = "Chronon Diamond";
+	public static String chrononMetalName = "Chronon Metal";
+	public static Item vortexMan;
+	public static String vortexManName = "Vortex Manipulator";
+	public static Item sonicScrew;
+	public static String sonicScrewName = "Sonic Screwdriver";
+
 	// Achievements
-	public static Achievement		angelAchieve;
-	public static int				angelAchieveiD;
-	public static Achievement		angelAchieve2;
-	public static int				angelAchieve2iD;
-	
+	public static Achievement angelAchieve;
+	public static int angelAchieveiD;
+	public static Achievement angelAchieve2;
+	public static int angelAchieve2iD;
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		packetChannel = NetworkRegistry.INSTANCE
+				.newEventDrivenChannel(Reference.MOD_ID);
 		proxy.preInit();
-		
+		this.config(event);
+		this.handlers();
+
+		proxy.registerRenderThings();
+		this.items();
+		this.blocks();
+		this.entities();
+		this.craftSmelt();
+
+		this.achievements();
+
+	}
+
+	private void config(FMLPreInitializationEvent event) {
 		Configuration config = new Configuration(
 				event.getSuggestedConfigurationFile());
 		String general = "General";
-		String itemId = "Item IDs", blockId = "Block IDs";
 		String achievement = "Achievement IDs";
 		String angelStat = "Angel Stats", angelSpawn = "Angel Spawn Options";
 		String addon = "Addons";
 		config.load(); // load configs from its file
-		
+
 		// Entities
 		WeepingAngelsMod.entityWeepingAngelID = CoreUtil.getAndComment(config,
 				general, "EntityWeepingAngelID", "", 300);
@@ -131,40 +140,7 @@ public class WeepingAngelsMod {
 				achievement, "Scared of an Angel ID", "", 10000);
 		WeepingAngelsMod.angelAchieve2iD = CoreUtil.getAndComment(config,
 				achievement, "Slayed by an Angel ID", "", 10001);
-		// Blocks
-		WeepingAngelsMod.plinthBlockID = CoreUtil.getAndComment(config,
-				blockId, "PlinthBlockID", "", 3023);
-		WeepingAngelsMod.spawnBlockID = CoreUtil.getAndComment(config, blockId,
-				"SpawnBlockID", "", 3024);
-		// Items
-		WeepingAngelsMod.statueItemID = CoreUtil.getAndComment(config, itemId,
-				"StatueItemID", "", 12034);
-		WeepingAngelsMod.chrononID = CoreUtil
-				.getAndComment(
-						config,
-						itemId,
-						"Chronon Items",
-						"The item id for all chronon items.\nOnly active if an add-on is enabled.",
-						12035);
-		WeepingAngelsMod.vortexManID = CoreUtil
-				.getAndComment(
-						config,
-						itemId,
-						WeepingAngelsMod.vortexManName,
-						"The item id for the Vortex Manipulator.\nOnly active if add-on 'Vortex Manipulator' is enabled.",
-						12036);
-		WeepingAngelsMod.sonicScrewID = CoreUtil
-				.getAndComment(
-						config,
-						itemId,
-						WeepingAngelsMod.sonicScrewName,
-						"The item id for the Sonic Screwdriver.\nOnly active if add-on 'Sonic Screwdriver' is enabled.",
-						12037);
-		if (CG_Core.DEBUG)
-			WeepingAngelsMod.debugItemiD = CoreUtil.getAndComment(config,
-					itemId, WeepingAngelsMod.debugItemName,
-					"Only active in a development environment", 12038);
-		
+
 		// Stats
 		WeepingAngelsMod.canPoison = CoreUtil.getAndComment(config, angelStat,
 				"Angel Can Poison", "", true);
@@ -194,67 +170,46 @@ public class WeepingAngelsMod {
 		WeepingAngelsMod.addonSonic = CoreUtil.getAndComment(config, addon,
 				"Enable " + WeepingAngelsMod.sonicScrewName,
 				"Enable the add-on for the Sonic Screwdriver.", true);
-		
+
 		config.save();
-		/*
-		 * GameRegistry.registerWorldGenerator(new WorldGenerator());
-		 * VillagerRegistry.instance().registerVillageCreationHandler( new
-		 * VillageHandlerAngelDungeon()); try { if (new
-		 * CallableMinecraftVersion(null).minecraftVersion().equals( "1.6.4")) {
-		 * MapGenStructureIO.func_143031_a(ComponentAngelDungeon.class,
-		 * Reference.MOD_ID + ":AngelDungeon"); } } catch (Throwable e) {
-		 * 
-		 * }
-		 */
 	}
-	
-	@Mod.EventHandler
-	public void init(FMLInitializationEvent event) {
-		proxy.registerRenderThings();
-		
-		this.items();
-		this.blocks();
-		this.entities();
-		this.craftSmelt();
-		
-		WeepingAngelsMod.angelAchieve = new Achievement(
-				WeepingAngelsMod.angelAchieveiD, "AngelAchieve", -4, -7,
-				statue, null).setSpecial().registerAchievement();
-		LanguageRegistry.instance().addStringLocalization(
-				"achievement.AngelAchieve", "en_US", "Scared of an Angel");
-		LanguageRegistry.instance().addStringLocalization(
-				"achievement.AngelAchieve.desc", "en_US",
-				"The statue is coming. Don't Blink.");
-		
-		WeepingAngelsMod.angelAchieve2 = new Achievement(
-				WeepingAngelsMod.angelAchieve2iD, "AngelAchieve2", -1, -7,
-				statue, WeepingAngelsMod.angelAchieve).setSpecial()
-				.registerAchievement();
-		LanguageRegistry.instance().addStringLocalization(
-				"achievement.AngelAchieve2", "en_US", "Slayed by an Angel");
-		LanguageRegistry.instance().addStringLocalization(
-				"achievement.AngelAchieve2.desc", "en_US",
-				"I'm sorry. I'm so sorry But, you blinked.");
-		
-		NetworkRegistry.instance().registerGuiHandler(
-				WeepingAngelsMod.instance, new GuiHandler());
-		
-		this.iChun_Morph();
+
+	private void achievements() {
+		WeepingAngelsMod.angelAchieve = new Achievement("angelachieve",
+				"AngelAchieve", -4, -7, statue, null).setSpecial();
+		// TODO .registerAchievement();
+		// LanguageRegistry.instance().addStringLocalization(
+		// "achievement.AngelAchieve", "en_US", "Scared of an Angel");
+		// LanguageRegistry.instance().addStringLocalization(
+		// "achievement.AngelAchieve.desc", "en_US",
+		// "The statue is coming. Don't Blink.");
+
+		WeepingAngelsMod.angelAchieve2 = new Achievement("angelachieve2",
+				"AngelAchieve2", -1, -7, statue, WeepingAngelsMod.angelAchieve)
+				.setSpecial();
+		// TODO .registerAchievement();
+		// LanguageRegistry.instance().addStringLocalization(
+		// "achievement.AngelAchieve2", "en_US", "Slayed by an Angel");
+		// LanguageRegistry.instance().addStringLocalization(
+		// "achievement.AngelAchieve2.desc", "en_US",
+		// "I'm sorry. I'm so sorry But, you blinked.");
 	}
-	
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new EventHandler());
-		GameRegistry.registerPickupHandler(new EventHandler());
-		TickRegistry.registerTickHandler(new ServerTickHandler(), Side.SERVER);
+
+	private void handlers() {
+		GameRegistry.registerWorldGenerator(new WorldGenerator(), 0);
+		NetworkRegistry.INSTANCE.registerGuiHandler(WeepingAngelsMod.instance,
+				new GuiHandler());
+		//MinecraftForge.EVENT_BUS.register(new EventHandler());
+		FMLCommonHandler.instance().bus().register(new EventHandler());
+		// TODO GameRegistry.registerPickupHandler(new EventHandler());
 	}
-	
+
 	public void items() {
-		statue = (new ItemStatue(statueItemID, Reference.MOD_ID_LOWERCASE,
-				"Weeping Angel Statue", EntityStatue.class)).setCreativeTab(
-				CreativeTabs.tabMisc).setMaxStackSize(64);
+		statue = (new ItemStatue(Reference.MOD_ID, "Weeping Angel Statue",
+				EntityStatue.class)).setCreativeTab(CreativeTabs.tabMisc)
+				.setMaxStackSize(64);
 		// LanguageRegistry.addName(statue, "Weeping Angel Statue");
-		
+
 		if (this.addonVortex || this.addonSonic) {
 			this.chronon();
 		}
@@ -262,76 +217,78 @@ public class WeepingAngelsMod {
 			this.vortex();
 		if (this.addonSonic)
 			this.sonic();
-		
-		if (CG_Core.DEBUG)
-			WeepingAngelsMod.debugItem = new ItemWADebug(
-					WeepingAngelsMod.debugItemiD, Reference.MOD_ID,
+
+		if (Core.DEBUG)
+			WeepingAngelsMod.debugItem = new ItemWADebug(Reference.MOD_ID,
 					WeepingAngelsMod.debugItemName);
-		
+
 	}
-	
+
 	private void chronon() {
-		WeepingAngelsMod.chronon = new ItemMetadataBase(
-				WeepingAngelsMod.chrononID, Reference.MOD_ID_LOWERCASE,
+		WeepingAngelsMod.chronon = new ItemMetadataBase(Reference.MOD_ID,
 				new String[] { WeepingAngelsMod.chrononDustName,
 						WeepingAngelsMod.chrononDiamondName,
 						WeepingAngelsMod.chrononMetalName });
 		WeepingAngelsMod.chronon.setCreativeTab(CreativeTabs.tabMaterials);
 		// Chronon Diamond
 		GameRegistry.addShapelessRecipe(new ItemStack(WeepingAngelsMod.chronon,
-				1, 1), new Object[] { Item.diamond,
+				1, 1), new Object[] { Items.diamond,
 				new ItemStack(WeepingAngelsMod.chronon, 1, 0),
 				new ItemStack(WeepingAngelsMod.chronon, 1, 0) });
 		// Chronon Metal
-		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.chronon, 1, 2),
-				new Object[] { "xxx", "ccc", "xxx", 'x', Item.ingotIron, 'c',
+		GameRegistry.addRecipe(
+				new ItemStack(WeepingAngelsMod.chronon, 1, 2),
+				new Object[] { "xxx", "ccc", "xxx", 'x',
+						Items.iron_ingot, 'c',
 						// Chronon Diamond
 						new ItemStack(WeepingAngelsMod.chronon, 1, 1) });
-		
+
 	}
-	
+
 	private void vortex() {
-		WeepingAngelsMod.vortexMan = new ItemVortex(
-				WeepingAngelsMod.vortexManID, Reference.MOD_ID,
+		WeepingAngelsMod.vortexMan = new ItemVortex(Reference.MOD_ID,
 				WeepingAngelsMod.vortexManName);
 		WeepingAngelsMod.vortexMan.setCreativeTab(CreativeTabs.tabTools);
 		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.vortexMan),
 				new Object[] { "xxx", "xcx", "xxx", 'x',
 						new ItemStack(WeepingAngelsMod.chronon, 1, 2), 'c',
-						Item.eyeOfEnder });
+						Items.ender_eye });
 	}
-	
+
 	private void sonic() {
-		WeepingAngelsMod.sonicScrew = new ItemSonic(
-				WeepingAngelsMod.sonicScrewID, Reference.MOD_ID,
+		WeepingAngelsMod.sonicScrew = new ItemSonic(Reference.MOD_ID,
 				WeepingAngelsMod.sonicScrewName);
 		WeepingAngelsMod.sonicScrew.setCreativeTab(CreativeTabs.tabTools);
-		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.sonicScrew),
-				new Object[] { " ge", "lig", "rl ", 'g', Item.ingotGold, 'e',
-						Item.emerald, 'l', Item.leather, 'i', Item.ingotIron,
-						'r', Item.redstone });
+		GameRegistry.addRecipe(
+				new ItemStack(WeepingAngelsMod.sonicScrew),
+				new Object[] { " ge", "lig", "rl ", 'g',
+						Items.gold_ingot, 'e',
+						Items.emerald, 'l',
+						Items.leather, 'i',
+						Items.iron_ingot, 'r',
+						Items.redstone });
 	}
-	
+
 	public void blocks() {
-		plinthBlock = (new BlockPlinth(plinthBlockID, TileEntityPlinth.class,
-				Material.rock)).setHardness(2.0F).setResistance(10F)
-				.setStepSound(Block.soundStoneFootstep)
-				.setUnlocalizedName("Plinth");
+		plinthBlock = new BlockPlinth(TileEntityPlinth.class, Material.rock);
+		plinthBlock.setHardness(2.0F).setResistance(10F);
+		plinthBlock.setStepSound(Block.soundTypeStone);
+		plinthBlock.setBlockName("Plinth");
 		GameRegistry.registerBlock(plinthBlock, "Plinth");
-		LanguageRegistry.addName(plinthBlock, "Plinth");
+		// LanguageRegistry.addName(plinthBlock, "Plinth");
 		GameRegistry.registerTileEntity(TileEntityPlinth.class,
 				"TileEntityPlinth");
-		
-		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn(spawnBlockID, 1)
-				.setHardness(0.5F).setUnlocalizedName("weepingangelspawn")
-				.setCreativeTab(CreativeTabs.tabMisc);
-		LanguageRegistry.addName(blockWeepingAngelSpawn,
-				"Weeping Angel Spawn Block");
+
+		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn().setHardness(0.5F);
+		blockWeepingAngelSpawn.setBlockName("weepingangelspawn");
+		blockWeepingAngelSpawn.setCreativeTab(CreativeTabs.tabMisc);
+		// LanguageRegistry.addName(blockWeepingAngelSpawn,
+		// "Weeping Angel Spawn Block");
 		GameRegistry.registerBlock(blockWeepingAngelSpawn,
 				"Weeping Angel Spawn Block");
-		
+
 	}
-	
+
 	public void entities() {
 		// Register all entities, blocks and items to game
 		// Weeping Angel Entity
@@ -343,45 +300,41 @@ public class WeepingAngelsMod {
 				entityWeepingAngelID, 0x808080, 0xD1D1D1));
 		if (spawnRate > 0) {
 			EntityRegistry.addSpawn(EntityWeepingAngel.class, spawnRate, 1,
-					maxSpawn, EnumCreatureType.monster, new BiomeGenBase[] {
-							BiomeGenBase.iceMountains, BiomeGenBase.icePlains,
-							BiomeGenBase.taiga, BiomeGenBase.desert,
-							BiomeGenBase.desertHills, BiomeGenBase.plains,
-							BiomeGenBase.taiga, BiomeGenBase.taigaHills,
-							BiomeGenBase.swampland, BiomeGenBase.beach,
-							BiomeGenBase.river, BiomeGenBase.frozenRiver,
-							BiomeGenBase.extremeHills,
-							BiomeGenBase.extremeHillsEdge });
+					maxSpawn, EnumCreatureType.monster,
+					BiomeGenBase.beach);
 		}
-		LanguageRegistry.instance().addStringLocalization(
-				"entity.WeepingAngels.Weeping Angel.name", "Weeping Angel");
-		
+		// LanguageRegistry.instance().addStringLocalization(
+		// "entity.WeepingAngels.Weeping Angel.name", "Weeping Angel");
+
 	}
-	
+
 	public void craftSmelt() {
 		GameRegistry.addRecipe(new ShapedOreRecipe(
 				WeepingAngelsMod.blockWeepingAngelSpawn, new Object[] { "xxx",
 						"xcx", "xxx", Character.valueOf('x'), "stone",
 						Character.valueOf('c'), WeepingAngelsMod.statue }));
 	}
-	
+
 	@Mod.EventHandler
-	public void onServerStarting(FMLServerStartingEvent event) {
-		GameRegistry.registerPlayerTracker(new EventHandler());
-		
+	public void init(FMLInitializationEvent event) {
+		this.iChun_Morph();
 	}
-	
+
 	private void iChun_Morph() {
-		if (CG_Core.isMorphLoaded()) {
-			morph.api.Ability.registerAbility("timelock",
-					MorphAbilityTimeLock.class);
-			
-			morph.api.Ability.mapAbilities(EntityWeepingAngel.class,
-					new MorphAbilityTimeLock(),
-					new morph.common.ability.AbilityStep(3.0F),
-					new morph.common.ability.AbilityHostile(),
-					new morph.common.ability.AbilityFireImmunity());
-		}
+		/*
+		 * if (CG_Core.isMorphLoaded()) {
+		 * morph.api.Ability.registerAbility("timelock",
+		 * MorphAbilityTimeLock.class);
+		 * 
+		 * morph.api.Ability.mapAbilities(EntityWeepingAngel.class, new
+		 * MorphAbilityTimeLock(), new morph.common.ability.AbilityStep(3.0F),
+		 * new morph.common.ability.AbilityHostile(), new
+		 * morph.common.ability.AbilityFireImmunity()); }
+		 */
 	}
-	
+
+	@Mod.EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
+	}
+
 }

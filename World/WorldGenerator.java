@@ -1,4 +1,4 @@
-package WeepingAngels.World;
+package com.countrygamer.weepingangels.World;
 
 import java.util.Random;
 
@@ -24,8 +24,8 @@ public class WorldGenerator implements IWorldGenerator {
 		int xCoord = blockX + rand.nextInt(16);
 		int zCoord = blockZ + rand.nextInt(16);
 		int yCoord = rand.nextInt(80);
-		//(new WorldGenAngelDungeon()).generate(world, rand, xCoord, yCoord,
-		//		zCoord);
+		(new WorldGenAngelDungeon()).generate(world, rand, xCoord, yCoord,
+				zCoord);
 	}
 
 }

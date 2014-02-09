@@ -1,10 +1,10 @@
-package WeepingAngels.Handlers;
+package com.countrygamer.weepingangels.Handlers;
 
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
-import net.minecraftforge.event.ForgeSubscribe;
-import WeepingAngels.lib.Reference;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import com.countrygamer.weepingangels.lib.Reference;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class SoundEventHandler {
 	// Sound Events
@@ -15,15 +15,16 @@ public class SoundEventHandler {
 	 * 
 	 * @param event
 	 */
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onSound(SoundLoadEvent event) {
-		event.manager.addSound(Reference.BASE_TEX + "crumble.ogg");
-		event.manager.addSound(Reference.BASE_TEX + "light.ogg");
-		event.manager.addSound(Reference.BASE_TEX + "stone1.ogg");
-		event.manager.addSound(Reference.BASE_TEX + "stone2.ogg");
-		event.manager.addSound(Reference.BASE_TEX + "stone3.ogg");
-		event.manager.addSound(Reference.BASE_TEX + "stone4.ogg");
-		event.manager.addSound(Reference.BASE_TEX + "teleport_activate.ogg");
+		// TODO
+		// event.manager.addSound(Reference.BASE_TEX + "crumble.ogg");
+		// event.manager.addSound(Reference.BASE_TEX + "light.ogg");
+		// event.manager.addSound(Reference.BASE_TEX + "stone1.ogg");
+		// event.manager.addSound(Reference.BASE_TEX + "stone2.ogg");
+		// event.manager.addSound(Reference.BASE_TEX + "stone3.ogg");
+		// event.manager.addSound(Reference.BASE_TEX + "stone4.ogg");
+		// event.manager.addSound(Reference.BASE_TEX + "teleport_activate.ogg");
 		/*
 		 * // Args: entity, sound, volume (relative to 1.0), and frequency (or
 		 * pitch, also relative to 1.0)
@@ -32,5 +33,5 @@ public class SoundEventHandler {
 		 * the number when using playSound!
 		 */
 	}
-	
+
 }

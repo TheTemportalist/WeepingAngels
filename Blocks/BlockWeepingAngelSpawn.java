@@ -1,26 +1,24 @@
-package WeepingAngels.Blocks;
+package com.countrygamer.weepingangels.Blocks;
 
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import WeepingAngels.WeepingAngelsMod;
-import WeepingAngels.Entity.EntityWeepingAngel;
+
+import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockWeepingAngelSpawn extends Block {
 
-	public BlockWeepingAngelSpawn(int i, int j) {
-		super(i, Material.rock);
+	public BlockWeepingAngelSpawn() {
+		super(Material.rock);
 	}
 
 	/*
@@ -28,8 +26,8 @@ public class BlockWeepingAngelSpawn extends Block {
 	 * mod_WeepingAngel.statue.shiftedIndex; }
 	 */
 
-	public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-		if (l > 0 && Block.blocksList[l].canProvidePower()
+	public void onNeighborBlockChange(World world, int i, int j, int k, Block l) {
+		if (l != null && l.canProvidePower()
 				&& world.isBlockIndirectlyGettingPowered(i, j, k)) {
 			int a1 = world.getEntitiesWithinAABB(
 					EntityWeepingAngel.class,
@@ -57,8 +55,9 @@ public class BlockWeepingAngelSpawn extends Block {
 		world.spawnEntityInWorld(ewp);
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
+	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		this.blockIcon = par1IconRegister.registerIcon("stone");
 	}
 	

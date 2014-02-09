@@ -1,19 +1,21 @@
-package WeepingAngels.Entity;
+package com.countrygamer.weepingangels.Entity;
 
-import WeepingAngels.WeepingAngelsMod;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.item.Item;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import com.countrygamer.weepingangels.WeepingAngelsMod;
+
 public class EntityStatue extends EntityLiving {
-	public int dropId;
+	public Item dropId;
 	public Class livingEntity;
 
 	public EntityStatue(World world) {
 		super(world);
-		dropId = WeepingAngelsMod.statue.itemID;
+		dropId = WeepingAngelsMod.statue;
 		livingEntity = EntityWeepingAngel.class;
 
 	}

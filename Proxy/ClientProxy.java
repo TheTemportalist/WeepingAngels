@@ -1,26 +1,25 @@
-package WeepingAngels.Proxy;
+package com.countrygamer.weepingangels.proxy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
-import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import WeepingAngels.Client.Render.RenderWeepingAngel;
-import WeepingAngels.Client.Render.RenderWeepingAngelStatue;
-import WeepingAngels.Client.Render.TileEntityPlinthRenderer;
-import WeepingAngels.Entity.EntityStatue;
-import WeepingAngels.Entity.EntityWeepingAngel;
-import WeepingAngels.Handlers.ClientTickHandler;
-import WeepingAngels.Handlers.HUDOverlay;
-import WeepingAngels.Handlers.SoundEventHandler;
+
+import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
+import com.countrygamer.weepingangels.Client.Render.RenderWeepingAngel;
+import com.countrygamer.weepingangels.Client.Render.RenderWeepingAngelStatue;
+import com.countrygamer.weepingangels.Client.Render.TileEntityPlinthRenderer;
+import com.countrygamer.weepingangels.Entity.EntityStatue;
+import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
+import com.countrygamer.weepingangels.Handlers.HUDOverlay;
+import com.countrygamer.weepingangels.Handlers.SoundEventHandler;
+
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 public class ClientProxy extends ServerProxy {
 
 	@Override
 	public void registerRenderThings() {
-		TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
+		//TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
 
 		RenderingRegistry.registerEntityRenderingHandler(
 				EntityWeepingAngel.class, new RenderWeepingAngel(0.5f));

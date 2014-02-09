@@ -1,21 +1,23 @@
-package WeepingAngels.Client.Render;
+package com.countrygamer.weepingangels.Client.Render;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.src.ModLoader;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import WeepingAngels.WeepingAngelsMod;
-import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import WeepingAngels.Client.Model.ModelWeepingAngel;
-import WeepingAngels.Entity.EntityStatue;
-import WeepingAngels.lib.Reference;
+import com.countrygamer.weepingangels.WeepingAngelsMod;
+import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
+import com.countrygamer.weepingangels.Client.Model.ModelWeepingAngel;
+import com.countrygamer.weepingangels.Entity.EntityStatue;
+import com.countrygamer.weepingangels.lib.Reference;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -105,7 +107,7 @@ public class TileEntityPlinthRenderer extends TileEntitySpecialRenderer
         GL11.glPushMatrix();
         GL11.glScalef(f1, -f1, -f1);
         GL11.glPopMatrix();
-        FontRenderer fontrenderer = getFontRenderer();
+        FontRenderer fontrenderer = this.func_147498_b();
         float f3 = 0.01666667F * f1;
         GL11.glTranslatef(0.0F, 0.5F * f1, 0.07F * f1);
         GL11.glScalef(f3, -f3, f3);
@@ -130,10 +132,10 @@ public class TileEntityPlinthRenderer extends TileEntitySpecialRenderer
         GL11.glPopMatrix();
     }
 
-    private EntityStatue LoadStatue(int i)
+    private EntityStatue LoadStatue(Item i)
     {
-        World world = ModLoader.getMinecraftServerInstance().worldServers[0];
-        if(i == WeepingAngelsMod.statue.itemID)
+        World world = DimensionManager.getWorlds()[0];
+        if(i == WeepingAngelsMod.statue)
         {
             return new EntityStatue(world);
         }
@@ -158,7 +160,7 @@ public class TileEntityPlinthRenderer extends TileEntitySpecialRenderer
         //signModel.signStick.showModel = false;
         //signModel.renderSign();
         GL11.glPopMatrix();
-        FontRenderer fontrenderer = getFontRenderer();
+        FontRenderer fontrenderer = this.func_147498_b();
         float f3 = 0.01666667F * f1;
         GL11.glTranslatef(0.0F, 0.5F * f1, 0.07F * f1);
         GL11.glScalef(f3, -f3, f3);

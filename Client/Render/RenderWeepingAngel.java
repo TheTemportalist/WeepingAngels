@@ -1,13 +1,14 @@
-package WeepingAngels.Client.Render;
+package com.countrygamer.weepingangels.Client.Render;
 
-import WeepingAngels.WeepingAngelsMod;
-import WeepingAngels.Client.Model.ModelWeepingAngel;
-import WeepingAngels.Entity.EntityWeepingAngel;
-import WeepingAngels.lib.Reference;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
+
+import com.countrygamer.weepingangels.Client.Model.ModelWeepingAngel;
+import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
+import com.countrygamer.weepingangels.lib.Reference;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -38,7 +39,7 @@ public class RenderWeepingAngel extends RenderLiving {
 			// "Render: Is angry");
 			this.textureToUse = Reference.weepingAngelTex;
 		}
-		super.doRenderLiving(angel, d, d1, d2, f, f1);
+		super.doRender(angel, d, d1, d2, f, f1);
 	}
 
 	public void doRenderLiving(EntityLiving entityliving, double d, double d1,

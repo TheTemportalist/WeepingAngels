@@ -1,45 +1,46 @@
-package WeepingAngels.Items;
+package com.countrygamer.weepingangels.Items;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import CountryGamer_Core.Client.ParticleEffects;
-import CountryGamer_Core.Items.ItemBase;
-import CountryGamer_Core.lib.CoreUtil;
-import WeepingAngels.WeepingAngelsMod;
+
+import com.countrygamer.countrygamer_core.Items.ItemBase;
+import com.countrygamer.countrygamer_core.lib.CoreUtil;
+import com.countrygamer.weepingangels.WeepingAngelsMod;
 
 public class ItemVortex extends ItemBase {
-	
-	public static String	modeTag	= "MODE";
-	
-	public ItemVortex(int id, String modid, String name) {
-		super(id, modid, name);
+
+	public static String modeTag = "MODE";
+
+	public ItemVortex(String modid, String name) {
+		super(modid, name);
 		this.setMaxStackSize(1);
 	}
-	
+
 	public ItemStack onItemRightClick(ItemStack itemStack, World world,
 			EntityPlayer player) {
-		
+
 		// prevents null pointers if player scrolls too fast
-		if (itemStack.itemID == this.itemID) {
-			
+		if (itemStack.getItem() == this) {
+
 			NBTTagCompound tagCom = itemStack.getTagCompound();
 			boolean mode = tagCom.getBoolean(this.modeTag);
 			if (player.isSneaking()) {
 				boolean newMode = !mode;
-				
+
 				tagCom.setBoolean(this.modeTag, newMode);
 				itemStack.setTagCompound(tagCom);
-				
+
 				String message = "The Vortex Manipulator is now in ";
 				if (!world.isRemote)
-					if (newMode)
-						player.addChatMessage(message + "RANDOM mode");
-					else
-						player.addChatMessage(message + "CONTROLLED mode");
+					if (newMode) {
+						// TODO player.addChatMessage(message + "RANDOM mode");
+					} else {
+						// TODO player.addChatMessage(message +
+						// "CONTROLLED mode");
+					}
 			} else {
 				// TODO teleportation types
 				if (mode) { // Random
@@ -52,11 +53,11 @@ public class ItemVortex extends ItemBase {
 							(int) player.posZ);
 				}
 			}
-			
+
 		}
 		return itemStack;
 	}
-	
+
 	@Override
 	public void onUpdate(ItemStack itemStack, World world, Entity entity,
 			int par4, boolean isCurrentItem) {
@@ -68,5 +69,5 @@ public class ItemVortex extends ItemBase {
 			}
 		}
 	}
-	
+
 }

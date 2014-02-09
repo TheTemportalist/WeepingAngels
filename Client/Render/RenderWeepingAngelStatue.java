@@ -1,11 +1,13 @@
-package WeepingAngels.Client.Render;
+package com.countrygamer.weepingangels.Client.Render;
 
 
-import WeepingAngels.Client.Model.ModelWeepingAngel;
-import WeepingAngels.lib.Reference;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+
+import com.countrygamer.weepingangels.Client.Model.ModelWeepingAngel;
+import com.countrygamer.weepingangels.lib.Reference;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

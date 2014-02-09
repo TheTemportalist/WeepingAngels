@@ -1,16 +1,13 @@
-package WeepingAngels.Morph;
+package com.countrygamer.weepingangels.Morph;
 
-import WeepingAngels.lib.Util;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import morph.api.Ability;
-import morph.common.Morph;
-import morph.common.core.ObfHelper;
-import morph.common.morph.MorphInfo;
-import net.minecraft.entity.Entity;
+import javax.media.j3d.Morph;
+
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+
+import com.countrygamer.weepingangels.lib.Util;
 
 public class MorphAbilityTimeLock extends Ability {
 

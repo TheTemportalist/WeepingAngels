@@ -1,12 +1,13 @@
-package WeepingAngels.Handlers.Player;
+package com.countrygamer.weepingangels.Handlers.Player;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
-import WeepingAngels.WeepingAngelsMod;
-import WeepingAngels.Handlers.HUDOverlay;
+
+import com.countrygamer.weepingangels.WeepingAngelsMod;
+import com.countrygamer.weepingangels.Handlers.HUDOverlay;
 
 public class ExtendedPlayer implements IExtendedEntityProperties {
 

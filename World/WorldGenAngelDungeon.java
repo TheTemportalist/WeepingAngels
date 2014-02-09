@@ -1,4 +1,4 @@
-package WeepingAngels.World;
+package com.countrygamer.weepingangels.World;
 
 import java.util.Random;
 
@@ -12,5 +12,5 @@ public class WorldGenAngelDungeon extends WorldGenerator {
 		
 		return false;
 	}
-
+	
 }

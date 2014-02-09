@@ -1,37 +1,48 @@
-package WeepingAngels.Handlers.Packet;
+package com.countrygamer.weepingangels.Handlers.Packet;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import CountryGamer_Core.lib.CoreUtil;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
 
-public class PacketHandler implements IPacketHandler {
+import com.countrygamer.countrygamer_core.Handler.AbstractPacket;
+
+public class VortexNBTPacket extends AbstractPacket {
 
 	@Override
-	public void onPacketData(INetworkManager manager,
-			Packet250CustomPayload packet, Player player) {
-		DataInputStream inputStream = new DataInputStream(
-				new ByteArrayInputStream(packet.data));
-		if (packet.channel.equals("WepAng_vortex")) {
-			this.handleVortex(inputStream, packet, (EntityPlayer) player);
-		} else if (packet.channel.equals("WepAng_statue")) {
-			// handleStatue(packet); //TODO
-		}
+	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	private void handleVortex(DataInputStream inputStream,
-			Packet250CustomPayload packet, EntityPlayer player) {
+	@Override
+	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleClientSide(EntityPlayer player) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void handleServerSide(EntityPlayer player) {
+		// TODO Auto-generated method stub
+
+	}
+
+	// Util
+	private void handleVortex(DataInputStream inputStream, EntityPlayer player) {
 		try {
 			ItemStack stack = this.readItemStack(inputStream);
 			NBTTagCompound tagCom = stack.getTagCompound();
@@ -52,7 +63,7 @@ public class PacketHandler implements IPacketHandler {
 		if (short1 >= 0) {
 			byte b0 = par0DataInput.readByte();
 			short short2 = par0DataInput.readShort();
-			itemstack = new ItemStack(short1, b0, short2);
+			itemstack = new ItemStack(Item.getItemById(short1), b0, short2);
 			itemstack.stackTagCompound = readNBTTagCompound(par0DataInput);
 
 			System.out.println("[RECIEVING]itemstack stacksize: " + b0);
@@ -82,7 +93,8 @@ public class PacketHandler implements IPacketHandler {
 		if (par0ItemStack == null) {
 			par1DataOutput.writeShort(-1);
 		} else {
-			par1DataOutput.writeShort(par0ItemStack.itemID);
+			par1DataOutput.writeShort(Item.getIdFromItem(par0ItemStack
+					.getItem()));
 			par1DataOutput.writeByte(par0ItemStack.stackSize);
 			par1DataOutput.writeShort(par0ItemStack.getItemDamage());
 			NBTTagCompound nbttagcompound = null;
@@ -94,8 +106,8 @@ public class PacketHandler implements IPacketHandler {
 
 			writeNBTTagCompound(nbttagcompound, par1DataOutput);
 
-			System.out
-					.println("[SENDING]itemstack id: " + par0ItemStack.itemID);
+			System.out.println("[SENDING]itemstack item: "
+					+ par0ItemStack.getItem().getUnlocalizedName());
 			System.out.println("[SENDING]itemstack stacksize: "
 					+ par0ItemStack.stackSize);
 			System.out.println("[SENDING]itemstack damage: "

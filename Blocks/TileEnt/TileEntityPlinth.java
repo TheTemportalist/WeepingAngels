@@ -1,29 +1,28 @@
-package WeepingAngels.Blocks.TileEnt;
+package com.countrygamer.weepingangels.Blocks.TileEnt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.countrygamer.weepingangels.WeepingAngelsMod;
+import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import CountryGamer_Core.CG_Core;
-import WeepingAngels.WeepingAngelsMod;
-import WeepingAngels.Entity.EntityWeepingAngel;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityPlinth extends TileEntity {
-	public int statueType = WeepingAngelsMod.statue.itemID;
+	public Item statueType = WeepingAngelsMod.statue;
 	public String signText[] = { "", "" };
 	public int lineBeingEdited;
 	private boolean isEditable;
@@ -68,7 +67,7 @@ public class TileEntityPlinth extends TileEntity {
 		nbttagcompound.setByte("rotation", (byte) (this.rotation & 255));
 		nbttagcompound.setString("Text1", signText[0]);
 		nbttagcompound.setString("Text2", signText[1]);
-		nbttagcompound.setInteger("Type", statueType);
+		nbttagcompound.setInteger("Type", Item.getIdFromItem(statueType));
 		nbttagcompound.setBoolean("activated", canBeActivated);
 		if (statueEntity != null) {
 			NBTTagCompound var1 = new NBTTagCompound();
@@ -88,38 +87,15 @@ public class TileEntityPlinth extends TileEntity {
 			}
 		}
 
-		this.statueType = nbttagcompound.getInteger("Type");
+		this.statueType = Item.getItemById(nbttagcompound.getInteger("Type"));
 		this.rotation = nbttagcompound.getByte("rotation");
 		this.canBeActivated = nbttagcompound.getBoolean("activated");
 		if (nbttagcompound.hasKey("entityStored")) {
 			this.statueEntity.readFromNBT(nbttagcompound);
 		}
-		//if (CG_Core.DEBUG)
-		//	WeepingAngelsMod.log.info("rotation: " + this.rotation
-		//			+ " Active: " + this.canBeActivated);
-	}
-
-	/**
-	 * Overriden in a sign to provide the text.
-	 */
-	public Packet getDescriptionPacket() {
-		NBTTagCompound var1 = new NBTTagCompound();
-		this.writeToNBT(var1);
-		return new Packet132TileEntityData(this.xCoord, this.yCoord,
-				this.zCoord, 4, var1);
-	}
-
-	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		this.readFromNBT(pkt.data);
-		/*
-		 * NBTTagCompound compundTag = pkt.customParam1; this.statueType =
-		 * compundTag.getInteger("Type"); this.rotation =
-		 * compundTag.getByte("rotation"); this.signText[0] =
-		 * compundTag.getString("Text1"); this.signText[1] =
-		 * compundTag.getString("Text2"); this.canBeActivated =
-		 * compundTag.getBoolean("activated");
-		 */
+		// if (CG_Core.DEBUG)
+		// WeepingAngelsMod.log.info("rotation: " + this.rotation
+		// + " Active: " + this.canBeActivated);
 	}
 
 	public void setRotation(int par1) {
@@ -147,13 +123,13 @@ public class TileEntityPlinth extends TileEntity {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public int getStatueType() {
+	public Item getStatueType() {
 		return this.statueType;
 	}
 
 	public void ComeToLife(World world, int i, int j, int k) {
 		TileEntityPlinth tileentityplinth = (TileEntityPlinth) world
-				.getBlockTileEntity(i, j, k);
+				.getTileEntity(i, j, k);
 		int var = tileentityplinth.getBlockMetadata();
 		if (var == 1) {
 			EntityLiving entityliving = null;
@@ -162,15 +138,15 @@ public class TileEntityPlinth extends TileEntity {
 				entityliving = (EntityLiving) class1.getDeclaredConstructors()[0]
 						.newInstance(new Object[] { world });
 			} catch (InstantiationException instantiationexception) {
-				FMLLog.log(Level.SEVERE, instantiationexception.getMessage());
+				//FMLLog.log(Level.SEVERE, instantiationexception.getMessage());
 			} catch (IllegalAccessException illegalaccessexception) {
-				FMLLog.log(Level.SEVERE, illegalaccessexception.getMessage());
+				//FMLLog.log(Level.SEVERE, illegalaccessexception.getMessage());
 			} catch (IllegalArgumentException illegalargumentexception) {
-				FMLLog.log(Level.SEVERE, illegalargumentexception.getMessage());
+				//FMLLog.log(Level.SEVERE, illegalargumentexception.getMessage());
 			} catch (InvocationTargetException invocationtargetexception) {
-				FMLLog.log(Level.SEVERE, invocationtargetexception.getMessage());
+				//FMLLog.log(Level.SEVERE, invocationtargetexception.getMessage());
 			} catch (SecurityException securityexception) {
-				FMLLog.log(Level.SEVERE, securityexception.getMessage());
+				//FMLLog.log(Level.SEVERE, securityexception.getMessage());
 			}
 			entityliving.setPositionAndRotation(i + 0.5, j + 0.5, k + 0.5,
 					(float) (tileentityplinth.getRotation() * 360) / 16f, 0.0F);
@@ -178,8 +154,8 @@ public class TileEntityPlinth extends TileEntity {
 				world.spawnEntityInWorld(entityliving);
 			tileentityplinth.setActivated(false);
 			tileentityplinth.validate();
-			world.setBlockTileEntity(i, j, k, tileentityplinth);
-			world.setBlock(i, j, k, Block.stoneSingleSlab.blockID,
+			world.setTileEntity(i, j, k, tileentityplinth);
+			world.setBlock(i, j, k, Blocks.stone_slab,
 					world.getBlockMetadata(i, j, k), 3);
 		}
 

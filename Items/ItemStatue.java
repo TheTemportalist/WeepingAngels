@@ -1,28 +1,28 @@
-package WeepingAngels.Items;
+package com.countrygamer.weepingangels.Items;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import CountryGamer_Core.CG_Core;
-import CountryGamer_Core.Items.ItemBase;
-import WeepingAngels.WeepingAngelsMod;
-import WeepingAngels.Blocks.TileEnt.TileEntityPlinth;
-import WeepingAngels.Entity.EntityStatue;
-import WeepingAngels.lib.Util;
+
+import com.countrygamer.countrygamer_core.Items.ItemBase;
+import com.countrygamer.weepingangels.WeepingAngelsMod;
+import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
+import com.countrygamer.weepingangels.Entity.EntityStatue;
+import com.countrygamer.weepingangels.lib.Util;
 
 public class ItemStatue extends ItemBase {
 	private Class statue;
 	private int armorId;
 	public int statueYaw = 0;
 
-	public ItemStatue(int id, String modid, String name, Class class1) {
-		super(id, modid, name);
+	public ItemStatue(String modid, String name, Class class1) {
+		super(modid, name);
 		statue = class1;
 	}
 
-	public ItemStatue(int i, String modid, String name, Class class1, int j) {
-		this(i, modid, name, class1);
+	public ItemStatue(String modid, String name, Class class1, int j) {
+		this(modid, name, class1);
 		armorId = j;
 	}
 
@@ -33,7 +33,7 @@ public class ItemStatue extends ItemBase {
 		if (l == 0) {
 			return false;
 		}
-		if (!world.getBlockMaterial(i, j, k).isSolid()) {
+		if (!world.getBlock(i, j, k).getMaterial().isSolid()) {
 			return false;
 		}
 		if (l == 1) {
@@ -57,15 +57,15 @@ public class ItemStatue extends ItemBase {
 		if (l == 1) {
 			statueYaw = MathHelper
 					.floor_double((double) ((entityplayer.rotationYaw + 180f) * 16.0F / 360.0F) + 0.5D) & 15;
-			world.setBlock(i, j, k, WeepingAngelsMod.plinthBlock.blockID, 1, 3);
+			world.setBlock(i, j, k, WeepingAngelsMod.plinthBlock, 1, 3);
 		} else {
-			world.setBlock(i, j, k, WeepingAngelsMod.plinthBlock.blockID, l, 3);
+			world.setBlock(i, j, k, WeepingAngelsMod.plinthBlock, l, 3);
 		}
 		EntityStatue entitystatue = null;
 		entitystatue = Util.getEntityStatue(world, statue);
 		if (entitystatue != null) {
 			TileEntityPlinth tileentityplinth = (TileEntityPlinth) world
-					.getBlockTileEntity(i, j, k);
+					.getTileEntity(i, j, k);
 			tileentityplinth.setRotation(statueYaw);
 			tileentityplinth.statueType = entitystatue.dropId;
 			itemstack.stackSize--;
