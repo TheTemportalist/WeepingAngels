@@ -48,10 +48,6 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION)
-// @NetworkMod(clientSideRequired = true, serverSideRequired = true, channels =
-// {
-// "WepAng_statue", "WepAng_teleport", "WepAng_vortex" }, packetHandler =
-// PacketHandler.class)
 public class WeepingAngelsMod {
 
 	public static final Logger log = Logger.getLogger("WeepingAngels");
@@ -176,30 +172,19 @@ public class WeepingAngelsMod {
 
 	private void achievements() {
 		WeepingAngelsMod.angelAchieve = new Achievement("angelachieve",
-				"AngelAchieve", -4, -7, statue, null).setSpecial();
-		// TODO .registerAchievement();
-		// LanguageRegistry.instance().addStringLocalization(
-		// "achievement.AngelAchieve", "en_US", "Scared of an Angel");
-		// LanguageRegistry.instance().addStringLocalization(
-		// "achievement.AngelAchieve.desc", "en_US",
-		// "The statue is coming. Don't Blink.");
+				"AngelAchieve", -4, -7, statue, null).setSpecial()
+				.registerStat();
 
 		WeepingAngelsMod.angelAchieve2 = new Achievement("angelachieve2",
 				"AngelAchieve2", -1, -7, statue, WeepingAngelsMod.angelAchieve)
-				.setSpecial();
-		// TODO .registerAchievement();
-		// LanguageRegistry.instance().addStringLocalization(
-		// "achievement.AngelAchieve2", "en_US", "Slayed by an Angel");
-		// LanguageRegistry.instance().addStringLocalization(
-		// "achievement.AngelAchieve2.desc", "en_US",
-		// "I'm sorry. I'm so sorry But, you blinked.");
+				.setSpecial().registerStat();
 	}
 
 	private void handlers() {
 		GameRegistry.registerWorldGenerator(new WorldGenerator(), 0);
 		NetworkRegistry.INSTANCE.registerGuiHandler(WeepingAngelsMod.instance,
 				new GuiHandler());
-		//MinecraftForge.EVENT_BUS.register(new EventHandler());
+		// MinecraftForge.EVENT_BUS.register(new EventHandler());
 		FMLCommonHandler.instance().bus().register(new EventHandler());
 		// TODO GameRegistry.registerPickupHandler(new EventHandler());
 	}
@@ -236,10 +221,8 @@ public class WeepingAngelsMod {
 				new ItemStack(WeepingAngelsMod.chronon, 1, 0),
 				new ItemStack(WeepingAngelsMod.chronon, 1, 0) });
 		// Chronon Metal
-		GameRegistry.addRecipe(
-				new ItemStack(WeepingAngelsMod.chronon, 1, 2),
-				new Object[] { "xxx", "ccc", "xxx", 'x',
-						Items.iron_ingot, 'c',
+		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.chronon, 1, 2),
+				new Object[] { "xxx", "ccc", "xxx", 'x', Items.iron_ingot, 'c',
 						// Chronon Diamond
 						new ItemStack(WeepingAngelsMod.chronon, 1, 1) });
 
@@ -259,14 +242,10 @@ public class WeepingAngelsMod {
 		WeepingAngelsMod.sonicScrew = new ItemSonic(Reference.MOD_ID,
 				WeepingAngelsMod.sonicScrewName);
 		WeepingAngelsMod.sonicScrew.setCreativeTab(CreativeTabs.tabTools);
-		GameRegistry.addRecipe(
-				new ItemStack(WeepingAngelsMod.sonicScrew),
-				new Object[] { " ge", "lig", "rl ", 'g',
-						Items.gold_ingot, 'e',
-						Items.emerald, 'l',
-						Items.leather, 'i',
-						Items.iron_ingot, 'r',
-						Items.redstone });
+		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.sonicScrew),
+				new Object[] { " ge", "lig", "rl ", 'g', Items.gold_ingot, 'e',
+						Items.emerald, 'l', Items.leather, 'i',
+						Items.iron_ingot, 'r', Items.redstone });
 	}
 
 	public void blocks() {
@@ -300,8 +279,7 @@ public class WeepingAngelsMod {
 				entityWeepingAngelID, 0x808080, 0xD1D1D1));
 		if (spawnRate > 0) {
 			EntityRegistry.addSpawn(EntityWeepingAngel.class, spawnRate, 1,
-					maxSpawn, EnumCreatureType.monster,
-					BiomeGenBase.beach);
+					maxSpawn, EnumCreatureType.monster, BiomeGenBase.beach);
 		}
 		// LanguageRegistry.instance().addStringLocalization(
 		// "entity.WeepingAngels.Weeping Angel.name", "Weeping Angel");

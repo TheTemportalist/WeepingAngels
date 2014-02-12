@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -15,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.C17PacketCustomPayload;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
 
 import org.apache.logging.log4j.LogManager;
@@ -166,9 +166,13 @@ public class GuiVortex extends GuiScreen {
 					index = Integer.parseInt(this.indexTextBox.getText());
 				} catch (NumberFormatException err) {
 					this.mc.displayGuiScreen(null);
-					// TODO
-					// this.thePlayer.addChatMessage("Your index is wrong.");
-					// this.thePlayer.addChatMessage("Please type a valid index.");
+					this.thePlayer
+							.addChatComponentMessage(new ChatComponentText(
+									"Your index is wrong."));
+					this.thePlayer
+							.addChatComponentMessage(new ChatComponentText(
+									"Please type a valid index."));
+
 					return;
 				}
 				this.storeCoords(index, this.nameTextBox.getText(),
@@ -212,7 +216,7 @@ public class GuiVortex extends GuiScreen {
 						false, false);
 				Core.packetPipelineTeleport.sendToServer(packet);
 			} else if (Core.DEBUG) {
-				//WeepingAngelsMod.log.info("coords are null");
+				// WeepingAngelsMod.log.info("coords are null");
 			}
 		}
 
@@ -345,9 +349,10 @@ public class GuiVortex extends GuiScreen {
 		if (this.vortexStack != null) {
 			if (index <= 0 || index >= 11) {
 				this.mc.displayGuiScreen(null);
-				// TODO
-				// this.thePlayer.addChatMessage("Indexes cannot be less than 1,");
-				// this.thePlayer.addChatMessage("nor greater than 10.");
+				this.thePlayer.addChatComponentMessage(new ChatComponentText(
+						"Indexes cannot be less than 1,"));
+				this.thePlayer.addChatComponentMessage(new ChatComponentText(
+						"nor greater than 10."));
 				return;
 			}
 			NBTTagCompound tagCom;
@@ -429,9 +434,10 @@ public class GuiVortex extends GuiScreen {
 			return new double[] { newX, newY, newZ };
 		} catch (NumberFormatException err) {
 			this.mc.displayGuiScreen(null);
-			// TODO
-			// this.thePlayer.addChatMessage("Your coordinates are wrong.");
-			// this.thePlayer.addChatMessage("Please type valid coordinates.");
+			this.thePlayer.addChatComponentMessage(new ChatComponentText(
+					"Your coordinates are wrong."));
+			this.thePlayer.addChatComponentMessage(new ChatComponentText(
+					"Please type valid coordinates."));
 			return null;
 		}
 	}

@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 import com.countrygamer.countrygamer_core.Items.ItemBase;
@@ -36,10 +37,11 @@ public class ItemVortex extends ItemBase {
 				String message = "The Vortex Manipulator is now in ";
 				if (!world.isRemote)
 					if (newMode) {
-						// TODO player.addChatMessage(message + "RANDOM mode");
+						player.addChatComponentMessage(new ChatComponentText(
+								message + "RANDOM mode"));
 					} else {
-						// TODO player.addChatMessage(message +
-						// "CONTROLLED mode");
+						player.addChatComponentMessage(new ChatComponentText(
+								message + "CONTROLLED mode"));
 					}
 			} else {
 				// TODO teleportation types
