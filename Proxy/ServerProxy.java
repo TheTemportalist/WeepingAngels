@@ -10,6 +10,6 @@ public class ServerProxy {
 	}
 
 	public void preInit() {
-		WeepingAngelsMod.packetChannel.register(new ServerPacketHandler());
+		
 	}
 }

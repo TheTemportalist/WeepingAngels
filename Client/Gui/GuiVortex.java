@@ -26,8 +26,8 @@ import com.countrygamer.countrygamer_core.Client.Gui.GuiButtonArrow;
 import com.countrygamer.countrygamer_core.Handler.PacketTeleport;
 import com.countrygamer.countrygamer_core.lib.CoreUtil;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
+import com.countrygamer.weepingangels.Handlers.Packet.PacketStoreCoords;
 import com.countrygamer.weepingangels.lib.Reference;
-import com.countrygamer.weepingangels.lib.Util;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -374,10 +374,9 @@ public class GuiVortex extends GuiScreen {
 			coor.setDouble("z", z);
 
 			coorsTag.setTag(index + "", coor);
-			tagCom.setTag("Coords", coorsTag);
-			this.vortexStack.setTagCompound(tagCom);
-			Util.buildNBTPacket(WeepingAngelsMod.packetChannel,
-					"WepAng_vortex", this.vortexStack);
+			
+			PacketStoreCoords packet = new PacketStoreCoords(coorsTag);
+			WeepingAngelsMod.packetChannel.sendToServer(packet);
 		}
 	}
 

@@ -13,11 +13,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import com.countrygamer.countrygamer_core.Core;
+import com.countrygamer.countrygamer_core.Handler.PacketPipeline;
 import com.countrygamer.countrygamer_core.Items.ItemMetadataBase;
 import com.countrygamer.countrygamer_core.lib.CoreUtil;
 import com.countrygamer.weepingangels.Blocks.BlockPlinth;
@@ -27,6 +27,7 @@ import com.countrygamer.weepingangels.Client.Gui.GuiHandler;
 import com.countrygamer.weepingangels.Entity.EntityStatue;
 import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
 import com.countrygamer.weepingangels.Handlers.EventHandler;
+import com.countrygamer.weepingangels.Handlers.Packet.PacketStoreCoords;
 import com.countrygamer.weepingangels.Items.ItemSonic;
 import com.countrygamer.weepingangels.Items.ItemStatue;
 import com.countrygamer.weepingangels.Items.ItemVortex;
@@ -42,7 +43,6 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -57,7 +57,7 @@ public class WeepingAngelsMod {
 	public static ServerProxy proxy;
 
 	// Packet
-	public static FMLEventChannel packetChannel;
+	public static final PacketPipeline packetChannel = new PacketPipeline();
 
 	// Blocks
 	public static Block plinthBlock;
@@ -103,8 +103,6 @@ public class WeepingAngelsMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		packetChannel = NetworkRegistry.INSTANCE
-				.newEventDrivenChannel(Reference.MOD_ID);
 		proxy.preInit();
 		this.config(event);
 		this.handlers();
@@ -184,17 +182,16 @@ public class WeepingAngelsMod {
 		GameRegistry.registerWorldGenerator(new WorldGenerator(), 0);
 		NetworkRegistry.INSTANCE.registerGuiHandler(WeepingAngelsMod.instance,
 				new GuiHandler());
-		// MinecraftForge.EVENT_BUS.register(new EventHandler());
 		FMLCommonHandler.instance().bus().register(new EventHandler());
 		// TODO GameRegistry.registerPickupHandler(new EventHandler());
 	}
 
 	public void items() {
-		statue = (new ItemStatue(Reference.MOD_ID, "Weeping Angel Statue",
+		WeepingAngelsMod.statue = (new ItemStatue(Reference.MOD_ID, "Weeping Angel Statue",
 				EntityStatue.class)).setCreativeTab(CreativeTabs.tabMisc)
 				.setMaxStackSize(64);
-		// LanguageRegistry.addName(statue, "Weeping Angel Statue");
-
+		Core.addItemToTab(WeepingAngelsMod.statue);
+		
 		if (this.addonVortex || this.addonSonic) {
 			this.chronon();
 		}
@@ -203,10 +200,12 @@ public class WeepingAngelsMod {
 		if (this.addonSonic)
 			this.sonic();
 
-		if (Core.DEBUG)
+		if (Core.DEBUG) {
 			WeepingAngelsMod.debugItem = new ItemWADebug(Reference.MOD_ID,
 					WeepingAngelsMod.debugItemName);
-
+			Core.addItemToTab(WeepingAngelsMod.debugItem);
+		}
+		
 	}
 
 	private void chronon() {
@@ -214,7 +213,7 @@ public class WeepingAngelsMod {
 				new String[] { WeepingAngelsMod.chrononDustName,
 						WeepingAngelsMod.chrononDiamondName,
 						WeepingAngelsMod.chrononMetalName });
-		WeepingAngelsMod.chronon.setCreativeTab(CreativeTabs.tabMaterials);
+		Core.addItemToTab(WeepingAngelsMod.chronon);
 		// Chronon Diamond
 		GameRegistry.addShapelessRecipe(new ItemStack(WeepingAngelsMod.chronon,
 				1, 1), new Object[] { Items.diamond,
@@ -231,7 +230,7 @@ public class WeepingAngelsMod {
 	private void vortex() {
 		WeepingAngelsMod.vortexMan = new ItemVortex(Reference.MOD_ID,
 				WeepingAngelsMod.vortexManName);
-		WeepingAngelsMod.vortexMan.setCreativeTab(CreativeTabs.tabTools);
+		Core.addItemToTab(WeepingAngelsMod.vortexMan);
 		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.vortexMan),
 				new Object[] { "xxx", "xcx", "xxx", 'x',
 						new ItemStack(WeepingAngelsMod.chronon, 1, 2), 'c',
@@ -241,7 +240,7 @@ public class WeepingAngelsMod {
 	private void sonic() {
 		WeepingAngelsMod.sonicScrew = new ItemSonic(Reference.MOD_ID,
 				WeepingAngelsMod.sonicScrewName);
-		WeepingAngelsMod.sonicScrew.setCreativeTab(CreativeTabs.tabTools);
+		Core.addItemToTab(WeepingAngelsMod.sonicScrew);
 		GameRegistry.addRecipe(new ItemStack(WeepingAngelsMod.sonicScrew),
 				new Object[] { " ge", "lig", "rl ", 'g', Items.gold_ingot, 'e',
 						Items.emerald, 'l', Items.leather, 'i',
@@ -260,9 +259,7 @@ public class WeepingAngelsMod {
 
 		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn().setHardness(0.5F);
 		blockWeepingAngelSpawn.setBlockName("weepingangelspawn");
-		blockWeepingAngelSpawn.setCreativeTab(CreativeTabs.tabMisc);
-		// LanguageRegistry.addName(blockWeepingAngelSpawn,
-		// "Weeping Angel Spawn Block");
+		Core.addBlockToTab(WeepingAngelsMod.blockWeepingAngelSpawn);
 		GameRegistry.registerBlock(blockWeepingAngelSpawn,
 				"Weeping Angel Spawn Block");
 
@@ -295,6 +292,8 @@ public class WeepingAngelsMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
+		this.packetChannel.initalise(Reference.MOD_ID);
+		this.packetChannel.registerPacket(PacketStoreCoords.class);
 		this.iChun_Morph();
 	}
 
@@ -313,6 +312,7 @@ public class WeepingAngelsMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		this.packetChannel.postInitialise();
 	}
 
 }
