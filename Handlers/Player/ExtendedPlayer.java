@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
 import com.countrygamer.weepingangels.WeepingAngelsMod;
-import com.countrygamer.weepingangels.Handlers.HUDOverlay;
+import com.countrygamer.weepingangels.Client.Gui.HUDOverlay;
 
 public class ExtendedPlayer implements IExtendedEntityProperties {
 

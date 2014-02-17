@@ -4,12 +4,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
+import com.countrygamer.weepingangels.Client.Gui.HUDOverlay;
 import com.countrygamer.weepingangels.Client.Render.RenderWeepingAngel;
 import com.countrygamer.weepingangels.Client.Render.RenderWeepingAngelStatue;
 import com.countrygamer.weepingangels.Client.Render.TileEntityPlinthRenderer;
 import com.countrygamer.weepingangels.Entity.EntityStatue;
 import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
-import com.countrygamer.weepingangels.Handlers.HUDOverlay;
 import com.countrygamer.weepingangels.Handlers.SoundEventHandler;
 
 import cpw.mods.fml.client.registry.ClientRegistry;

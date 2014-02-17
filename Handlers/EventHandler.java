@@ -1,6 +1,8 @@
 package com.countrygamer.weepingangels.Handlers;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
@@ -13,6 +15,7 @@ import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
 import com.countrygamer.weepingangels.Handlers.Player.ExtendedPlayer;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -24,7 +27,8 @@ public class EventHandler {// implements IPickupNotifier {
 	public void entityDeathEvent(LivingDeathEvent event) {
 		if (event.entityLiving != null) {
 			EntityLivingBase ent = event.entityLiving;
-			if (ent instanceof EntityPlayer) {
+			if (ent instanceof EntityPlayer
+					&& event.source.getEntity() instanceof EntityWeepingAngel) {
 				EntityPlayer player = (EntityPlayer) ent;
 				ExtendedPlayer playerProps = ExtendedPlayer.get(player);
 				if (playerProps.isConvertActive() == 1) {
@@ -35,11 +39,21 @@ public class EventHandler {// implements IPickupNotifier {
 								player.posZ, player.rotationYaw,
 								player.rotationPitch);
 						player.worldObj.spawnEntityInWorld(angel);
-						player.addStat(WeepingAngelsMod.angelAchieve2, 1);
+						player.addStat(WeepingAngelsMod.angelAchieve3, 1);
 					}
 					playerProps.setConvert(0);
 					playerProps.setAngelHealth(0.0F);
 					playerProps.setTicksTillAngelHeal(0);
+				} else {
+					player.addStat(WeepingAngelsMod.angelAchieve2, 1);
+				}
+			}
+			//
+			if (ent instanceof EntityWeepingAngel
+					&& event.source.getEntity() instanceof EntityPlayer) {
+				EntityPlayer player = ((EntityPlayer) event.source.getEntity());
+				if (!player.worldObj.isRemote) {
+					player.addStat(WeepingAngelsMod.angelAchieve1, 1);
 				}
 			}
 		}
@@ -63,17 +77,6 @@ public class EventHandler {// implements IPickupNotifier {
 
 	}
 
-	// Achivements on Item Pickup
-	// @Override
-	// public void notifyPickup(EntityItem item, EntityPlayer player) {
-	// // if (CG_Core.DEBUG)
-	// // WeepingAngelsMod.log.info(item.getEntityItem().itemID + ":"
-	// // + WeepingAngelsMod.statue.itemID);
-	// if (item.getEntityItem().getItem() == WeepingAngelsMod.statue) {
-	// player.addStat(WeepingAngelsMod.angelAchieve, 1);
-	// }
-	// }
-
 	@SubscribeEvent
 	public void onEntityConstructing(EntityConstructing event) {
 		if (event.entity instanceof EntityPlayer
@@ -84,18 +87,19 @@ public class EventHandler {// implements IPickupNotifier {
 
 	@SubscribeEvent
 	public void playerTickEvent(PlayerTickEvent event) {
-		//if (Core.DEBUG) WeepingAngelsMod.log.info("Tick Event");
+		// if (Core.DEBUG) WeepingAngelsMod.log.info("Tick Event");
 		Side side = event.side;
 		if (side == Side.CLIENT) {
 
 		}
 		if (side == Side.SERVER) {
-			//if (Core.DEBUG) WeepingAngelsMod.log.info("Server Tick Event");
+			// if (Core.DEBUG) WeepingAngelsMod.log.info("Server Tick Event");
 			if (event.phase == TickEvent.Phase.START) {
-				//if (Core.DEBUG) WeepingAngelsMod.log.info("Server Start Tick Event");
+				// if (Core.DEBUG)
+				// WeepingAngelsMod.log.info("Server Start Tick Event");
 				EntityPlayer player = (EntityPlayer) event.player;
 				ExtendedPlayer playerProperties = ExtendedPlayer.get(player);
-				if (playerProperties == null){
+				if (playerProperties == null) {
 					ExtendedPlayer.register(player);
 					playerProperties = ExtendedPlayer.get(player);
 				}
@@ -106,7 +110,7 @@ public class EventHandler {// implements IPickupNotifier {
 				}
 
 				if (playerProperties.isConvertActive() == 1) {
-					//if (Core.DEBUG) WeepingAngelsMod.log.info("Has Effect");
+					// if (Core.DEBUG) WeepingAngelsMod.log.info("Has Effect");
 					if (playerProperties.getAngelHealth() >= 20) {
 						// WeepingAngelsMod.log.info("Kill Player now");
 						if (!player.capabilities.disableDamage
@@ -138,4 +142,17 @@ public class EventHandler {// implements IPickupNotifier {
 			}
 		}
 	}
+
+	@SubscribeEvent
+	public void itemPickUp(ItemPickupEvent event) {
+		EntityItem item = event.pickedUp;
+		if (Core.DEBUG)
+			WeepingAngelsMod.log.info(item.getEntityItem().getItem()
+					.getUnlocalizedName()
+					+ ":" + WeepingAngelsMod.statue.getUnlocalizedName());
+		if (item.getEntityItem().getItem() == WeepingAngelsMod.statue) {
+			// event.player.addStat(WeepingAngelsMod.angelAchieve, 1);
+		}
+	}
+
 }

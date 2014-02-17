@@ -12,7 +12,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+import net.minecraft.stats.AchievementList;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -96,10 +98,9 @@ public class WeepingAngelsMod {
 	public static String sonicScrewName = "Sonic Screwdriver";
 
 	// Achievements
-	public static Achievement angelAchieve;
-	public static int angelAchieveiD;
+	public static Achievement angelAchieve1;
 	public static Achievement angelAchieve2;
-	public static int angelAchieve2iD;
+	public static Achievement angelAchieve3;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -126,37 +127,47 @@ public class WeepingAngelsMod {
 		String addon = "Addons";
 		config.load(); // load configs from its file
 
-		// Entities
-		WeepingAngelsMod.entityWeepingAngelID = CoreUtil.getAndComment(config,
-				general, "EntityWeepingAngelID", "", 300);
-		// Achievements
-		WeepingAngelsMod.angelAchieveiD = CoreUtil.getAndComment(config,
-				achievement, "Scared of an Angel ID", "", 10000);
-		WeepingAngelsMod.angelAchieve2iD = CoreUtil.getAndComment(config,
-				achievement, "Slayed by an Angel ID", "", 10001);
-
 		// Stats
 		WeepingAngelsMod.canPoison = CoreUtil.getAndComment(config, angelStat,
-				"Angel Can Poison", "", true);
+				"Angel Can Poison",
+				"When attacked can the angel start the angel conversion. "
+						+ "Overwrites 'Poison Chance Percentage' if false.",
+				true);
 		WeepingAngelsMod.poisonChance = CoreUtil.getAndComment(config,
-				angelStat, "Poison Chance Percentage", "", 5);
+				angelStat, "Poison Chance Percentage",
+				"Out of 100, what percentage of attacks can an "
+						+ "angel start an angel conversion. Default 5%", 5);
 		WeepingAngelsMod.canTeleport = CoreUtil.getAndComment(config,
-				angelStat, "Angel Can Cause Teleport", "", true);
+				angelStat, "Angel Can Cause Teleport",
+				"Determines if an angel can teleport the player. "
+						+ "If false, will override all other "
+						+ "teleportation of player stats.", true);
 		WeepingAngelsMod.teleportChance = CoreUtil.getAndComment(config,
-				angelStat, "Teleport Chance Percentage", "", 20);
+				angelStat, "Teleport Chance Percentage",
+				"Out of 100, what percentage of attacks can an "
+						+ "angel teleport the player. Default 20%", 20);
 		WeepingAngelsMod.teleportRangeMax = CoreUtil.getAndComment(config,
-				angelStat, "TeleportRangeMax", "", 60);
+				angelStat, "Teleport Range (Maximum)",
+				"Maximum number of blocks an angel can "
+						+ "teleport the player. Default 60", 60);
 		WeepingAngelsMod.attackStrength = CoreUtil.getAndComment(config,
-				angelStat, "AttackStrength", "", 6);
+				angelStat, "Attack Strength",
+				"How many half hearts of damage the "
+						+ "angel can deal. Default 6 (3 hearts)", 6);
 		WeepingAngelsMod.pickOnly = CoreUtil.getAndComment(config, angelStat,
 				"Hurt Angel with PickAxe only", "", true);
 		// Other
 		WeepingAngelsMod.spawnRate = CoreUtil.getAndComment(config, angelSpawn,
-				"SpawnRate", "", 2);
+				"Spawn Frequency",
+				"If you make this higher it will spawn more often. Default 2",
+				2);
 		WeepingAngelsMod.maxSpawn = CoreUtil.getAndComment(config, angelSpawn,
-				"MaxSpawnedPerWorldInstance", "", 2);
+				"Max per group spawn",
+				"When the mob has been chosen to be spawned there will "
+						+ "spawn between 1 and X of them. Default 2", 2);
 		WeepingAngelsMod.maxSpawnHeight = CoreUtil.getAndComment(config,
-				angelSpawn, "Max Spawn Y-Level", "", 40);
+				angelSpawn, "Max Spawn Y-Level",
+				"The maximum height at which angels can spawn.", 40);
 		// Addons
 		WeepingAngelsMod.addonVortex = CoreUtil.getAndComment(config, addon,
 				"Enable " + WeepingAngelsMod.vortexManName,
@@ -169,29 +180,38 @@ public class WeepingAngelsMod {
 	}
 
 	private void achievements() {
-		WeepingAngelsMod.angelAchieve = new Achievement("angelachieve",
-				"AngelAchieve", -4, -7, statue, null).setSpecial()
-				.registerStat();
+		String angelAchieve = "";
 
-		WeepingAngelsMod.angelAchieve2 = new Achievement("angelachieve2",
-				"AngelAchieve2", -1, -7, statue, WeepingAngelsMod.angelAchieve)
+		angelAchieve = "AngelAchieve1";
+		WeepingAngelsMod.angelAchieve1 = new Achievement(angelAchieve,
+				angelAchieve, 9, 1, statue, AchievementList.killEnemy)
 				.setSpecial().registerStat();
+
+		angelAchieve = "AngelAchieve2";
+		WeepingAngelsMod.angelAchieve2 = new Achievement(angelAchieve,
+				angelAchieve, 8, 3, statue, WeepingAngelsMod.angelAchieve1)
+				.setSpecial().registerStat();
+
+		angelAchieve = "AngelAchieve3";
+		WeepingAngelsMod.angelAchieve3 = new Achievement(angelAchieve,
+				angelAchieve, 10, 3, statue, WeepingAngelsMod.angelAchieve1)
+				.setSpecial().registerStat();
+
 	}
 
 	private void handlers() {
 		GameRegistry.registerWorldGenerator(new WorldGenerator(), 0);
 		NetworkRegistry.INSTANCE.registerGuiHandler(WeepingAngelsMod.instance,
 				new GuiHandler());
-		FMLCommonHandler.instance().bus().register(new EventHandler());
-		// TODO GameRegistry.registerPickupHandler(new EventHandler());
+		MinecraftForge.EVENT_BUS.register(new EventHandler());
 	}
 
 	public void items() {
-		WeepingAngelsMod.statue = (new ItemStatue(Reference.MOD_ID, "Weeping Angel Statue",
-				EntityStatue.class)).setCreativeTab(CreativeTabs.tabMisc)
-				.setMaxStackSize(64);
+		WeepingAngelsMod.statue = (new ItemStatue(Reference.MOD_ID,
+				"Weeping Angel Statue", EntityStatue.class)).setCreativeTab(
+				CreativeTabs.tabMisc).setMaxStackSize(64);
 		Core.addItemToTab(WeepingAngelsMod.statue);
-		
+
 		if (this.addonVortex || this.addonSonic) {
 			this.chronon();
 		}
@@ -205,7 +225,7 @@ public class WeepingAngelsMod {
 					WeepingAngelsMod.debugItemName);
 			Core.addItemToTab(WeepingAngelsMod.debugItem);
 		}
-		
+
 	}
 
 	private void chronon() {
@@ -268,15 +288,25 @@ public class WeepingAngelsMod {
 	public void entities() {
 		// Register all entities, blocks and items to game
 		// Weeping Angel Entity
+		// ~ class, nameToBeLocalized, id per mod, mod instance,
+		// ~ amount of blocks before despawn, tracking rate,
+		// ~ send velocity updates
 		EntityRegistry.registerModEntity(EntityWeepingAngel.class,
-				"Weeping Angel", entityWeepingAngelID, this, 80, 3, true);
+				"Weeping Angel", 1, WeepingAngelsMod.instance, 80, 3, false);
 		EntityList.IDtoClassMapping.put(entityWeepingAngelID,
 				EntityWeepingAngel.class);
 		EntityList.entityEggs.put(entityWeepingAngelID, new EntityEggInfo(
 				entityWeepingAngelID, 0x808080, 0xD1D1D1));
 		if (spawnRate > 0) {
-			EntityRegistry.addSpawn(EntityWeepingAngel.class, spawnRate, 1,
-					maxSpawn, EnumCreatureType.monster, BiomeGenBase.beach);
+			for (int i = 0; i < BiomeGenBase.getBiomeGenArray().length; i++) {
+				if (BiomeGenBase.getBiomeGenArray()[i] != null) {
+					// ~ mob file, spawn frequency, group size,
+					// ~ creature type, biome
+					EntityRegistry.addSpawn(EntityWeepingAngel.class,
+							spawnRate, 1, maxSpawn, EnumCreatureType.monster,
+							BiomeGenBase.getBiomeGenArray()[i]);
+				}
+			}
 		}
 		// LanguageRegistry.instance().addStringLocalization(
 		// "entity.WeepingAngels.Weeping Angel.name", "Weeping Angel");

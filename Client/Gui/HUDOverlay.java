@@ -1,4 +1,4 @@
-package com.countrygamer.weepingangels.Handlers;
+package com.countrygamer.weepingangels.Client.Gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -16,7 +16,10 @@ import com.countrygamer.weepingangels.lib.Reference;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class HUDOverlay extends Gui {
 
 	private Minecraft mc;
