@@ -10,7 +10,6 @@ import com.countrygamer.weepingangels.Client.Render.RenderWeepingAngelStatue;
 import com.countrygamer.weepingangels.Client.Render.TileEntityPlinthRenderer;
 import com.countrygamer.weepingangels.Entity.EntityStatue;
 import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
-import com.countrygamer.weepingangels.Handlers.SoundEventHandler;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -31,7 +30,6 @@ public class ClientProxy extends ServerProxy {
 		// ModLoader.registerTileEntity(TileEntityPlinth.class,
 		// "TileEntityPlinth", new TileEntityPlinthRenderer());
 
-		MinecraftForge.EVENT_BUS.register(new SoundEventHandler());
 		MinecraftForge.EVENT_BUS.register(new HUDOverlay(Minecraft
 				.getMinecraft()));
 
