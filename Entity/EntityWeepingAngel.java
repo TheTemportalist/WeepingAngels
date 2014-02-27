@@ -316,7 +316,7 @@ public class EntityWeepingAngel extends EntityCreature {
 					canHurt = false;
 				else {
 					canHurt = itemStack.getItem()
-							.func_150897_b(Blocks.obsidian);
+							.canHarvestBlock(Blocks.obsidian, itemStack);
 					if (this.worldObj.difficultySetting.getDifficultyId() >= EnumDifficulty.NORMAL
 							.getDifficultyId())
 						canHurt = canHurt

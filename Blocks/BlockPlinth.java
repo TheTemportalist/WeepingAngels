@@ -48,7 +48,7 @@ public class BlockPlinth extends BlockContainer {
 		Block i1 = world.getBlock(i, j + 1, k);
 		Block j1 = world.getBlock(i, j + 2, k);
 		return l != null && i1 != null
-				&& (j1 != null || j1.getMaterial() == Material.circuits);
+				&& (j1 != null && j1.getMaterial() == Material.circuits);
 	}
 
 	@Override
