@@ -21,10 +21,10 @@ import org.apache.logging.log4j.LogManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import com.countrygamer.countrygamer_core.Core;
-import com.countrygamer.countrygamer_core.Handler.PacketTeleport;
-import com.countrygamer.countrygamer_core.client.gui.GuiButtonArrow;
-import com.countrygamer.countrygamer_core.lib.CoreUtil;
+import com.countrygamer.core.Core;
+import com.countrygamer.core.Handler.PacketTeleport;
+import com.countrygamer.core.client.gui.GuiButtonArrow;
+import com.countrygamer.core.lib.CoreUtil;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 import com.countrygamer.weepingangels.Handlers.Packet.PacketStoreCoords;
 import com.countrygamer.weepingangels.lib.Reference;
@@ -144,7 +144,7 @@ public class GuiVortex extends GuiScreen {
 		if (guiB.id == this.dimension.id) {
 			String currentDimName = this.dimension.displayString;
 			ArrayList<String> dimNames = new ArrayList<String>();
-			for (String key : com.countrygamer.countrygamer_core.Core.dimensions.keySet()) {
+			for (String key : com.countrygamer.core.Core.dimensions.keySet()) {
 				dimNames.add(key);
 				
 			}
@@ -169,7 +169,7 @@ public class GuiVortex extends GuiScreen {
 					return;
 				}
 				this.storeCoords(index, this.nameTextBox.getText(),
-						com.countrygamer.countrygamer_core.Core.dimensions
+						com.countrygamer.core.Core.dimensions
 								.get(this.dimension.displayString), coords[0], coords[1], coords[2]);
 			}
 		}
@@ -192,7 +192,7 @@ public class GuiVortex extends GuiScreen {
 			this.newZTextBox.setText(this.coordZ + "");
 		}
 		if (guiB.id == this.selectCurrent.id) {
-			this.dimension.displayString = com.countrygamer.countrygamer_core.Core.dimensions1
+			this.dimension.displayString = com.countrygamer.core.Core.dimensions1
 					.get(this.thePlayer.dimension);
 			this.newXTextBox.setText(this.round(this.thePlayer.posX, 2) + "");
 			this.newYTextBox.setText(this.round(this.thePlayer.posY, 2) + "");
@@ -201,7 +201,7 @@ public class GuiVortex extends GuiScreen {
 		if (guiB.id == this.teleport.id) {
 			double[] coords = this.getCoords();
 			if (coords != null) {
-				int dimID = com.countrygamer.countrygamer_core.Core.dimensions
+				int dimID = com.countrygamer.core.Core.dimensions
 						.get(this.dimension.displayString);
 				this.mc.displayGuiScreen(null);
 				PacketTeleport packet = new PacketTeleport(dimID, coords, false, false);

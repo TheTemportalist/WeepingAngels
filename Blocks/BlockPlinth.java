@@ -2,10 +2,13 @@ package com.countrygamer.weepingangels.Blocks;
 
 import java.util.Random;
 
+import com.countrygamer.core.Core;
+import com.countrygamer.weepingangels.WeepingAngelsMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -16,10 +19,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockPlinth extends BlockContainer {
-	private Class signEntityClass;
+	private Class<? extends TileEntity> signEntityClass;
 	private Item itemDrop;
 
-	public BlockPlinth(Class class1, Material material) {
+	public BlockPlinth(Class<? extends TileEntity> class1, Material material) {
 		super(material);
 		itemDrop = null;
 		signEntityClass = class1;
@@ -33,12 +36,12 @@ public class BlockPlinth extends BlockContainer {
 
 	@Override
 	public void onNeighborBlockChange(World world, int i, int j, int k,
-			Block block) {
+	                                  Block block) {
 		if (block != null && block.canProvidePower()) {
 			boolean flag = world.isBlockIndirectlyGettingPowered(i, j, k)
 					|| world.isBlockIndirectlyGettingPowered(i, j + 1, k);
 			if (flag) {
-				world.scheduleBlockUpdate(i, j, k, block, tickRate(world));
+				world.scheduleBlockUpdate(i, j, k, this, tickRate(world));
 			}
 		}
 	}
@@ -48,32 +51,41 @@ public class BlockPlinth extends BlockContainer {
 		Block i1 = world.getBlock(i, j + 1, k);
 		Block j1 = world.getBlock(i, j + 2, k);
 		return l != null && i1 != null
-				&& (j1 != null && j1.getMaterial() == Material.circuits);
+				&& (j1 != null);// && j1.getMaterial() != Material.circuits);
 	}
 
 	@Override
 	public void updateTick(World world, int i, int j, int k, Random random) {
-		if (world.isBlockIndirectlyGettingPowered(i, j, k)
-				|| world.isBlockIndirectlyGettingPowered(i, j + 1, k)) {
+		boolean indirectPower1 = world.isBlockIndirectlyGettingPowered(i, j + 0, k);
+		boolean indirectPower2 = world.isBlockIndirectlyGettingPowered(i, j + 1, k);
+		WeepingAngelsMod.log.info((indirectPower1 || indirectPower2) + "");
+		if (indirectPower1 || indirectPower2) {
 			TileEntity tileEnt = world.getTileEntity(i, j, k);
+			if (tileEnt == null) WeepingAngelsMod.log.info("Null TileEnt");
 			if (tileEnt != null && tileEnt instanceof TileEntityPlinth) {
 				TileEntityPlinth tileEntP = (TileEntityPlinth) tileEnt;
-				// if (CG_Core.DEBUG)
-				// WeepingAngelsMod.log.info("Powered");
+
+				WeepingAngelsMod.log.info("Powered");
+
 				tileEntP.ComeToLife(world, i, j, k);
 				itemDrop = null;
 			}
 		}
 	}
 
-	// @Override TODO
-	// public Item idPicked(World world, int x, int y, int z) {
-	// return WeepingAngelsMod.statue;
-	// }
+	/**
+	 * Gets an item for the block being called on. Args: world, x, y, z
+	 */
+	@SideOnly(Side.CLIENT)
+	@Override
+	public Item getItem(World world, int x, int y, int z)
+	{
+		return WeepingAngelsMod.statue;
+	}
 
 	@Override
 	public void breakBlock(World world, int i, int j, int k, Block par5,
-			int par6) {
+	                       int par6) {
 		// if (CG_Core.DEBUG)
 		// WeepingAngelsMod.log.info("BlockPlinth broken at i: " + i + " j: "
 		// + j + " k: " + k);
@@ -102,7 +114,7 @@ public class BlockPlinth extends BlockContainer {
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {
 		try {
-			return new TileEntityPlinth();
+			return signEntityClass.newInstance();
 		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
@@ -113,4 +125,5 @@ public class BlockPlinth extends BlockContainer {
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		this.blockIcon = par1IconRegister.registerIcon("weepingangels:plinth");
 	}
+
 }

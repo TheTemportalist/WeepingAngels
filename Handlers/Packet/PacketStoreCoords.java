@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.countrygamer.countrygamer_core.Handler.AbstractPacket;
+import com.countrygamer.core.Handler.AbstractPacket;
 
 public class PacketStoreCoords extends AbstractPacket {
 	

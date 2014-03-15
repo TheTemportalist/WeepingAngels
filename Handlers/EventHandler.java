@@ -9,7 +9,7 @@ import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
-import com.countrygamer.countrygamer_core.Core;
+import com.countrygamer.core.Core;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
 import com.countrygamer.weepingangels.Handlers.Player.ExtendedPlayer;

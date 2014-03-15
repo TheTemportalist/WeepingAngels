@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-import com.countrygamer.countrygamer_core.Items.ItemBase;
+import com.countrygamer.core.Items.ItemBase;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
 import com.countrygamer.weepingangels.Entity.EntityStatue;
@@ -28,12 +28,14 @@ public class ItemStatue extends ItemBase {
 
 	@Override
 	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer,
-			World world, int i, int j, int k, int l, float par8, float par9,
-			float par10) {
+	                         World world, int i, int j, int k, int l, float par8, float par9,
+	                         float par10) {
 		if (l == 0) {
+			//WeepingAngelsMod.log.info("0");
 			return false;
 		}
 		if (!world.getBlock(i, j, k).getMaterial().isSolid()) {
+			//WeepingAngelsMod.log.info("Not Solid");
 			return false;
 		}
 		if (l == 1) {
@@ -52,6 +54,7 @@ public class ItemStatue extends ItemBase {
 			i++;
 		}
 		if (!WeepingAngelsMod.plinthBlock.canPlaceBlockAt(world, i, j, k)) {
+			//WeepingAngelsMod.log.info("Cannot Place");
 			return false;
 		}
 		if (l == 1) {
@@ -64,6 +67,7 @@ public class ItemStatue extends ItemBase {
 		EntityStatue entitystatue = null;
 		entitystatue = Util.getEntityStatue(world, statue);
 		if (entitystatue != null) {
+			//WeepingAngelsMod.log.info("Setting Statue");
 			TileEntityPlinth tileentityplinth = (TileEntityPlinth) world
 					.getTileEntity(i, j, k);
 			tileentityplinth.setRotation(statueYaw);

@@ -7,8 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
-import com.countrygamer.countrygamer_core.Items.ItemBase;
-import com.countrygamer.countrygamer_core.lib.CoreUtil;
+import com.countrygamer.core.Items.ItemBase;
+import com.countrygamer.core.lib.CoreUtil;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 
 public class ItemVortex extends ItemBase {

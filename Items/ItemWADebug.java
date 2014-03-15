@@ -13,7 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import com.countrygamer.countrygamer_core.Items.ItemBase;
+import com.countrygamer.core.Items.ItemBase;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 
 public class ItemWADebug extends ItemBase {
@@ -60,7 +60,7 @@ public class ItemWADebug extends ItemBase {
 
 		}
 		 */
-		
+		player.getFoodStats().setFoodLevel(10);
 		
 		return itemStack;
 	}

@@ -13,15 +13,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.AchievementList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import com.countrygamer.countrygamer_core.Core;
-import com.countrygamer.countrygamer_core.Handler.PacketPipeline;
-import com.countrygamer.countrygamer_core.Items.ItemMetadataBase;
-import com.countrygamer.countrygamer_core.lib.CoreUtil;
+import com.countrygamer.core.Core;
+import com.countrygamer.core.Handler.PacketPipeline;
+import com.countrygamer.core.Items.ItemMetadataBase;
+import com.countrygamer.core.lib.CoreUtil;
 import com.countrygamer.weepingangels.Blocks.BlockPlinth;
 import com.countrygamer.weepingangels.Blocks.BlockWeepingAngelSpawn;
 import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
@@ -268,14 +269,12 @@ public class WeepingAngelsMod {
 	}
 
 	public void blocks() {
+		TileEntity.addMapping(TileEntityPlinth.class, Reference.MOD_ID + "_Plinth");
 		plinthBlock = new BlockPlinth(TileEntityPlinth.class, Material.rock);
 		plinthBlock.setHardness(2.0F).setResistance(10F);
 		plinthBlock.setStepSound(Block.soundTypeStone);
 		plinthBlock.setBlockName("Plinth");
 		GameRegistry.registerBlock(plinthBlock, "Plinth");
-		// LanguageRegistry.addName(plinthBlock, "Plinth");
-		GameRegistry.registerTileEntity(TileEntityPlinth.class,
-				"TileEntityPlinth");
 
 		blockWeepingAngelSpawn = new BlockWeepingAngelSpawn().setHardness(0.5F);
 		blockWeepingAngelSpawn.setBlockName("weepingangelspawn");

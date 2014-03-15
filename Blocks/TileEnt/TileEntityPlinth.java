@@ -14,6 +14,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -23,7 +26,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityPlinth extends TileEntity {
 	public Item statueType = WeepingAngelsMod.statue;
-	public String signText[] = { "", "" };
+	//public String signText[] = { "", "" };
 	public int lineBeingEdited;
 	private boolean isEditable;
 	public Entity statueEntity;
@@ -62,11 +65,26 @@ public class TileEntityPlinth extends TileEntity {
 		super.updateEntity();
 	}
 
+	// Client Server Sync
+	@Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+		NBTTagCompound tagCom = pkt.func_148857_g();
+		this.readFromNBT(tagCom);
+	}
+
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound tagCom = new NBTTagCompound();
+		this.writeToNBT(tagCom);
+		return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord,
+				this.zCoord, this.blockMetadata, tagCom);
+	}
+
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 		nbttagcompound.setByte("rotation", (byte) (this.rotation & 255));
-		nbttagcompound.setString("Text1", signText[0]);
-		nbttagcompound.setString("Text2", signText[1]);
+		//nbttagcompound.setString("Text1", signText[0]);
+		//nbttagcompound.setString("Text2", signText[1]);
 		nbttagcompound.setInteger("Type", Item.getIdFromItem(statueType));
 		nbttagcompound.setBoolean("activated", canBeActivated);
 		if (statueEntity != null) {
@@ -79,6 +97,7 @@ public class TileEntityPlinth extends TileEntity {
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		isEditable = false;
 		super.readFromNBT(nbttagcompound);
+		/*
 		for (int i = 0; i < 2; i++) {
 			signText[i] = nbttagcompound.getString((new StringBuilder())
 					.append("Text").append(i + 1).toString());
@@ -86,12 +105,14 @@ public class TileEntityPlinth extends TileEntity {
 				signText[i] = signText[i].substring(0, 15);
 			}
 		}
+		*/
 
 		this.statueType = Item.getItemById(nbttagcompound.getInteger("Type"));
 		this.rotation = nbttagcompound.getByte("rotation");
 		this.canBeActivated = nbttagcompound.getBoolean("activated");
 		if (nbttagcompound.hasKey("entityStored")) {
-			this.statueEntity.readFromNBT(nbttagcompound);
+			NBTTagCompound var1 = nbttagcompound.getCompoundTag("entityStored");
+			this.statueEntity.readFromNBT(var1);
 		}
 		// if (CG_Core.DEBUG)
 		// WeepingAngelsMod.log.info("rotation: " + this.rotation
