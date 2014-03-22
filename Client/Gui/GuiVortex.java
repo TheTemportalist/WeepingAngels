@@ -23,7 +23,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.countrygamer.core.Core;
 import com.countrygamer.core.Handler.PacketTeleport;
-import com.countrygamer.core.client.gui.GuiButtonArrow;
+import com.countrygamer.core.Base.client.gui.GuiButtonArrow;
 import com.countrygamer.core.lib.CoreUtil;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 import com.countrygamer.weepingangels.Handlers.Packet.PacketStoreCoords;

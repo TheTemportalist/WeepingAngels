@@ -7,7 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
-import com.countrygamer.core.Items.ItemBase;
+import com.countrygamer.core.Base.item.ItemBase;
 import com.countrygamer.core.lib.CoreUtil;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 
@@ -27,11 +27,11 @@ public class ItemVortex extends ItemBase {
 		if (itemStack.getItem() == this) {
 
 			NBTTagCompound tagCom = itemStack.getTagCompound();
-			boolean mode = tagCom.getBoolean(this.modeTag);
+			boolean mode = tagCom.getBoolean(ItemVortex.modeTag);
 			if (player.isSneaking()) {
 				boolean newMode = !mode;
 
-				tagCom.setBoolean(this.modeTag, newMode);
+				tagCom.setBoolean(ItemVortex.modeTag, newMode);
 				itemStack.setTagCompound(tagCom);
 
 				String message = "The Vortex Manipulator is now in ";
@@ -66,7 +66,7 @@ public class ItemVortex extends ItemBase {
 		if (!world.isRemote) {
 			if (!itemStack.hasTagCompound()) {
 				NBTTagCompound tagCom = new NBTTagCompound();
-				tagCom.setBoolean(this.modeTag, true);
+				tagCom.setBoolean(ItemVortex.modeTag, true);
 				itemStack.setTagCompound(tagCom);
 			}
 		}

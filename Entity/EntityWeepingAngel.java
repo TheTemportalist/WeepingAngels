@@ -415,8 +415,8 @@ public class EntityWeepingAngel extends EntityCreature {
 		return this.dataWatcher.getWatchableObjectByte(17);
 	}
 
-	private Entity getClosestPlayer(Class entity) {
-		List list = worldObj.getEntitiesWithinAABB(entity, boundingBox.expand(
+	private Entity getClosestPlayer(Class<?> entity) {
+		List<?> list = worldObj.getEntitiesWithinAABB(entity, boundingBox.expand(
 				this.closestPlayerRadius, 20D, this.closestPlayerRadius));
 		if (!list.isEmpty())
 			return (Entity) list.get(0);
@@ -455,13 +455,13 @@ public class EntityWeepingAngel extends EntityCreature {
 		}
 	}
 
-	private List getAngelsNear() {
+	private List<?> getAngelsNear() {
 		return worldObj.getEntitiesWithinAABB(EntityWeepingAngel.class,
 				boundingBox.expand(20D, 20D, 20D));
 	}
 
 	private boolean canBeSeenByAngel() {
-		List list = this.getAngelsNear();
+		List<?> list = this.getAngelsNear();
 		int angelsWatching = 0;
 		// WeepingAngelsMod.log.info("" + list.size());
 		for (int j = 0; j < list.size(); j++) {

@@ -34,7 +34,7 @@ public class ServerPacketHandler {
 
 	private void handleVortex(DataInputStream inputStream, EntityPlayer player) {
 		try {
-			ItemStack stack = this.readItemStack(inputStream);
+			ItemStack stack = ServerPacketHandler.readItemStack(inputStream);
 			NBTTagCompound tagCom = stack.getTagCompound();
 			player.setCurrentItemOrArmor(0, stack);
 		} catch (IOException e) {

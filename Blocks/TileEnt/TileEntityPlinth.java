@@ -2,12 +2,7 @@ package com.countrygamer.weepingangels.Blocks.TileEnt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.logging.Level;
 
-import com.countrygamer.weepingangels.WeepingAngelsMod;
-import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
-
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +15,10 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLLog;
+
+import com.countrygamer.weepingangels.WeepingAngelsMod;
+import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -42,7 +40,7 @@ public class TileEntityPlinth extends TileEntity {
 	public void updateEntity() {
 		EntityPlayer player = null;
 		int r = 10;
-		List list = worldObj.getEntitiesWithinAABB(EntityPlayer.class,
+		List<?> list = worldObj.getEntitiesWithinAABB(EntityPlayer.class,
 				AxisAlignedBB.getBoundingBox(this.xCoord - r, this.yCoord - r,
 						this.zCoord - r, this.xCoord + r, this.yCoord + r,
 						this.zCoord + r));

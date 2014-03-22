@@ -1,20 +1,11 @@
 package com.countrygamer.weepingangels.Items;
 
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Queue;
-import java.util.Set;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import com.countrygamer.core.Items.ItemBase;
-import com.countrygamer.weepingangels.WeepingAngelsMod;
+import com.countrygamer.core.Base.item.ItemBase;
 
 public class ItemWADebug extends ItemBase {
 	

@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -198,7 +197,7 @@ public class Util {
 			int meta = world.getBlockMetadata(x, y, z);
 			world.setBlockMetadataWithNotify(x, y, z,
 					meta >= 15 ? 0 : meta + 1, 2);
-			ArrayList blocksToUpdate = new ArrayList();
+			ArrayList<ChunkPosition> blocksToUpdate = new ArrayList<ChunkPosition>();
 			blocksToUpdate.clear();
 			blocksToUpdate.add(new ChunkPosition(x + 0, y + 0, z + 0));
 			// blocksToUpdate.add(new ChunkPosition(x - 1, y + 0, z + 0));
@@ -222,7 +221,7 @@ public class Util {
 	public static boolean canBeSeenMulti(World world,
 			AxisAlignedBB boundingBox, double closestPlayerRadius,
 			EntityLivingBase thisEntity) {
-		List list = thisEntity.worldObj.getEntitiesWithinAABB(
+		List<?> list = thisEntity.worldObj.getEntitiesWithinAABB(
 				EntityPlayer.class, boundingBox.expand(closestPlayerRadius,
 						20D, closestPlayerRadius));
 		int playersWatching = 0;

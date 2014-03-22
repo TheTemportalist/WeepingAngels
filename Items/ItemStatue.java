@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-import com.countrygamer.core.Items.ItemBase;
+import com.countrygamer.core.Base.item.ItemBase;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
 import com.countrygamer.weepingangels.Entity.EntityStatue;

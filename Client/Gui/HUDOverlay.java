@@ -66,7 +66,7 @@ public class HUDOverlay extends Gui {
 			GL11.glDisable(GL11.GL_LIGHTING);
 			this.mc.getTextureManager().bindTexture(health);
 
-			for (int i = 0; i < this.maxHUDHealth / 2; i++) {
+			for (int i = 0; i < HUDOverlay.maxHUDHealth / 2; i++) {
 				this.drawTexturedModalRect(xPos + (i * 9), yPos, 0, 9,
 						BUFF_ICON_SIZE, BUFF_ICON_SIZE);
 			}
@@ -89,7 +89,7 @@ public class HUDOverlay extends Gui {
 							BUFF_ICON_SIZE);
 			}
 
-			this.renderBlur(k, l, angelHealth / (float)(this.maxHUDHealth));
+			this.renderBlur(k, l, angelHealth / (float)(HUDOverlay.maxHUDHealth));
 		}
 	}
 

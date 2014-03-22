@@ -50,13 +50,13 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 		properties
 				.setInteger("ticksTillAngelHeal", this.player.getDataWatcher()
 						.getWatchableObjectInt(ExtendedPlayer.ticksiD));
-		compound.setTag(this.extendedPropertyName, properties);
+		compound.setTag(ExtendedPlayer.extendedPropertyName, properties);
 	}
 
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
 		NBTTagCompound properties = (NBTTagCompound) compound
-				.getTag(this.extendedPropertyName);
+				.getTag(ExtendedPlayer.extendedPropertyName);
 		if (this.player != null) {
 			this.player.getDataWatcher().updateObject(
 					ExtendedPlayer.isConvertActiveiD,

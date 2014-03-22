@@ -2,17 +2,15 @@ package com.countrygamer.weepingangels.Blocks;
 
 import java.util.Random;
 
-import com.countrygamer.core.Core;
-import com.countrygamer.weepingangels.WeepingAngelsMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import com.countrygamer.weepingangels.WeepingAngelsMod;
 import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
 
 import cpw.mods.fml.relauncher.Side;

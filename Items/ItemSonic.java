@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import com.countrygamer.core.Items.ItemBase;
+import com.countrygamer.core.Base.item.ItemBase;
 import com.countrygamer.core.lib.CoreUtil;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
@@ -49,7 +49,7 @@ public class ItemSonic extends ItemBase {
 				y -= 1;
 			}
 			// 0 & 4, 1 & 5, 2 & 6, 3 & 7
-			ArrayList<Integer> metadata = new ArrayList();
+			ArrayList<Integer> metadata = new ArrayList<Integer>();
 			for (int i = 0; i <= 3; i++) {
 				metadata.add(i + 4);
 			}

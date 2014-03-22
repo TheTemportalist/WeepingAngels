@@ -20,8 +20,8 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import com.countrygamer.core.Core;
-import com.countrygamer.core.Handler.PacketPipeline;
-import com.countrygamer.core.Items.ItemMetadataBase;
+import com.countrygamer.core.Base.packet.PacketPipeline;
+import com.countrygamer.core.Base.item.ItemMetadataBase;
 import com.countrygamer.core.lib.CoreUtil;
 import com.countrygamer.weepingangels.Blocks.BlockPlinth;
 import com.countrygamer.weepingangels.Blocks.BlockWeepingAngelSpawn;
@@ -39,7 +39,6 @@ import com.countrygamer.weepingangels.World.WorldGenerator;
 import com.countrygamer.weepingangels.lib.Reference;
 import com.countrygamer.weepingangels.proxy.ServerProxy;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
@@ -213,12 +212,12 @@ public class WeepingAngelsMod {
 				CreativeTabs.tabMisc).setMaxStackSize(64);
 		Core.addItemToTab(WeepingAngelsMod.statue);
 
-		if (this.addonVortex || this.addonSonic) {
+		if (WeepingAngelsMod.addonVortex || WeepingAngelsMod.addonSonic) {
 			this.chronon();
 		}
-		if (this.addonVortex)
+		if (WeepingAngelsMod.addonVortex)
 			this.vortex();
-		if (this.addonSonic)
+		if (WeepingAngelsMod.addonSonic)
 			this.sonic();
 
 		if (Core.DEBUG) {
@@ -321,8 +320,8 @@ public class WeepingAngelsMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
-		this.packetChannel.initalise(Reference.MOD_ID);
-		this.packetChannel.registerPacket(PacketStoreCoords.class);
+		WeepingAngelsMod.packetChannel.initalise(Reference.MOD_ID);
+		WeepingAngelsMod.packetChannel.registerPacket(PacketStoreCoords.class);
 		this.iChun_Morph();
 	}
 
@@ -341,7 +340,7 @@ public class WeepingAngelsMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		this.packetChannel.postInitialise();
+		WeepingAngelsMod.packetChannel.postInitialise();
 	}
 
 }
