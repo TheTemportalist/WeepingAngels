@@ -1,0 +1,22 @@
+
+item.Debugger.name=Debugger
+item.Weeping Angel Statue.name=Weeping Angel Statue
+
+item.Chronon Dust.Chronon Dust.name=Chronon Dust
+item.Chronon Dust.Chronon Diamond.name=Chronon Diamond
+item.Chronon Dust.Chronon Metal.name=Chronon Metal
+
+item.Vortex Manipulator.name=Vortex Manipulator
+item.Sonic Screwdriver.name=Sonic Screwdriver
+
+tile.Plinth.name=Plinth
+tile.weepingangelspawn.name=Weeping Angel Spawn
+
+entity.weepingangels.Weeping Angel.name=Weeping Angel
+
+achievement.AngelAchieve1=Scared of an Angel
+achievement.AngelAchieve1.desc=The statue is coming. Don't Blink.
+achievement.AngelAchieve2=Slayed by an Angel
+achievement.AngelAchieve2.desc=I'm sorry. I'm so sorry But, you blinked.
+achievement.AngelAchieve3=Taken by an Angel
+achievement.AngelAchieve3.desc=You have been consumed by an Angel.

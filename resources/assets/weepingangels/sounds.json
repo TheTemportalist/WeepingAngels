@@ -1,0 +1,38 @@
+{
+	"crumble": {
+		"category": "master",
+		"sounds": [
+			{
+				"name": "crumble",
+				"stream": false
+			}
+		]
+	},
+	"light": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "light",
+                "stream": false
+            }
+        ]
+    },
+    "stone": {
+        "category": "master",
+        "sounds": [
+            { "name": "stone1",  "stream": false },
+            { "name": "stone2",  "stream": false },
+            { "name": "stone3",  "stream": false },
+            { "name": "stone4",  "stream": false }
+        ]
+    },
+    "teleport_activate": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "teleport_activate",
+                "stream": false
+            }
+        ]
+    }
+}
