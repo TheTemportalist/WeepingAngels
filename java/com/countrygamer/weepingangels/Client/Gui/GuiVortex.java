@@ -171,6 +171,7 @@ public class GuiVortex extends GuiScreen {
 				this.storeCoords(index, this.nameTextBox.getText(),
 						com.countrygamer.core.Core.dimensions
 								.get(this.dimension.displayString), coords[0], coords[1], coords[2]);
+				
 			}
 		}
 		if (guiB.id == this.up.id) { // previous

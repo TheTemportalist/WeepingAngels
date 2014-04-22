@@ -26,8 +26,8 @@ public class ItemVortex extends ItemBase {
 		// prevents null pointers if player scrolls too fast
 		if (itemStack.getItem() == this) {
 
-			NBTTagCompound tagCom = itemStack.getTagCompound();
-			boolean mode = tagCom.getBoolean(ItemVortex.modeTag);
+			NBTTagCompound tagCom = itemStack.hasTagCompound() ? itemStack.getTagCompound() : new NBTTagCompound();
+			boolean mode = itemStack.hasTagCompound() ? tagCom.getBoolean(ItemVortex.modeTag) : true;
 			if (player.isSneaking()) {
 				boolean newMode = !mode;
 
@@ -58,18 +58,6 @@ public class ItemVortex extends ItemBase {
 
 		}
 		return itemStack;
-	}
-
-	@Override
-	public void onUpdate(ItemStack itemStack, World world, Entity entity,
-			int par4, boolean isCurrentItem) {
-		if (!world.isRemote) {
-			if (!itemStack.hasTagCompound()) {
-				NBTTagCompound tagCom = new NBTTagCompound();
-				tagCom.setBoolean(ItemVortex.modeTag, true);
-				itemStack.setTagCompound(tagCom);
-			}
-		}
 	}
 
 }
