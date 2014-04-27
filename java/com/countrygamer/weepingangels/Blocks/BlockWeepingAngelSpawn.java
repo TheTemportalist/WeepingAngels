@@ -48,7 +48,7 @@ public class BlockWeepingAngelSpawn extends Block {
 
 	public void spawnWeepingAngel(World world, double i, double j, double k) {
 		Random rand = new Random();
-		int i1 = world.getBlockMetadata((int) i, (int) j, (int) k);
+		//int i1 = world.getBlockMetadata((int) i, (int) j, (int) k);
 		EntityWeepingAngel ewp = new EntityWeepingAngel(world);
 		ewp.setLocationAndAngles(i + 0.5, j + 1, k + 0.5,
 				(float) (rand.nextInt(15) * 360) / 16f, 0f);

@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import com.countrygamer.core.Base.item.ItemBase;
+import com.countrygamer.core.Base.common.item.ItemBase;
 
 public class ItemWADebug extends ItemBase {
 	

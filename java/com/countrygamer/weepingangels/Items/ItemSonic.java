@@ -13,8 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import com.countrygamer.core.Base.item.ItemBase;
-import com.countrygamer.core.lib.CoreUtil;
+import com.countrygamer.core.Base.common.item.ItemBase;
+import com.countrygamer.core.common.lib.CoreUtil;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
 import com.countrygamer.weepingangels.Entity.EntityWeepingAngel;

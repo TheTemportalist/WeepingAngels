@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.countrygamer.core.Base.packet.AbstractPacket;
+import com.countrygamer.core.Base.common.packet.AbstractPacket;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 
 import cpw.mods.fml.common.network.ByteBufUtils;

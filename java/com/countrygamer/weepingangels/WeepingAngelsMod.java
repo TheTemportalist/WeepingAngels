@@ -19,10 +19,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-import com.countrygamer.core.Core;
-import com.countrygamer.core.Base.packet.PacketPipeline;
-import com.countrygamer.core.Base.item.ItemMetadataBase;
-import com.countrygamer.core.lib.CoreUtil;
+import com.countrygamer.core.Base.common.item.ItemMetadataBase;
+import com.countrygamer.core.Base.common.packet.PacketPipeline;
+import com.countrygamer.core.common.Core;
+import com.countrygamer.core.common.lib.CoreUtil;
 import com.countrygamer.weepingangels.Blocks.BlockPlinth;
 import com.countrygamer.weepingangels.Blocks.BlockWeepingAngelSpawn;
 import com.countrygamer.weepingangels.Blocks.TileEnt.TileEntityPlinth;
@@ -121,8 +121,8 @@ public class WeepingAngelsMod {
 	private void config(FMLPreInitializationEvent event) {
 		Configuration config = new Configuration(
 				event.getSuggestedConfigurationFile());
-		String general = "General";
-		String achievement = "Achievement IDs";
+		//String general = "General";
+		//String achievement = "Achievement IDs";
 		String angelStat = "Angel Stats", angelSpawn = "Angel Spawn Options";
 		String addon = "Addons";
 		config.load(); // load configs from its file
@@ -283,6 +283,7 @@ public class WeepingAngelsMod {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public void entities() {
 		// Register all entities, blocks and items to game
 		// Weeping Angel Entity

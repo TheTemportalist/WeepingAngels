@@ -1,14 +1,13 @@
 package com.countrygamer.weepingangels.Items;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
-import com.countrygamer.core.Base.item.ItemBase;
-import com.countrygamer.core.lib.CoreUtil;
+import com.countrygamer.core.Base.common.item.ItemBase;
+import com.countrygamer.core.common.lib.CoreUtil;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 
 public class ItemVortex extends ItemBase {

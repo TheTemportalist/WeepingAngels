@@ -16,7 +16,7 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 
-import com.countrygamer.core.lib.CoreUtil;
+import com.countrygamer.core.common.lib.CoreUtil;
 import com.countrygamer.weepingangels.WeepingAngelsMod;
 import com.countrygamer.weepingangels.Handlers.Player.ExtendedPlayer;
 import com.countrygamer.weepingangels.lib.Reference;
