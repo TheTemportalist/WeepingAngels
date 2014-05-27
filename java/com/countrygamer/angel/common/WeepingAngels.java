@@ -24,31 +24,28 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 		version = "@PLUGIN_VERSION@")
 public class WeepingAngels extends PluginBase {
 	
-	public static final String				PLUGIN_ID				= "angel";
-	public static final String				PLUGIN_NAME				= "Weeping Angels";
-	public static final String				BASE_TEX				= PLUGIN_ID + ":";
+	public static final String PLUGIN_ID = "angel";
+	public static final String PLUGIN_NAME = "Weeping Angels";
+	public static final String BASE_TEX = PLUGIN_ID + ":";
 	
-	public static final Logger				logger					= Logger.getLogger(WeepingAngels.PLUGIN_NAME);
+	public static final Logger logger = Logger.getLogger(WeepingAngels.PLUGIN_NAME);
 	
 	@SidedProxy(serverSide = "com.countrygamer.angel.common.CommonProxy",
 			clientSide = "com.countrygamer.angel.client.ClientProxy")
-	public static CommonProxy				proxy;
+	public static CommonProxy proxy;
 	
 	@Instance(WeepingAngels.PLUGIN_ID)
-	public static WeepingAngels				instance;
+	public static WeepingAngels instance;
 	
-	public static Achievement				angelAchieve1, angelAchieve2, angelAchieve3;
+	public static Achievement angelAchieve1, angelAchieve2, angelAchieve3;
 	
-	public static final ResourceLocation	weepingAngelTex			= new ResourceLocation(
-																			BASE_TEX
-																					+ "textures/entities/weepingangel.png");
-	public static final ResourceLocation	weepingAngelAngryTex	= new ResourceLocation(
-																			BASE_TEX
-																					+ "textures/entities/weepingangel-angry.png");
+	public static final ResourceLocation weepingAngelTex = new ResourceLocation(BASE_TEX
+			+ "textures/entities/weepingangel.png");
+	public static final ResourceLocation weepingAngelAngryTex = new ResourceLocation(BASE_TEX
+			+ "textures/entities/weepingangel-angry.png");
 	
-	public static final ResourceLocation	weepingAngelStatueTex	= new ResourceLocation(
-																			BASE_TEX
-																					+ "textures/blocks/plinth.png");
+	public static final ResourceLocation weepingAngelStatueTex = new ResourceLocation(BASE_TEX
+			+ "textures/blocks/plinth.png");
 	
 	// Initializations
 	@EventHandler
