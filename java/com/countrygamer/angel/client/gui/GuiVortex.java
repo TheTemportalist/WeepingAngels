@@ -24,8 +24,9 @@ import org.lwjgl.opengl.GL11;
 import com.countrygamer.angel.common.WeepingAngels;
 import com.countrygamer.angel.common.packet.PacketStoreCoords;
 import com.countrygamer.core.Base.client.gui.GuiButtonArrow;
+import com.countrygamer.core.Base.common.network.PacketHandler;
 import com.countrygamer.countrygamercore.common.Core;
-import com.countrygamer.countrygamercore.common.handler.packet.PacketTeleport;
+import com.countrygamer.countrygamercore.common.network.MessageTeleport;
 import com.countrygamer.countrygamercore.lib.CoreUtil;
 
 import cpw.mods.fml.relauncher.Side;
@@ -34,28 +35,25 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiVortex extends GuiScreen {
 	
-	public static final ResourceLocation	bkgd			= new ResourceLocation(
-																	WeepingAngels.PLUGIN_ID,
-																	"textures/gui/"
-																			+ "Vortex Manipulator"
-																			+ ".png");
-	private int								leftOfGui, topOfGui;
-	protected int							xSize			= 176;
-	protected int							ySize			= 166;
+	public static final ResourceLocation bkgd = new ResourceLocation(WeepingAngels.PLUGIN_ID,
+			"textures/gui/" + "Vortex Manipulator" + ".png");
+	private int leftOfGui, topOfGui;
+	protected int xSize = 176;
+	protected int ySize = 166;
 	
-	private final EntityPlayer				thePlayer;
-	private final ItemStack					vortexStack;
+	private final EntityPlayer thePlayer;
+	private final ItemStack vortexStack;
 	
-	private GuiButton						teleport, saveLocation, dimension;
-	private GuiButton						select, selectCurrent;
-	private GuiTextField					indexTextBox, nameTextBox, dimIDText;
-	private GuiTextField					newXTextBox, newYTextBox, newZTextBox;
+	private GuiButton teleport, saveLocation, dimension;
+	private GuiButton select, selectCurrent;
+	private GuiTextField indexTextBox, nameTextBox, dimIDText;
+	private GuiTextField newXTextBox, newYTextBox, newZTextBox;
 	
-	private int								locationIndex	= 0;
-	private String							indexName		= "", dimName = "Overworld";
-	private double							coordX			= 0.0D, coordY = 0.0D, coordZ = 0.0D;
+	private int locationIndex = 0;
+	private String indexName = "", dimName = "Overworld";
+	private double coordX = 0.0D, coordY = 0.0D, coordZ = 0.0D;
 	
-	private GuiButtonArrow					up, down;
+	private GuiButtonArrow up, down;
 	
 	public GuiVortex(EntityPlayer player) {
 		super();
@@ -202,8 +200,9 @@ public class GuiVortex extends GuiScreen {
 			if (coords != null) {
 				int dimID = Core.dimensions.get(this.dimension.displayString);
 				this.mc.displayGuiScreen(null);
-				PacketTeleport packet = new PacketTeleport(dimID, coords, false, false);
-				Core.instance.packetChannel.sendToServer(packet);
+				
+				MessageTeleport message = new MessageTeleport(dimID, coords, false, false);
+				PacketHandler.sendToServer(Core.pluginID, message);
 			}
 			else if (Core.DEBUG) {
 				// WeepingAngelsMod.log.info("coords are null");
@@ -366,8 +365,8 @@ public class GuiVortex extends GuiScreen {
 			
 			coorsTag.setTag(index + "", coor);
 			
-			PacketStoreCoords packet = new PacketStoreCoords(coorsTag);
-			WeepingAngels.instance.packetChannel.sendToServer(packet);
+			PacketHandler.sendToServer(WeepingAngels.PLUGIN_ID, new PacketStoreCoords(coorsTag));
+			
 		}
 	}
 	

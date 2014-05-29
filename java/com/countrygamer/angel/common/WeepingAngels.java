@@ -11,6 +11,7 @@ import com.countrygamer.angel.common.extended.ExtendedAngelPlayer;
 import com.countrygamer.angel.common.item.WAItems;
 import com.countrygamer.angel.common.packet.PacketStoreCoords;
 import com.countrygamer.core.Base.Plugin.PluginBase;
+import com.countrygamer.core.Base.common.network.PacketHandler;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -19,6 +20,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = WeepingAngels.PLUGIN_ID, name = WeepingAngels.PLUGIN_NAME,
 		version = "@PLUGIN_VERSION@")
@@ -48,13 +50,17 @@ public class WeepingAngels extends PluginBase {
 			+ "textures/blocks/plinth.png");
 	
 	// Initializations
+	@SuppressWarnings("unchecked")
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		super.preInitialize(WeepingAngels.PLUGIN_NAME, event, WeepingAngels.proxy, new WAOptions(),
-				new WAItems(), new WABlocks(), null, new WAEntity());
+		super.preInitialize(WeepingAngels.PLUGIN_ID, WeepingAngels.PLUGIN_NAME, event,
+				WeepingAngels.proxy, new WAOptions(), new WAItems(), new WABlocks(), null,
+				new WAEntity());
 		
 		this.registerExtendedPlayer("Extended Angel Player", ExtendedAngelPlayer.class, true);
-		this.registerPacketClass(PacketStoreCoords.class);
+		
+		if (event.getSide() == Side.CLIENT)
+			PacketHandler.registerHandler(WeepingAngels.PLUGIN_ID, PacketStoreCoords.class);
 		
 		this.registerAchievements();
 		

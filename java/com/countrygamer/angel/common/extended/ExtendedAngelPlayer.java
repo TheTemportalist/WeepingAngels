@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 
 import com.countrygamer.angel.client.gui.HUDOverlay;
 import com.countrygamer.angel.common.WAOptions;
-import com.countrygamer.core.Base.Plugin.ExtendedEntity;
+import com.countrygamer.core.Base.Plugin.extended.ExtendedEntity;
 
 public class ExtendedAngelPlayer extends ExtendedEntity {
 	

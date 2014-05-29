@@ -6,7 +6,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 import com.countrygamer.angel.common.WAOptions;
 import com.countrygamer.angel.common.WeepingAngels;
-import com.countrygamer.core.Base.Plugin.PluginEntityRegistry;
+import com.countrygamer.core.Base.Plugin.registry.PluginEntityRegistry;
 
 import cpw.mods.fml.common.registry.EntityRegistry;
 

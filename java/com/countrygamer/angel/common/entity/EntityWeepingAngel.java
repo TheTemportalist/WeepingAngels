@@ -21,7 +21,7 @@ import com.countrygamer.angel.common.WeepingAngels;
 import com.countrygamer.angel.common.extended.ExtendedAngelPlayer;
 import com.countrygamer.angel.common.item.WAItems;
 import com.countrygamer.angel.common.lib.Util;
-import com.countrygamer.core.Base.Plugin.ExtendedEntity;
+import com.countrygamer.core.Base.Plugin.extended.ExtendedEntity;
 import com.countrygamer.countrygamercore.lib.CoreUtil;
 
 public class EntityWeepingAngel extends EntityCreature {

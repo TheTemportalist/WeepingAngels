@@ -9,7 +9,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import com.countrygamer.angel.common.entity.EntityWeepingAngel;
 import com.countrygamer.angel.common.extended.ExtendedAngelPlayer;
 import com.countrygamer.angel.common.item.WAItems;
-import com.countrygamer.core.Base.Plugin.ExtendedEntity;
+import com.countrygamer.core.Base.Plugin.extended.ExtendedEntity;
 import com.countrygamer.countrygamercore.common.Core;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;

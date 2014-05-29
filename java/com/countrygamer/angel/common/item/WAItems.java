@@ -5,7 +5,7 @@ import net.minecraft.item.Item;
 import com.countrygamer.angel.common.WAOptions;
 import com.countrygamer.angel.common.WeepingAngels;
 import com.countrygamer.angel.common.entity.EntityStatue;
-import com.countrygamer.core.Base.Plugin.PluginItemRegistry;
+import com.countrygamer.core.Base.Plugin.registry.PluginItemRegistry;
 import com.countrygamer.core.Base.common.item.ItemBase;
 import com.countrygamer.countrygamercore.common.Core;
 
