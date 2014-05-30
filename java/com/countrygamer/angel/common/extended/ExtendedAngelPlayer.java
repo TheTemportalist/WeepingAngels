@@ -39,7 +39,7 @@ public class ExtendedAngelPlayer extends ExtendedEntity {
 	
 	@Override
 	public void init(Entity entity, World world) {
-		this.clearAngelTicks();
+		this.syncEntity();
 	}
 	
 	public void setConvertting(boolean val) {
