@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 import com.countrygamer.angel.common.block.WABlocks;
 import com.countrygamer.angel.common.entity.EntityWeepingAngel;
 import com.countrygamer.angel.common.tile.TileEntityPlinth;
-import com.countrygamer.core.Base.common.item.ItemBase;
+import com.countrygamer.countrygamercore.Base.common.item.ItemBase;
 import com.countrygamer.countrygamercore.lib.CoreUtil;
 
 public class ItemSonic extends ItemBase {

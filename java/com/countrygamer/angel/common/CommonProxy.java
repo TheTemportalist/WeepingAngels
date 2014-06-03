@@ -3,7 +3,7 @@ package com.countrygamer.angel.common;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-import com.countrygamer.core.Base.Plugin.PluginCommonProxy;
+import com.countrygamer.countrygamercore.Base.Plugin.PluginCommonProxy;
 
 public class CommonProxy implements PluginCommonProxy {
 	

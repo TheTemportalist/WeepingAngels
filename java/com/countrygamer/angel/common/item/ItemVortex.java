@@ -7,7 +7,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 import com.countrygamer.angel.common.WeepingAngels;
-import com.countrygamer.core.Base.common.item.ItemBase;
+import com.countrygamer.countrygamercore.Base.common.item.ItemBase;
 import com.countrygamer.countrygamercore.lib.CoreUtil;
 
 public class ItemVortex extends ItemBase {

@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import com.countrygamer.angel.common.WeepingAngels;
 import com.countrygamer.angel.common.tile.TileEntityPlinth;
-import com.countrygamer.core.Base.Plugin.registry.PluginBlockRegistry;
+import com.countrygamer.countrygamercore.Base.Plugin.registry.PluginBlockRegistry;
 import com.countrygamer.countrygamercore.common.Core;
 
 import cpw.mods.fml.common.registry.GameRegistry;

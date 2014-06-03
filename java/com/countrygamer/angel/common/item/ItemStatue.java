@@ -9,7 +9,7 @@ import com.countrygamer.angel.common.block.WABlocks;
 import com.countrygamer.angel.common.entity.EntityStatue;
 import com.countrygamer.angel.common.lib.Util;
 import com.countrygamer.angel.common.tile.TileEntityPlinth;
-import com.countrygamer.core.Base.common.item.ItemBase;
+import com.countrygamer.countrygamercore.Base.common.item.ItemBase;
 
 public class ItemStatue extends ItemBase {
 	private Class statue;

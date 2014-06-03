@@ -2,7 +2,7 @@ package com.countrygamer.angel.common;
 
 import net.minecraftforge.common.config.Configuration;
 
-import com.countrygamer.core.Base.Plugin.registry.PluginOptionRegistry;
+import com.countrygamer.countrygamercore.Base.Plugin.registry.PluginOptionRegistry;
 import com.countrygamer.countrygamercore.lib.CoreUtil;
 
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;

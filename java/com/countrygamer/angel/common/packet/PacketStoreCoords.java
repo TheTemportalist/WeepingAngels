@@ -6,7 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.countrygamer.core.Base.common.network.AbstractMessage;
+import com.countrygamer.countrygamercore.Base.common.network.AbstractMessage;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 

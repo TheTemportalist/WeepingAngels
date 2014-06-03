@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.countrygamer.angel.common.WeepingAngels;
 import com.countrygamer.angel.common.extended.ExtendedAngelPlayer;
-import com.countrygamer.core.Base.Plugin.extended.ExtendedEntity;
+import com.countrygamer.countrygamercore.Base.Plugin.extended.ExtendedEntity;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
