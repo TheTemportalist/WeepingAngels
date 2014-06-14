@@ -1,0 +1,4 @@
+ name: Weeping Angels
+ version: 0.1
+ description: The Weeping Angels mod for bukkit.
+ main: com.countrygamer.angel.client
