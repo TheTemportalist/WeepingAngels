@@ -1,5 +1,5 @@
  name: Weeping Angels
  version: 0.1
  description: The Weeping Angels mod for bukkit.
- main: com.countrygamer.angel.client
-//The main is the main code file, this may need to change according to the main bukkit file.
+ main: com.countrygamer.angel.common
+//Getting more progress done. Unsure If I need to add a CGCore bukkit.yml aswell.
