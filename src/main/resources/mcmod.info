@@ -1,0 +1,16 @@
+[
+{
+  "modid": "weepingangels",
+  "name": "Weeping Angels",
+  "description": "Weeping. Freaking. Angels.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["CountryGamer"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": ["cgo"]
+}
+]

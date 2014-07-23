@@ -4,3 +4,17 @@
 *.jar
 *.war
 *.ear
+
+.gradle
+build
+WeepingAngel.iml
+WeepingAngel.ipr
+WeepingAngel.iws
+eclipse
+gradle
+gradle.properties
+gradlew
+gradle.bat
+output
+run
+test
