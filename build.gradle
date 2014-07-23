@@ -27,41 +27,41 @@ configFile.withReader {
     project.ext.config = new ConfigSlurper().parse prop
 }
 
-group= "com.countrygamer.weepingangels"
+group = "com.countrygamer.weepingangels"
 archivesBaseName = "CoG-WeepingAngels"
 
 dependencies {
     compile project(':CGOrigin')
 }
 
-version = "3.0.0"
+version = "3.0.1"
 
 minecraft {
     version = "${config.minecraft_version}-${config.forge_version}"
     runDir = "${config.assets_path}"
 
     replace "@PLUGIN_VERSION@", project.version
-    replaceIn "WeepingAngels.java"
+    replaceIn "WeepingAngels.scala"
 }
 
 version = "${config.minecraft_version}-$version"
 
 processResources
-{
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+        {
+            // this will ensure that this task is redone when the versions change.
+            inputs.property "version", project.version
+            inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
+            // replace stuff in mcmod.info, nothing else
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
+
+                // replace version and mcversion
+                expand 'version': project.version, 'mcversion': project.minecraft.version
+            }
+
+            // copy everything else, thats not the mcmod.info
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
