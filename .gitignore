@@ -41,7 +41,7 @@ eclipse
 gradle
 gradle.properties
 gradlew
-gradle.bat
+gradlew.bat
 output
 run
 test
