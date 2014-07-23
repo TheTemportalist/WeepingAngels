@@ -1,6 +1,8 @@
 package com.countrygamer.weepingangels.common.tile
 
 import com.countrygamer.cgo.wrapper.common.tile.TEWrapper
+import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
+import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
 
 /**
@@ -13,6 +15,7 @@ class TileEntityStatue() extends TEWrapper("Statue") {
 	private var facialState: Int = 0
 	private var armState: Int = 0
 	private var rotation: Float = 0.0F
+	private var isSpawning: Boolean = false
 
 	// Default Constructor
 	{
@@ -36,6 +39,7 @@ class TileEntityStatue() extends TEWrapper("Statue") {
 		tagCom.setInteger("facialState", this.facialState)
 		tagCom.setInteger("armState", this.armState)
 		tagCom.setFloat("rotation", this.rotation)
+		tagCom.setBoolean("isSpawing", this.isSpawning)
 
 	}
 
@@ -45,6 +49,7 @@ class TileEntityStatue() extends TEWrapper("Statue") {
 		this.facialState = tagCom.getInteger("facialState")
 		this.armState = tagCom.getInteger("armState")
 		this.rotation = tagCom.getFloat("rotation")
+		this.isSpawning = tagCom.getBoolean("isSpawning")
 
 	}
 
@@ -82,7 +87,23 @@ class TileEntityStatue() extends TEWrapper("Statue") {
 	}
 
 	def comeToLife(): Unit = {
-		// TODO
+		val angelEntity: EntityWeepingAngel = new EntityWeepingAngel(this.getWorldObj)
+
+		angelEntity.setPositionAndRotation(this.xCoord + 0.5, this.yCoord + 0.5, this.zCoord + 0.5,
+			this.getRotation(), 0.0F)
+
+		if (!this.getWorldObj.isRemote) {
+			this.getWorldObj.spawnEntityInWorld(angelEntity)
+		}
+
+		this.isSpawning = true
+
+		this.getWorldObj.setBlock(this.xCoord, this.yCoord, this.zCoord, Blocks.stone_slab)
+
+	}
+
+	def isComingToLife(): Boolean = {
+		this.isSpawning
 	}
 
 }
