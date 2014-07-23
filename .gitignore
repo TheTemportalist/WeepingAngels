@@ -7,9 +7,9 @@
 
 .gradle
 build
-WeepingAngel.iml
-WeepingAngel.ipr
-WeepingAngel.iws
+WeepingAngels.iml
+WeepingAngels.ipr
+WeepingAngels.iws
 eclipse
 gradle
 gradle.properties
