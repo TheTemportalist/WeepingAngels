@@ -26,13 +26,13 @@ class CommonProxy() extends ProxyWrapper {
 
 	override def getClientGuiElement(ID: Int, player: EntityPlayer, world: World, x: Int, y: Int,
 			z: Int): AnyRef = {
-		return null
+		null
 	}
 
 	override def getServerGuiElement(ID: Int, player: EntityPlayer, world: World, x: Int, y: Int,
 			z: Int): AnyRef = {
 
-		return null
+		null
 	}
 
 }

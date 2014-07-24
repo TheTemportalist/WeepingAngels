@@ -59,8 +59,8 @@ class GuiButtonIterator(id: Int, x: Int, y: Int, w: Int, h: Int, val list: Array
 		this.setText(this.displayIndex)
 	}
 
-	def getIndex(): Int = {
-		return this.displayIndex
+	def getIndex: Int = {
+		this.displayIndex
 	}
 
 }

@@ -15,7 +15,7 @@ import net.minecraft.init.Blocks
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.util._
-import net.minecraft.world.{EnumSkyBlock, EnumDifficulty, World}
+import net.minecraft.world.{EnumDifficulty, EnumSkyBlock, World}
 
 /**
  *
@@ -104,24 +104,24 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		this.dataWatcher.updateObject(16, state)
 	}
 
-	def getAngryState(): Byte = {
-		return this.dataWatcher.getWatchableObjectByte(16)
+	def getAngryState: Byte = {
+		this.dataWatcher.getWatchableObjectByte(16)
 	}
 
 	def setArmState(state: Byte): Unit = {
 		this.dataWatcher.updateObject(17, state)
 	}
 
-	def getArmState(): Byte = {
-		return this.dataWatcher.getWatchableObjectByte(17)
+	def getArmState: Byte = {
+		this.dataWatcher.getWatchableObjectByte(17)
 	}
 
 	def setLightSourceKillDelay(delay: Int): Unit = {
 		this.dataWatcher.updateObject(18, delay)
 	}
 
-	def getLightSourceKillDelay(): Int = {
-		return this.dataWatcher.getWatchableObjectInt(18)
+	def getLightSourceKillDelay: Int = {
+		this.dataWatcher.getWatchableObjectInt(18)
 	}
 
 	override def applyEntityAttributes(): Unit = {
@@ -135,19 +135,19 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	}
 
 	override def getLivingSound: String = {
-		return WeepingAngels.pluginID + ":stone"
+		WeepingAngels.pluginID + ":stone"
 	}
 
 	override def getHurtSound: String = {
-		return WeepingAngels.pluginID + ":light"
+		WeepingAngels.pluginID + ":light"
 	}
 
 	override def getDeathSound: String = {
-		return WeepingAngels.pluginID + ":crumble"
+		WeepingAngels.pluginID + ":crumble"
 	}
 
 	override def isAIEnabled: Boolean = {
-		return true
+		true
 	}
 
 	override def onUpdate(): Unit = {
@@ -207,7 +207,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		}
 
 		//if (!canBeSeen)
-	//		this.changeAngelMovement()
+		//		this.changeAngelMovement()
 
 		super.onUpdate()
 
@@ -249,7 +249,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 		}
 
-		return numberOfPlayersWatching > 0
+		numberOfPlayersWatching > 0
 	}
 
 	def isInFieldOfViewOf(entity: EntityLivingBase): Boolean = {
@@ -266,10 +266,10 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		val d1: Double = entityVec.dotProduct(difVec)
 
 		if (d1 > ((1.0D - 0.025D) / lengthOfDif)) {
-			return entity.canEntityBeSeen(this)
+			entity.canEntityBeSeen(this)
 		}
 		else {
-			return false
+			false
 		}
 	}
 
@@ -278,11 +278,11 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	}
 
 	override def findPlayerToAttack(): Entity = {
-		return this.worldObj.getClosestPlayerToEntity(this, 64.0D) // range
+		this.worldObj.getClosestPlayerToEntity(this, 64.0D) // range
 	}
 
-	def isInSkylight(): Boolean = {
-		return this.worldObj.canBlockSeeTheSky(
+	def isInSkylight: Boolean = {
+		this.worldObj.canBlockSeeTheSky(
 			MathHelper.floor_double(this.posX),
 			MathHelper.floor_double(this.posY),
 			MathHelper.floor_double(this.posZ)
@@ -332,7 +332,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 		}
 
-		return closest
+		closest
 	}
 
 	def isValidLightSource(x: Int, y: Int, z: Int, maxDistance: Double): Boolean = {
@@ -354,7 +354,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 		}
 
-		return false
+		false
 	}
 
 	def breakLightSource(coords: Vec3): Unit = {
@@ -395,8 +395,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 	}
 
-	def getAngelsNearby(): util.List[_] = {
-		return this.worldObj.getEntitiesWithinAABB(classOf[EntityWeepingAngel],
+	def getAngelsNearby: util.List[_] = {
+		this.worldObj.getEntitiesWithinAABB(classOf[EntityWeepingAngel],
 			this.boundingBox.expand(20D, 20D, 20D))
 	}
 
@@ -405,38 +405,39 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		if (entity != null && !this.canBeSeen_Multiplayer(this.boundingBox, 64D)) {
 			var didAlternateAction: Boolean = false
 			var entityIsConvertting: Boolean = false
-			if (entity.isInstanceOf[EntityPlayer]) {
-				val player: EntityPlayer = entity.asInstanceOf[EntityPlayer]
+			entity match {
+				case player: EntityPlayer => {
+					if (WAOptions.angelsCanConvertPlayers &&
+							this.rand.nextInt(100) < WAOptions.conversionChance) {
+						val angelPlayer: AngelPlayer = ExtendedEntityHandler
+								.getExtended(player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
 
-				if (WAOptions.angelsCanConvertPlayers &&
-						this.rand.nextInt(100) < WAOptions.conversionChance) {
-					val angelPlayer: AngelPlayer = ExtendedEntityHandler
-							.getExtended(player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
+						if (!angelPlayer.converting()) {
+							angelPlayer.startConversion()
+							angelPlayer.setAngelHealth(0.0F)
+							angelPlayer.clearRegenTicks()
+							didAlternateAction = true
+							entityIsConvertting = true
 
-					if (!angelPlayer.converting()) {
-						angelPlayer.startConversion()
-						angelPlayer.setAngelHealth(0.0F)
-						angelPlayer.clearRegenTicks()
+						}
+						else {
+							entityIsConvertting = true
+						}
+
+					}
+
+					if (!didAlternateAction && WAOptions.angelsCanTeleportPlayers &&
+							this.rand.nextInt(100) < WAOptions.teleportationChance) {
+						UtilVector.teleportPlayer(player, WAOptions.teleportationMinRange,
+							WAOptions.teleportationMaxRange, player.posX, player.posZ, true, true)
+						this.worldObj.playSoundAtEntity(player,
+							WeepingAngels.pluginID + ":teleport_activate", 1.0F, 1.0F)
 						didAlternateAction = true
-						entityIsConvertting = true
 
-					}
-					else {
-						entityIsConvertting = true
 					}
 
 				}
-
-				if (!didAlternateAction && WAOptions.angelsCanTeleportPlayers &&
-						this.rand.nextInt(100) < WAOptions.teleportationChance) {
-					UtilVector.teleportPlayer(player, WAOptions.teleportationMinRange,
-						WAOptions.teleportationMaxRange, player.posX, player.posZ, true, true)
-					this.worldObj.playSoundAtEntity(player,
-						WeepingAngels.pluginID + ":teleport_activate", 1.0F, 1.0F)
-					didAlternateAction = true
-
-				}
-
+				case _ =>
 			}
 
 			if (!didAlternateAction && !entityIsConvertting) {
@@ -453,7 +454,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			return true
 		}
 
-		return false
+		false
 	}
 
 	override def attackEntity(entity: Entity, distanceToEntity: Float): Unit = {
@@ -473,8 +474,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 	}
 
-	def hasStolenInventory(): Boolean = {
-		return this.stolenInventory != null
+	def hasStolenInventory: Boolean = {
+		this.stolenInventory != null
 	}
 
 	def dropStolenInventory(): Unit = {
@@ -506,50 +507,51 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 				return false
 			}
 
-			if (source.getSourceOfDamage.isInstanceOf[EntityPlayer]) {
-				var canDamage: Boolean = false
-				val heldStack: ItemStack = source.getSourceOfDamage.asInstanceOf[EntityPlayer]
-						.inventory.getCurrentItem
+			source.getSourceOfDamage match {
+				case player: EntityPlayer => {
+					var canDamage: Boolean = false
+					val heldStack: ItemStack = source.getSourceOfDamage.asInstanceOf[EntityPlayer]
+							.inventory.getCurrentItem
 
-				if (WAOptions.angelsOnlyHurtWithPickaxe) {
-					if (heldStack != null) {
+					if (WAOptions.angelsOnlyHurtWithPickaxe) {
+						if (heldStack != null) {
 
-						var blockLevel: Block = Blocks.dirt
+							var blockLevel: Block = Blocks.dirt
 
-						if (this.worldObj.difficultySetting == EnumDifficulty.PEACEFUL) {
-							blockLevel = Blocks.dirt // anything
+							if (this.worldObj.difficultySetting == EnumDifficulty.PEACEFUL) {
+								blockLevel = Blocks.dirt // anything
+							}
+							else if (this.worldObj.difficultySetting == EnumDifficulty.EASY) {
+								blockLevel = Blocks.iron_ore // Stone or higher
+							}
+							else if (this.worldObj.difficultySetting == EnumDifficulty.NORMAL) {
+								blockLevel = Blocks.diamond_ore // Iron or higher
+							}
+							else if (this.worldObj.difficultySetting == EnumDifficulty.HARD) {
+								blockLevel = Blocks.obsidian // Diamond or higher
+							}
+
+							canDamage = heldStack.getItem.canHarvestBlock(blockLevel, heldStack) ||
+									heldStack.getItem.func_150897_b(blockLevel)
+
 						}
-						else if (this.worldObj.difficultySetting == EnumDifficulty.EASY) {
-							blockLevel = Blocks.iron_ore // Stone or higher
-						}
-						else if (this.worldObj.difficultySetting == EnumDifficulty.NORMAL) {
-							blockLevel = Blocks.diamond_ore // Iron or higher
-						}
-						else if (this.worldObj.difficultySetting == EnumDifficulty.HARD) {
-							blockLevel = Blocks.obsidian // Diamond or higher
-						}
-
-						canDamage = heldStack.getItem.canHarvestBlock(blockLevel, heldStack) ||
-								heldStack.getItem.func_150897_b(blockLevel)
-
 					}
-				}
-				else {
-					canDamage = true
-				}
+					else {
+						canDamage = true
+					}
 
-				if (canDamage) {
-					return super.attackEntityFrom(source, damage)
-				}
+					if (canDamage) {
+						return super.attackEntityFrom(source, damage)
+					}
 
-				return false
-			}
-			else {
-				return super.attackEntityFrom(source, damage)
+					return false
+				}
+				case _ =>
+					super.attackEntityFrom(source, damage)
 			}
 
 		}
-		return false
+		false
 	}
 
 	override def dropRareDrop(par1: Int): Unit = {
@@ -557,18 +559,18 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	}
 
 	override def getCanSpawnHere: Boolean = {
-		return this.worldObj.difficultySetting != EnumDifficulty.PEACEFUL &&
+		this.worldObj.difficultySetting != EnumDifficulty.PEACEFUL &&
 				this.boundingBox.minY <= WAOptions.maximumSpawnHeight &&
 				this.isValidLightLevel() && super.getCanSpawnHere()
 	}
 
-	def isValidLightLevel(): Boolean = {
+	def isValidLightLevel: Boolean = {
 		val x: Int = MathHelper.floor_double(this.posX)
 		val y: Int = MathHelper.floor_double(this.boundingBox.minY)
 		val z: Int = MathHelper.floor_double(this.posZ)
 
 		if (this.worldObj.getSavedLightValue(EnumSkyBlock.Sky, x, y, z) > this.rand.nextInt(32)) {
-			return false
+			false
 		}
 		else {
 			var lightLevel: Int = this.worldObj.getBlockLightValue(x, y, z)
@@ -580,7 +582,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 				this.worldObj.skylightSubtracted = savedSkylightSubtracted
 			}
 
-			return lightLevel <= this.rand.nextInt(WAOptions.maxLightLevelForSpawn)
+			lightLevel <= this.rand.nextInt(WAOptions.maxLightLevelForSpawn)
 		}
 	}
 

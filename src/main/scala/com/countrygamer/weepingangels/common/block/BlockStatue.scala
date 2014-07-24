@@ -43,7 +43,7 @@ class BlockStatue(material: Material, pluginID: String, name: String,
 	 * @return
 	 */
 	override def hasTileEntity(metadata: Int): Boolean = {
-		return metadata == 0
+		metadata == 0
 	}
 
 	/**
@@ -56,23 +56,23 @@ class BlockStatue(material: Material, pluginID: String, name: String,
 		if (metadata == 0) {
 			return super.createTileEntity(world, metadata)
 		}
-		return null
+		null
 	}
 
 	override def renderAsNormalBlock(): Boolean = {
-		return false
+		false
 	}
 
 	override def isOpaqueCube: Boolean = {
-		return false
+		false
 	}
 
 	override def getRenderType: Int = {
-		return -1
+		-1
 	}
 
 	override def canPlaceBlockAt(world: World, x: Int, y: Int, z: Int): Boolean = {
-		return world.getBlock(x, y, z) == Blocks.air && world.getBlock(x, y + 1, z) == Blocks.air
+		world.getBlock(x, y, z) == Blocks.air && world.getBlock(x, y + 1, z) == Blocks.air
 	}
 
 	override def onBlockAdded(world: World, x: Int, y: Int, z: Int): Unit = {
@@ -130,25 +130,26 @@ class BlockStatue(material: Material, pluginID: String, name: String,
 				}
 			}
 		}
-		return drops
+		drops
 	}
 
 	override def onBlockPlacedBy(world: World, x: Int, y: Int, z: Int, entity: EntityLivingBase,
 			itemStack: ItemStack): Unit = {
 		val tileEntity: TileEntity = world.getTileEntity(x, y, z)
 
-		if (tileEntity.isInstanceOf[TileEntityStatue]) {
+		tileEntity match {
+			case statue: TileEntityStatue =>
 
-			var rotation: Float = entity.rotationYaw
+				var rotation: Float = entity.rotationYaw
 
-			if (entity.isSneaking) {
-				rotation = -rotation
-			}
+				if (entity.isSneaking) {
+					rotation = -rotation
+				}
 
-			tileEntity.asInstanceOf[TileEntityStatue].setRotation(rotation)
+				statue.setRotation(rotation)
 
+			case _ =>
 		}
-
 
 	}
 
@@ -168,7 +169,7 @@ class BlockStatue(material: Material, pluginID: String, name: String,
 			return true
 		}
 
-		return false
+		false
 	}
 
 }

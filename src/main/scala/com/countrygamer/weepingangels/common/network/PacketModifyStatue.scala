@@ -56,26 +56,24 @@ class PacketModifyStatue(x: Int, y: Int, z: Int, var state: Int, var value: Floa
 	}
 
 	override def handleSync(player: EntityPlayer, tileEntity: TileEntity): Unit = {
-		if (tileEntity.isInstanceOf[TileEntityStatue]) {
-			val statueTE: TileEntityStatue = tileEntity.asInstanceOf[TileEntityStatue]
+		tileEntity match {
+			case statueTE: TileEntityStatue =>
 
-			// Switch statement
-			this.state match {
-				case 1 => { // Face
-					statueTE.setFacialState(Math.floor(this.value).asInstanceOf[Int])
+				// Switch statement
+				this.state match {
+					case 1 => // Face
+						statueTE.setFacialState(Math.floor(this.value).asInstanceOf[Int])
 					//System.out.println("Set face to " + this.value)
 					//System.out.println("Face is " + statueTE.getFacialState())
-				}
-				case 2 => { // Arms
-					statueTE.setArmState(Math.floor(this.value).asInstanceOf[Int])
-				}
-				case 3 => { // Rotation
-					statueTE.setRotation(this.value)
+					case 2 => // Arms
+						statueTE.setArmState(Math.floor(this.value).asInstanceOf[Int])
+					case 3 => // Rotation
+						statueTE.setRotation(this.value)
 					//System.out.println("Set rot to " + this.value)
 					//System.out.println("Rot is " + statueTE.getRotation())
 				}
-			}
 
+			case _ =>
 		}
 
 	}

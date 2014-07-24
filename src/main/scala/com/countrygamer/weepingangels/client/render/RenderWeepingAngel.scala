@@ -5,7 +5,7 @@ import com.countrygamer.weepingangels.common.WAOptions
 import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.renderer.entity.RenderLiving
-import net.minecraft.entity.{EntityLiving, Entity}
+import net.minecraft.entity.{Entity, EntityLiving}
 import net.minecraft.util.ResourceLocation
 
 /**
@@ -26,19 +26,21 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 	// End Constructor
 
 	override def getEntityTexture(p_110775_1_ : Entity): ResourceLocation = {
-		return this.texture
+		this.texture
 	}
 
 	override def doRender(entity: EntityLiving, d1: Double, d2: Double, d3: Double, f1: Float,
 			f2: Float): Unit = {
 
-		if (entity.isInstanceOf[EntityWeepingAngel]) {
-			if (entity.asInstanceOf[EntityWeepingAngel].getAngryState() > 0) {
-				this.texture = WAOptions.weepingAngel2
-			}
-			else {
-				this.texture = WAOptions.weepingAngel1
-			}
+		entity match {
+			case angel: EntityWeepingAngel =>
+				if (angel.getAngryState() > 0) {
+					this.texture = WAOptions.weepingAngel2
+				}
+				else {
+					this.texture = WAOptions.weepingAngel1
+				}
+			case _ =>
 		}
 
 		super.doRender(entity, d1, d2, d3, f1, f2)

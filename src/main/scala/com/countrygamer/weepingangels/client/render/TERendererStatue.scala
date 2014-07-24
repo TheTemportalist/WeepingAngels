@@ -69,12 +69,10 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 			this.angelEntity.setArmState(statueTE.getArmState().asInstanceOf[Byte])
 
 			statueTE.getFacialState() match {
-				case 0 => {
+				case 0 =>
 					UtilRender.bindResource(WAOptions.weepingAngel1)
-				}
-				case 1 => {
+				case 1 =>
 					UtilRender.bindResource(WAOptions.weepingAngel2)
-				}
 			}
 
 			// Render the model
@@ -114,7 +112,8 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 			val renderer: RenderBlocks = new RenderBlocks(statueTE.getWorldObj)
 
 			// Translate so that actualy coords can be passed
-			tess.setTranslation(-(statueTE.xCoord + 0.5), -(statueTE.yCoord + 0.5), -(statueTE.zCoord + 0.5))
+			tess.setTranslation(-(statueTE.xCoord + 0.5), -(statueTE.yCoord + 0.5),
+				-(statueTE.zCoord + 0.5))
 
 			// Render the slab
 			renderer.renderBlockByRenderType(Blocks.stone_slab, statueTE.xCoord, statueTE.yCoord,

@@ -41,10 +41,10 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	}
 
-	def getMaxTicksPerRegen(): Int = {
+	def getMaxTicksPerRegen: Int = {
 		val totalTime: Int = (WAOptions.totalConversionTime.asInstanceOf[Double] /
 				WAOptions.maxAngelHealth.asInstanceOf[Double]).asInstanceOf[Int]
-		return totalTime
+		totalTime
 	}
 
 	def startConversion(): Unit = {
@@ -62,7 +62,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 	}
 
 	def converting(): Boolean = {
-		return this.isConverting
+		this.isConverting
 	}
 
 	def setAngelHealth(newHealth: Float): Unit = {
@@ -72,8 +72,8 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	}
 
-	def getAngelHealth(): Float = {
-		return this.angelHealth + this.fractionalHealth
+	def getAngelHealth: Float = {
+		this.angelHealth + this.fractionalHealth
 	}
 
 	def setHealthWithRespectToTicks(): Unit = {
@@ -97,8 +97,8 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	}
 
-	def getTicksUntilNextRegen(): Int = {
-		return this.ticksUntilNextRegen
+	def getTicksUntilNextRegen: Int = {
+		this.ticksUntilNextRegen
 	}
 
 	def decrementTicksUntilRegen(): Unit = {
@@ -115,12 +115,12 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	}
 
-	def getOpacityForBlackout(): Float = {
+	def getOpacityForBlackout: Float = {
 		if (this.getAngelHealth() > 0.0F) {
-			return (this.getAngelHealth() / WAOptions.maxAngelHealth.asInstanceOf[Float])
+			(this.getAngelHealth() / WAOptions.maxAngelHealth.asInstanceOf[Float])
 		}
 		else {
-			return 0.0F
+			0.0F
 		}
 	}
 

@@ -57,31 +57,31 @@ class TileEntityStatue() extends TEWrapper("Statue") {
 		this.facialState = state
 	}
 
-	def getFacialState(): Int = {
-		return this.facialState
+	def getFacialState: Int = {
+		this.facialState
 	}
 
 	def setArmState(state: Int): Unit = {
 		this.armState = state
 	}
 
-	def getArmState(): Int = {
-		return this.armState
+	def getArmState: Int = {
+		this.armState
 	}
 
 	def setRotation(rot: Float): Unit = {
 		this.rotation = rot
 	}
 
-	def getRotation(): Float = {
-		return this.rotation
+	def getRotation: Float = {
+		this.rotation
 	}
 
 	/**
 	 * Called when the power is not what it was
 	 */
 	override def onPowerChanged: Unit = {
-		if (this.getBlockMetadata == 0 && this.isPowered(true)) {
+		if (this.getBlockMetadata == 0 && this.isPowered(checkState = true)) {
 			this.comeToLife()
 		}
 	}
@@ -102,7 +102,7 @@ class TileEntityStatue() extends TEWrapper("Statue") {
 
 	}
 
-	def isComingToLife(): Boolean = {
+	def isComingToLife: Boolean = {
 		this.isSpawning
 	}
 

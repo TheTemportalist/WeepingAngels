@@ -2,10 +2,10 @@ package com.countrygamer.weepingangels.client
 
 import com.countrygamer.weepingangels.client.gui.{GuiStatue, HUDOverlay}
 import com.countrygamer.weepingangels.client.render.{RenderWeepingAngel, TERendererStatue}
-import com.countrygamer.weepingangels.common.{WAOptions, CommonProxy}
 import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
 import com.countrygamer.weepingangels.common.tile.TileEntityStatue
-import cpw.mods.fml.client.registry.{RenderingRegistry, ClientRegistry}
+import com.countrygamer.weepingangels.common.{CommonProxy, WAOptions}
+import cpw.mods.fml.client.registry.{ClientRegistry, RenderingRegistry}
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
@@ -51,7 +51,7 @@ class ClientProxy() extends CommonProxy() {
 			return new GuiStatue(tileEntity.asInstanceOf[TileEntityStatue])
 		}
 
-		return null
+		null
 	}
 
 }

@@ -167,12 +167,10 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 			rotation = rotText.toFloat
 		}
 		catch {
-			case e: NumberFormatException => {
-
-			}
+			case e: NumberFormatException =>
 		}
 
-		return rotation
+		rotation
 	}
 
 	def updateComponents(): Unit = {
@@ -183,7 +181,7 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 	}
 
 	override def doesGuiPauseGame(): Boolean = {
-		return false
+		false
 	}
 
 	override protected def drawGuiBackground(): Unit = {

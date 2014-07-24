@@ -4,9 +4,9 @@ import com.countrygamer.cgo.wrapper.common.PluginWrapper
 import com.countrygamer.cgo.wrapper.common.registries.RegisterHelper
 import com.countrygamer.weepingangels.common.block.WABlocks
 import com.countrygamer.weepingangels.common.entity.WAEntity
-import com.countrygamer.weepingangels.common.extended.{AngelPlayerHandler, AngelPlayer}
+import com.countrygamer.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
 import com.countrygamer.weepingangels.common.network.PacketModifyStatue
-import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
+import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
 import cpw.mods.fml.common.{Mod, SidedProxy}
 
 /**
@@ -31,7 +31,8 @@ object WeepingAngels extends PluginWrapper {
 		super.preInitialize(this.pluginID, this.pluginName, event, this.proxy, WAOptions, WABlocks,
 			WAEntity)
 
-		RegisterHelper.registerExtendedPlayer("Extended Angel Player", classOf[AngelPlayer], false)
+		RegisterHelper.registerExtendedPlayer("Extended Angel Player", classOf[AngelPlayer],
+			deathPersistance = false)
 
 		RegisterHelper.registerHandler(AngelPlayerHandler, null)
 

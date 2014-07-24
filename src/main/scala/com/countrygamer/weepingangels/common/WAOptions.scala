@@ -156,7 +156,7 @@ object WAOptions extends OptionRegister {
 
 	@SideOnly(Side.CLIENT)
 	override def getGuiConfigClass(): Class[_ <: GuiScreen] = {
-		return classOf[com.countrygamer.weepingangels.client.gui.configFactory.GuiConfig]
+		classOf[com.countrygamer.weepingangels.client.gui.configFactory.GuiConfig]
 	}
 
 	final val weepingAngel1: ResourceLocation = new ResourceLocation(WeepingAngels.pluginID,

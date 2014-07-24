@@ -175,76 +175,76 @@ class ModelWeepingAngel() extends ModelBase() {
 
 	override def setRotationAngles(f: Float, f1: Float, f2: Float, f3: Float, f4: Float, f5: Float,
 			entity: Entity): Unit = {
-		if (entity.isInstanceOf[EntityWeepingAngel]) {
-			if (entity.asInstanceOf[EntityWeepingAngel].getAngryState() == 1) {
-				angleX = Math.toRadians(20).asInstanceOf[Float]
-				angleY = Math.toRadians(60).asInstanceOf[Float]
-				angleZ = Math.toRadians(5).asInstanceOf[Float]
-			}
-			else {
-				angleX = Math.toRadians(10).asInstanceOf[Float]
-				angleY = Math.toRadians(30).asInstanceOf[Float]
-				angleZ = Math.toRadians(5).asInstanceOf[Float]
-			}
-			if (entity.asInstanceOf[EntityWeepingAngel].getArmState() >= 2) {
-				val f6: Float = MathHelper.sin(onGround * 3.141593F)
-				var f7: Float = MathHelper.sin((1.0F - (1.0F - onGround)
-						* (1.0F - onGround)) * 3.141593F)
-				rightarm.rotateAngleZ = 0.0F
-				leftarm.rotateAngleZ = 0.0F
-				rightarm.rotateAngleY = -(0.1F - f6 * 0.6F)
-				leftarm.rotateAngleY = 0.1F - f6 * 0.6F
-				rightarm.rotateAngleX = -1.570796F
-				leftarm.rotateAngleX = -1.570796F
-			}
-			else if (entity.asInstanceOf[EntityWeepingAngel].getArmState() == 1) {
-				rightarm.rotateAngleX = -1.04533F
-				rightarm.rotateAngleY = -0.55851F
-				rightarm.rotateAngleZ = 0.0F
-				leftarm.rotateAngleX = -1.04533F
-				leftarm.rotateAngleY = 0.55851F
-				leftarm.rotateAngleZ = 0.0F
-			}
-			else {
+		entity match {
+			case angel: EntityWeepingAngel =>
+				if (angel.getAngryState() == 1) {
+					angleX = Math.toRadians(20).asInstanceOf[Float]
+					angleY = Math.toRadians(60).asInstanceOf[Float]
+					angleZ = Math.toRadians(5).asInstanceOf[Float]
+				}
+				else {
+					angleX = Math.toRadians(10).asInstanceOf[Float]
+					angleY = Math.toRadians(30).asInstanceOf[Float]
+					angleZ = Math.toRadians(5).asInstanceOf[Float]
+				}
+				if (angel.getArmState() >= 2) {
+					val f6: Float = MathHelper.sin(onGround * 3.141593F)
+					var f7: Float = MathHelper.sin((1.0F - (1.0F - onGround)
+							* (1.0F - onGround)) * 3.141593F)
+					rightarm.rotateAngleZ = 0.0F
+					leftarm.rotateAngleZ = 0.0F
+					rightarm.rotateAngleY = -(0.1F - f6 * 0.6F)
+					leftarm.rotateAngleY = 0.1F - f6 * 0.6F
+					rightarm.rotateAngleX = -1.570796F
+					leftarm.rotateAngleX = -1.570796F
+				}
+				else if (angel.getArmState() == 1) {
+					rightarm.rotateAngleX = -1.04533F
+					rightarm.rotateAngleY = -0.55851F
+					rightarm.rotateAngleZ = 0.0F
+					leftarm.rotateAngleX = -1.04533F
+					leftarm.rotateAngleY = 0.55851F
+					leftarm.rotateAngleZ = 0.0F
+				}
+				else {
+					rightarm.rotateAngleX = -1.74533F
+					rightarm.rotateAngleY = -0.55851F
+					rightarm.rotateAngleZ = 0.0F
+					leftarm.rotateAngleX = -1.74533F
+					leftarm.rotateAngleY = 0.55851F
+					leftarm.rotateAngleZ = 0.0F
+				}
+				rightwing2.rotateAngleX = angleX
+				rightwing3.rotateAngleX = angleX
+				rightwing4.rotateAngleX = angleX
+				rightwing1.rotateAngleX = angleX
+				leftwing2.rotateAngleX = angleX
+				leftwing3.rotateAngleX = angleX
+				leftwing4.rotateAngleX = angleX
+				leftwing1.rotateAngleX = angleX
+				rightwing2.rotateAngleY = -angleY
+				rightwing3.rotateAngleY = -angleY
+				rightwing4.rotateAngleY = -angleY
+				rightwing1.rotateAngleY = -angleY
+				leftwing2.rotateAngleY = angleY
+				leftwing3.rotateAngleY = angleY
+				leftwing4.rotateAngleY = angleY
+				leftwing1.rotateAngleY = angleY
+				rightwing2.rotateAngleZ = angleZ
+				rightwing3.rotateAngleZ = angleZ
+				rightwing4.rotateAngleZ = angleZ
+				rightwing1.rotateAngleZ = angleZ
+				leftwing2.rotateAngleZ = -angleZ
+				leftwing3.rotateAngleZ = -angleZ
+				leftwing4.rotateAngleZ = -angleZ
+				leftwing1.rotateAngleZ = -angleZ
+			case _ =>
 				rightarm.rotateAngleX = -1.74533F
 				rightarm.rotateAngleY = -0.55851F
 				rightarm.rotateAngleZ = 0.0F
 				leftarm.rotateAngleX = -1.74533F
 				leftarm.rotateAngleY = 0.55851F
 				leftarm.rotateAngleZ = 0.0F
-			}
-			rightwing2.rotateAngleX = angleX
-			rightwing3.rotateAngleX = angleX
-			rightwing4.rotateAngleX = angleX
-			rightwing1.rotateAngleX = angleX
-			leftwing2.rotateAngleX = angleX
-			leftwing3.rotateAngleX = angleX
-			leftwing4.rotateAngleX = angleX
-			leftwing1.rotateAngleX = angleX
-			rightwing2.rotateAngleY = -angleY
-			rightwing3.rotateAngleY = -angleY
-			rightwing4.rotateAngleY = -angleY
-			rightwing1.rotateAngleY = -angleY
-			leftwing2.rotateAngleY = angleY
-			leftwing3.rotateAngleY = angleY
-			leftwing4.rotateAngleY = angleY
-			leftwing1.rotateAngleY = angleY
-			rightwing2.rotateAngleZ = angleZ
-			rightwing3.rotateAngleZ = angleZ
-			rightwing4.rotateAngleZ = angleZ
-			rightwing1.rotateAngleZ = angleZ
-			leftwing2.rotateAngleZ = -angleZ
-			leftwing3.rotateAngleZ = -angleZ
-			leftwing4.rotateAngleZ = -angleZ
-			leftwing1.rotateAngleZ = -angleZ
-		}
-		else {
-			rightarm.rotateAngleX = -1.74533F
-			rightarm.rotateAngleY = -0.55851F
-			rightarm.rotateAngleZ = 0.0F
-			leftarm.rotateAngleX = -1.74533F
-			leftarm.rotateAngleY = 0.55851F
-			leftarm.rotateAngleZ = 0.0F
 		}
 
 	}
