@@ -100,7 +100,7 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 			PacketHandler.sync(WeepingAngels.pluginID, new
 							PacketModifyStatue(this.tileEntity.xCoord, this.tileEntity.yCoord,
 								this.tileEntity.zCoord, 1,
-								this.facial.getIndex().asInstanceOf[Float]))
+								this.facial.getIndex.asInstanceOf[Float]))
 
 		}
 
@@ -110,7 +110,7 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 			PacketHandler.sync(WeepingAngels.pluginID, new
 							PacketModifyStatue(this.tileEntity.xCoord, this.tileEntity.yCoord,
 								this.tileEntity.zCoord, 2,
-								this.arms.getIndex().asInstanceOf[Float]))
+								this.arms.getIndex.asInstanceOf[Float]))
 
 		}
 
@@ -174,9 +174,9 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 	}
 
 	def updateComponents(): Unit = {
-		this.facial.updateIndexAndText(this.tileEntity.getFacialState())
-		this.arms.updateIndexAndText(this.tileEntity.getArmState())
-		this.rotationField.setText(this.tileEntity.getRotation() + "")
+		this.facial.updateIndexAndText(this.tileEntity.getFacialState)
+		this.arms.updateIndexAndText(this.tileEntity.getArmState)
+		this.rotationField.setText(this.tileEntity.getRotation + "")
 
 	}
 
@@ -212,10 +212,10 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 
 		this.angelEntity = new EntityWeepingAngel(this.mc.theWorld)
 
-		this.angelEntity.setAngryState(this.tileEntity.getFacialState().asInstanceOf[Byte])
-		this.angelEntity.setArmState(this.tileEntity.getArmState().asInstanceOf[Byte])
+		this.angelEntity.setAngryState(this.tileEntity.getFacialState.asInstanceOf[Byte])
+		this.angelEntity.setArmState(this.tileEntity.getArmState.asInstanceOf[Byte])
 
-		this.drawStatue(x, y, 60, this.tileEntity.getRotation(), this.angelEntity)
+		this.drawStatue(x, y, 60, this.tileEntity.getRotation, this.angelEntity)
 
 	}
 

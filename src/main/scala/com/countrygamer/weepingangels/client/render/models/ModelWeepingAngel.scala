@@ -177,7 +177,7 @@ class ModelWeepingAngel() extends ModelBase() {
 			entity: Entity): Unit = {
 		entity match {
 			case angel: EntityWeepingAngel =>
-				if (angel.getAngryState() == 1) {
+				if (angel.getAngryState == 1) {
 					angleX = Math.toRadians(20).asInstanceOf[Float]
 					angleY = Math.toRadians(60).asInstanceOf[Float]
 					angleZ = Math.toRadians(5).asInstanceOf[Float]
@@ -187,7 +187,7 @@ class ModelWeepingAngel() extends ModelBase() {
 					angleY = Math.toRadians(30).asInstanceOf[Float]
 					angleZ = Math.toRadians(5).asInstanceOf[Float]
 				}
-				if (angel.getArmState() >= 2) {
+				if (angel.getArmState >= 2) {
 					val f6: Float = MathHelper.sin(onGround * 3.141593F)
 					var f7: Float = MathHelper.sin((1.0F - (1.0F - onGround)
 							* (1.0F - onGround)) * 3.141593F)
@@ -198,7 +198,7 @@ class ModelWeepingAngel() extends ModelBase() {
 					rightarm.rotateAngleX = -1.570796F
 					leftarm.rotateAngleX = -1.570796F
 				}
-				else if (angel.getArmState() == 1) {
+				else if (angel.getArmState == 1) {
 					rightarm.rotateAngleX = -1.04533F
 					rightarm.rotateAngleY = -0.55851F
 					rightarm.rotateAngleZ = 0.0F

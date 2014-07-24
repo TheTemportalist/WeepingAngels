@@ -19,7 +19,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	// Default Constructor
 	{
-		this.ticksUntilNextRegen = this.getMaxTicksPerRegen()
+		this.ticksUntilNextRegen = this.getMaxTicksPerRegen
 
 	}
 
@@ -78,7 +78,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	def setHealthWithRespectToTicks(): Unit = {
 
-		val maxTicks: Int = this.getMaxTicksPerRegen()
+		val maxTicks: Int = this.getMaxTicksPerRegen
 		this.fractionalHealth = ((maxTicks - this.ticksUntilNextRegen).asInstanceOf[Double] /
 				maxTicks.asInstanceOf[Double]).asInstanceOf[Float]
 		if (this.fractionalHealth >= 1.0F) {
@@ -109,15 +109,15 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 	}
 
 	def clearRegenTicks(): Unit = {
-		this.ticksUntilNextRegen = this.getMaxTicksPerRegen()
+		this.ticksUntilNextRegen = this.getMaxTicksPerRegen
 
 		this.syncEntity()
 
 	}
 
 	def getOpacityForBlackout: Float = {
-		if (this.getAngelHealth() > 0.0F) {
-			(this.getAngelHealth() / WAOptions.maxAngelHealth.asInstanceOf[Float])
+		if (this.getAngelHealth > 0.0F) {
+			(this.getAngelHealth / WAOptions.maxAngelHealth.asInstanceOf[Float])
 		}
 		else {
 			0.0F

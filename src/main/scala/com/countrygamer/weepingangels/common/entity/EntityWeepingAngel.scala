@@ -59,8 +59,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	override def writeEntityToNBT(tagCom: NBTTagCompound): Unit = {
 		super.writeEntityToNBT(tagCom)
 
-		tagCom.setBoolean("hasInventory", this.hasStolenInventory())
-		if (this.hasStolenInventory()) {
+		tagCom.setBoolean("hasInventory", this.hasStolenInventory)
+		if (this.hasStolenInventory) {
 			val tagList: NBTTagList = new NBTTagList()
 
 			for (slotID <- 0 until this.stolenInventory.length) {
@@ -183,12 +183,12 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		}
 
 		if (WAOptions.angelsLookForTorches && canBeSeen) {
-			if (!(this.worldObj.isDaytime && this.isInSkylight())) {
+			if (!(this.worldObj.isDaytime && this.isInSkylight)) {
 
 				val coordsOfSource: Vec3 = this.findNearestTorch()
 
 				if (coordsOfSource != null) {
-					val ticksUntilSourceBreak: Int = this.getLightSourceKillDelay()
+					val ticksUntilSourceBreak: Int = this.getLightSourceKillDelay
 					if (ticksUntilSourceBreak <= 0) {
 
 						this.breakLightSource(coordsOfSource)
@@ -468,7 +468,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	override def onDeath(source: DamageSource): Unit = {
 		super.onDeath(source)
 
-		if (this.hasStolenInventory()) {
+		if (this.hasStolenInventory) {
 			this.dropStolenInventory()
 		}
 
@@ -479,7 +479,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	}
 
 	def dropStolenInventory(): Unit = {
-		if (this.hasStolenInventory()) {
+		if (this.hasStolenInventory) {
 			for (i <- 0 until this.stolenInventory.length) {
 				UtilDrops.spawnItemStack(this.worldObj, this.posX, this.posY, this.posZ,
 					this.stolenInventory(i), this.rand)
@@ -561,7 +561,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	override def getCanSpawnHere: Boolean = {
 		this.worldObj.difficultySetting != EnumDifficulty.PEACEFUL &&
 				this.boundingBox.minY <= WAOptions.maximumSpawnHeight &&
-				this.isValidLightLevel() && super.getCanSpawnHere()
+				this.isValidLightLevel && super.getCanSpawnHere()
 	}
 
 	def isValidLightLevel: Boolean = {

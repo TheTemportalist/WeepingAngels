@@ -60,15 +60,15 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 			GL11.glTranslatef(0.0F, -1.5F, 0.0F)
 
 			// Rotate the statue according to the rotation stored in the statue's data
-			GL11.glRotatef(statueTE.getRotation(), 0.0F, 1.0F, 0.0F)
+			GL11.glRotatef(statueTE.getRotation, 0.0F, 1.0F, 0.0F)
 
 			// Create a new entity instance to modify
 			this.angelEntity = new EntityWeepingAngel(statueTE.getWorldObj)
 
-			this.angelEntity.setAngryState(statueTE.getFacialState().asInstanceOf[Byte])
-			this.angelEntity.setArmState(statueTE.getArmState().asInstanceOf[Byte])
+			this.angelEntity.setAngryState(statueTE.getFacialState.asInstanceOf[Byte])
+			this.angelEntity.setArmState(statueTE.getArmState.asInstanceOf[Byte])
 
-			statueTE.getFacialState() match {
+			statueTE.getFacialState match {
 				case 0 =>
 					UtilRender.bindResource(WAOptions.weepingAngel1)
 				case 1 =>

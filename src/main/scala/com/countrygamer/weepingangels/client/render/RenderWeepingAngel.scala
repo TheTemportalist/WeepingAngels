@@ -34,7 +34,7 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 
 		entity match {
 			case angel: EntityWeepingAngel =>
-				if (angel.getAngryState() > 0) {
+				if (angel.getAngryState > 0) {
 					this.texture = WAOptions.weepingAngel2
 				}
 				else {

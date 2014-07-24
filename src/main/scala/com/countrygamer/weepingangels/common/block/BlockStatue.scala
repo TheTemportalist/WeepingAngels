@@ -125,7 +125,7 @@ class BlockStatue(material: Material, pluginID: String, name: String,
 		else {
 			val tileEntity: TileEntity = world.getTileEntity(x, y, z)
 			if (tileEntity != null && tileEntity.isInstanceOf[TileEntityStatue]) {
-				if (tileEntity.asInstanceOf[TileEntityStatue].isComingToLife()) {
+				if (tileEntity.asInstanceOf[TileEntityStatue].isComingToLife) {
 					drops.clear()
 				}
 			}

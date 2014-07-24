@@ -90,7 +90,7 @@ class TileEntityStatue() extends TEWrapper("Statue") {
 		val angelEntity: EntityWeepingAngel = new EntityWeepingAngel(this.getWorldObj)
 
 		angelEntity.setPositionAndRotation(this.xCoord + 0.5, this.yCoord + 0.5, this.zCoord + 0.5,
-			this.getRotation(), 0.0F)
+			this.getRotation, 0.0F)
 
 		if (!this.getWorldObj.isRemote) {
 			this.getWorldObj.spawnEntityInWorld(angelEntity)
