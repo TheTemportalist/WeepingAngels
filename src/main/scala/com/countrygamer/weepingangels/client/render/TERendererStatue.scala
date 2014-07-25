@@ -80,6 +80,8 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 					.render(angelEntity, 0.0F, 0.0F, 0.0F, 0.0F,
 			            0.0F, f5)
 
+			//GL11.glTranslatef(0.0F, 1.5F, 0.0F)
+
 			// End matrix for entity rendering
 			GL11.glPopMatrix()
 
