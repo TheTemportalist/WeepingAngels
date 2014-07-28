@@ -117,7 +117,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	def getOpacityForBlackout(): Float = {
 		if (this.getAngelHealth > 0.0F) {
-			(this.getAngelHealth / WAOptions.maxAngelHealth.asInstanceOf[Float])
+			this.getAngelHealth / WAOptions.maxAngelHealth.asInstanceOf[Float]
 		}
 		else {
 			0.0F

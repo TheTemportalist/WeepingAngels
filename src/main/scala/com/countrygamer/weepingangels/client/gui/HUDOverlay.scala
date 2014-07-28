@@ -36,7 +36,7 @@ object HUDOverlay extends Gui() {
 	@SubscribeEvent(priority = EventPriority.NORMAL)
 	def renderOverlay(event: RenderGameOverlayEvent.Post): Unit = {
 
-		if (event.isCancelable) {
+		if (event.isCanceled) {
 			//return
 		}
 
@@ -80,8 +80,6 @@ object HUDOverlay extends Gui() {
 
 			val fullHearts: Int = Math.floor(angelHealth / 2.0F).asInstanceOf[Int]
 			val halfHearts: Int = Math.floor(angelHealth - (fullHearts * 2)).asInstanceOf[Int]
-
-
 
 			for (i <- 0 until fullHearts) {
 				this.drawTexturedModalRect(healthBarX + (i * 8), healthBarY, 0, 0, this.iconSize,

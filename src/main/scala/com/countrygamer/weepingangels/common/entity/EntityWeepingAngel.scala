@@ -406,7 +406,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			var didAlternateAction: Boolean = false
 			var entityIsConvertting: Boolean = false
 			entity match {
-				case player: EntityPlayer => {
+				case player: EntityPlayer =>
 					if (WAOptions.angelsCanConvertPlayers &&
 							this.rand.nextInt(100) < 100) {
 						val angelPlayer: AngelPlayer = ExtendedEntityHandler
@@ -434,7 +434,6 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 					}
 
-				}
 				case _ =>
 			}
 
@@ -506,7 +505,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			}
 
 			source.getSourceOfDamage match {
-				case player: EntityPlayer => {
+				case player: EntityPlayer =>
 					var canDamage: Boolean = false
 					val heldStack: ItemStack = source.getSourceOfDamage.asInstanceOf[EntityPlayer]
 							.inventory.getCurrentItem
@@ -543,7 +542,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 					}
 
 					return false
-				}
+
 				case _ =>
 					super.attackEntityFrom(source, damage)
 			}
