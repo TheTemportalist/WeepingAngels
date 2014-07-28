@@ -408,7 +408,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			entity match {
 				case player: EntityPlayer => {
 					if (WAOptions.angelsCanConvertPlayers &&
-							this.rand.nextInt(100) < WAOptions.conversionChance) {
+							this.rand.nextInt(100) < 100) {
 						val angelPlayer: AngelPlayer = ExtendedEntityHandler
 								.getExtended(player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
 
@@ -416,13 +416,11 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 							angelPlayer.startConversion()
 							angelPlayer.setAngelHealth(0.0F)
 							angelPlayer.clearRegenTicks()
-							didAlternateAction = true
-							entityIsConvertting = true
 
 						}
-						else {
-							entityIsConvertting = true
-						}
+
+						didAlternateAction = true
+						entityIsConvertting = true
 
 					}
 
