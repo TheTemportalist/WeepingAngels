@@ -72,7 +72,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	}
 
-	def getAngelHealth: Float = {
+	def getAngelHealth(): Float = {
 		this.angelHealth + this.fractionalHealth
 	}
 
@@ -97,7 +97,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	}
 
-	def getTicksUntilNextRegen: Int = {
+	def getTicksUntilNextRegen(): Int = {
 		this.ticksUntilNextRegen
 	}
 
@@ -115,7 +115,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	}
 
-	def getOpacityForBlackout: Float = {
+	def getOpacityForBlackout(): Float = {
 		if (this.getAngelHealth > 0.0F) {
 			(this.getAngelHealth / WAOptions.maxAngelHealth.asInstanceOf[Float])
 		}
