@@ -1,7 +1,7 @@
 package com.countrygamer.weepingangels.common
 
+import com.countrygamer.cgo.common.RegisterHelper
 import com.countrygamer.cgo.wrapper.common.PluginWrapper
-import com.countrygamer.cgo.wrapper.common.registries.RegisterHelper
 import com.countrygamer.weepingangels.common.block.WABlocks
 import com.countrygamer.weepingangels.common.entity.WAEntity
 import com.countrygamer.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}

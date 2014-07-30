@@ -16,7 +16,7 @@ buildscript {
 }
 
 apply plugin: 'scala'
-apply plugin: 'forge' j
+apply plugin: 'forge'
 
 ext.configFile = file "../CG.properties"
 
