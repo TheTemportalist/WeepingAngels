@@ -15,8 +15,20 @@ buildscript {
     }
 }
 
+repositories {
+    maven {
+    	url = "http://maven.dries007.net/content/repositories/ccm/"
+    }
+}
+
 apply plugin: 'scala'
 apply plugin: 'forge'
+apply plugin: 'maven'
+
+configurations {
+	compile
+	deplayJars
+}
 
 ext.configFile = file "../CGOrigin/CG.properties"
 
@@ -31,10 +43,14 @@ group = "com.countrygamer.weepingangels"
 archivesBaseName = "CoG-WeepingAngels"
 
 dependencies {
-    compile project(':CGOrigin')
+    compile("com.countrygamer.cgo:CGOrigin:" + project.minecraft.minecraftVersion + "-latest.integration:dev")
 }
 
 version = "3.0.1"
+
+ext.BUILD_NUMBER = System.getenv().BUILD_NUMBER
+if (ext.BUILD_NUMBER == null) ext.BUILD_NUMBER = 0
+version = version + "." + ext.BUILD_NUMBER
 
 minecraft {
     version = "${config.minecraft_version}-${config.forge_version}"
@@ -47,21 +63,91 @@ minecraft {
 version = "${config.minecraft_version}-$version"
 
 processResources
-        {
-            // this will ensure that this task is redone when the versions change.
-            inputs.property "version", project.version
-            inputs.property "mcversion", project.minecraft.version
+{
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
 
-            // replace stuff in mcmod.info, nothing else
-            from(sourceSets.main.resources.srcDirs) {
-                include 'mcmod.info'
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
 
-                // replace version and mcversion
-                expand 'version': project.version, 'mcversion': project.minecraft.version
-            }
+        // replace version and mcversion
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
 
-            // copy everything else, thats not the mcmod.info
-            from(sourceSets.main.resources.srcDirs) {
-                exclude 'mcmod.info'
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'src'
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    from (sourceSets.main.allSource.srcDirs) {
+        include '**/*.java'
+        include '**/*.scala'
+    }
+    classifier = 'dev'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives deobfJar
+}
+
+uploadArchives {
+    if (project.hasProperty("mavenUser") && project.hasProperty("mavenPassword")) {
+        repositories {
+            mavenDeployer {
+                repository(url: "http://maven.dries007.net/content/repositories/ccm/") {
+                    authentication(userName: mavenUser, password: mavenPassword)
+                }
+                pom {
+                    groupId = project.group
+                    version = project.version
+                    artifactId = project.archivesBaseName
+                    project {
+                        name project.archivesBaseName
+                        packaging 'jar'
+                        description 'CoG-WeepingAngels'
+                        url 'https://github.com/TheCountryGamer/WeepingAngels'
+
+                        scm {
+                            url 'https://github.com/TheCountryGamer/WeepingAngels'
+                            connection 'scm:git:git://github.com/TheCountryGamer/WeepingAngels.git'
+                            developerConnection 'scm:git:git@github.com:TheCountryGamer/WeepingAngels.git'
+                        }
+
+                        issueManagement {
+                            system 'github'
+                            url 'https://github.com/TheCountryGamer/WeepingAngels/issues'
+                        }
+
+                        licenses  {
+                            license  {
+                                name 'Apache License Version 2.0'
+                                url 'https://github.com/TheCountryGamer/WeepingAngels/blob/master/LICENSE'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'TheCountryGamer'
+                                name 'TheCountryGamer'
+                                roles { role 'developer' }
+                            }
+                        }
+                    }
+                }
             }
         }
+    }
+}    
