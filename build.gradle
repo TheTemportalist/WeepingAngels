@@ -18,7 +18,7 @@ buildscript {
 apply plugin: 'scala'
 apply plugin: 'forge'
 
-ext.configFile = file "../CG.properties"
+ext.configFile = file "../CGOrigin/CG.properties"
 
 configFile.withReader {
     // Load config.  It shall from now be referenced as simply config or project.config
