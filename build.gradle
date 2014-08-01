@@ -19,12 +19,6 @@ repositories {
     maven {
     	url = "http://maven.dries007.net/content/repositories/ccm/"
     }
-    maven {
-        url = "http://files.minecraftforge.net/maven/"
-    }
-    maven {
-        url = "https://libraries.minecraft.net/"
-    }
 }
 
 apply plugin: 'scala'
