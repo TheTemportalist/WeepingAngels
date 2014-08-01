@@ -43,7 +43,7 @@ group = "com.countrygamer.weepingangels"
 archivesBaseName = "CoG-WeepingAngels"
 
 dependencies {
-    compile("com.countrygamer.cgo:CGOrigin:" + project.minecraft.minecraftVersion + "-latest.integration:dev")
+    compile("com.countrygamer.cgo:CGOrigin:${config.minecraft_version}-latest.integration:dev")
 }
 
 version = "3.0.1"
