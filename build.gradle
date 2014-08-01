@@ -49,14 +49,14 @@ group = "com.countrygamer.weepingangels"
 archivesBaseName = "CoG-WeepingAngels"
 
 dependencies {
-    compile("com.countrygamer.cgo:CGOrigin:${config.minecraft_version}-latest.integration:dev")
+    compile("com.countrygamer.cgo:CGOrigin:${config.minecraft_version}-3+:dev")
 }
 
 version = "3.0.1"
 
 ext.BUILD_NUMBER = System.getenv().BUILD_NUMBER
 if (ext.BUILD_NUMBER == null) ext.BUILD_NUMBER = 0
-version = version + "." + ext.BUILD_NUMBER
+version = version + "_build-" + ext.BUILD_NUMBER
 
 minecraft {
     version = "${config.minecraft_version}-${config.forge_version}"
