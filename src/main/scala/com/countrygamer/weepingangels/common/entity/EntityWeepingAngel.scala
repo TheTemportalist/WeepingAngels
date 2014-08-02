@@ -452,6 +452,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 							living.setHealth(living.getHealth - damage)
 						case _ =>
 					}
+				}
 				//System.out.println(flag)
 				return flag
 			}
