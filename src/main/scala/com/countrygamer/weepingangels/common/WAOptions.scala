@@ -32,6 +32,7 @@ object WAOptions extends OptionRegister {
 	var maximumSpawnHeight: Int = 40
 	var spawnProbability: Int = 80
 	var maxLightLevelForSpawn: Int = 8
+	var angelOverridesPlayerArmor: Boolean = false
 
 	var angelsLookForTorches: Boolean = false
 	var angelMaxSpeed: Float = 0.4F
@@ -151,6 +152,12 @@ object WAOptions extends OptionRegister {
 			"The maximum movement speed of an Angel",
 			0.4D
 		).asInstanceOf[Float]
+
+		this.angelOverridesPlayerArmor = Config.getAndComment(this.config, stats,
+			"Angel ignores armor",
+			"Angels ignore a player's armor when they hurt a player",
+			false
+		)
 
 	}
 

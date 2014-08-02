@@ -442,8 +442,16 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 				val damage: Float = this.getEntityAttribute(SharedMonsterAttributes.attackDamage)
 						.getAttributeValue.asInstanceOf[Float]
 				///System.out.println(damage)
-				val flag: Boolean = entity
-						.attackEntityFrom(DamageSource.causeMobDamage(this), damage)
+				if (!WAOptions.angelOverridesPlayerArmor) {
+					val flag: Boolean = entity
+							.attackEntityFrom(DamageSource.causeMobDamage(this), damage)
+				}
+				else {
+					entity match {
+						case living: EntityLivingBase =>
+							living.setHealth(living.getHealth - damage)
+						case _ =>
+					}
 				//System.out.println(flag)
 				return flag
 			}
