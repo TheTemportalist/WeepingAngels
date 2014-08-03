@@ -16,7 +16,9 @@ import cpw.mods.fml.common.{Mod, SidedProxy}
  */
 @Mod(modid = WeepingAngels.pluginID, name = WeepingAngels.pluginName, version = "@PLUGIN_VERSION@",
 	modLanguage = "scala",
-	guiFactory = "com.countrygamer.weepingangels.client.gui.configFactory.WeepingAngelsFactory")
+	guiFactory = "com.countrygamer.weepingangels.client.gui.configFactory.WeepingAngelsFactory",
+	dependencies = "required-after:Forge@[10.13,);required-after:cgo@[3.0.2,)"
+)
 object WeepingAngels extends PluginWrapper {
 
 	final val pluginID = "weepingangels"

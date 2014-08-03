@@ -1,3 +1,5 @@
+import scala.tools.nsc.io.Jar
+
 buildscript {
     repositories {
         mavenCentral()
@@ -40,7 +42,7 @@ configFile.withReader {
 }
 
 group = "com.countrygamer.weepingangels"
-archivesBaseName = "CoG-WeepingAngels"
+archivesBaseName = "WeepingAngels"
 
 dependencies {
     compile("com.countrygamer.cgo:CGOrigin:${config.minecraft_version}-3+:dev")
