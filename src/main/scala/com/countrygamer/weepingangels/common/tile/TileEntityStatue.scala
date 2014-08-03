@@ -28,7 +28,6 @@ class TileEntityStatue() extends TEWrapper("Statue") {
 	 * Triggered when an EntityWeepingAngel touches this statue
 	 *
 	 */
-	// TODO
 	def touchedByAngel(): Unit = {
 		this.comeToLife()
 	}
