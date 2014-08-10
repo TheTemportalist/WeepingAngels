@@ -1,13 +1,16 @@
 package com.countrygamer.weepingangels.common
 
 import com.countrygamer.cgo.common.RegisterHelper
+import com.countrygamer.cgo.common.lib.util.General
 import com.countrygamer.cgo.wrapper.common.PluginWrapper
 import com.countrygamer.weepingangels.common.block.WABlocks
-import com.countrygamer.weepingangels.common.entity.WAEntity
+import com.countrygamer.weepingangels.common.entity.{EntityWeepingAngel, WAEntity}
 import com.countrygamer.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
 import com.countrygamer.weepingangels.common.network.PacketModifyStatue
+import com.countrygamer.weepingangels.morph.AngelFreezeAbility
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
 import cpw.mods.fml.common.{Mod, SidedProxy}
+import morph.api.Ability
 
 /**
  *
@@ -45,6 +48,12 @@ object WeepingAngels extends PluginWrapper {
 	@Mod.EventHandler
 	def init(event: FMLInitializationEvent): Unit = {
 		super.initialize(event)
+
+		if (General.isModLoaded("morph")) {
+			Ability.registerAbility("Angel Freeze", classOf[AngelFreezeAbility])
+			Ability.mapAbilities(classOf[EntityWeepingAngel], new AngelFreezeAbility())
+
+		}
 
 	}
 
