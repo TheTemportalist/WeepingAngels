@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation
  *
  * @author CountryGamer
  */
-class AngelFreezeAbility() extends Ability() {
+class AbilityTimelock() extends Ability() {
 
 	private val baseMovementSpeed: Double = 0.10000000149011612D
 
@@ -63,7 +63,7 @@ class AngelFreezeAbility() extends Ability() {
 	 * As previously stated before the ability instance used during registration is a base so it needs to be cloned for use with parents.
 	 */
 	override def clone: Ability = {
-		new AngelFreezeAbility()
+		new AbilityTimelock()
 	}
 
 }
