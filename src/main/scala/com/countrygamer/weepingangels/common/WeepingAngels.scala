@@ -1,7 +1,6 @@
 package com.countrygamer.weepingangels.common
 
 import com.countrygamer.cgo.common.RegisterHelper
-import com.countrygamer.cgo.common.lib.util.General
 import com.countrygamer.cgo.wrapper.common.PluginWrapper
 import com.countrygamer.weepingangels.common.block.WABlocks
 import com.countrygamer.weepingangels.common.entity.{EntityWeepingAngel, WAEntity}
@@ -20,7 +19,7 @@ import morph.api.Ability
 @Mod(modid = WeepingAngels.pluginID, name = WeepingAngels.pluginName, version = "@PLUGIN_VERSION@",
 	modLanguage = "scala",
 	guiFactory = "com.countrygamer.weepingangels.client.gui.configFactory.WeepingAngelsFactory",
-	dependencies = "required-after:Forge@[10.13,);required-after:cgo@[3.0.2,)"
+	dependencies = "required-after:Forge@[10.13,);required-after:cgo@[3.0.2,);after:Morph@[0.9.0,);"
 )
 object WeepingAngels extends PluginWrapper {
 
@@ -49,11 +48,10 @@ object WeepingAngels extends PluginWrapper {
 	def init(event: FMLInitializationEvent): Unit = {
 		super.initialize(event)
 
-		if (General.isModLoaded("morph")) {
-			Ability.registerAbility("Angel Freeze", classOf[AngelFreezeAbility])
-			Ability.mapAbilities(classOf[EntityWeepingAngel], new AngelFreezeAbility())
-
-		}
+		Ability.registerAbility("timelock", classOf[AngelFreezeAbility])
+		Ability.mapAbilities(classOf[EntityWeepingAngel],
+			new AngelFreezeAbility()
+		)
 
 	}
 

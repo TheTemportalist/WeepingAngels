@@ -6,6 +6,7 @@ import com.countrygamer.cgo.common.lib.util.{UtilDrops, UtilVector}
 import com.countrygamer.cgo.wrapper.common.extended.ExtendedEntityHandler
 import com.countrygamer.weepingangels.common.block.WABlocks
 import com.countrygamer.weepingangels.common.extended.AngelPlayer
+import com.countrygamer.weepingangels.common.lib.AngelUtility
 import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
 import net.minecraft.block.Block
 import net.minecraft.entity._
@@ -165,7 +166,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			this.isJumping = false
 
 		// Get whether angel can be seen
-		val canBeSeen: Boolean = this.canBeSeen_Multiplayer(this.boundingBox, 64D)
+		val canBeSeen: Boolean = AngelUtility
+				.canBeSeen_Multiplayer(this.worldObj, this, this.boundingBox, 64D)
 
 		if (canBeSeen) {
 			// Angel is quantum locked
@@ -222,55 +224,6 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		}
 
 		super.onLivingUpdate()
-	}
-
-	def canBeSeen_Multiplayer(boundingBox: AxisAlignedBB, radius: Double): Boolean = {
-
-		if (this.worldObj.getFullBlockLightValue(
-			MathHelper.floor_double(this.posX),
-			MathHelper.floor_double(this.posY),
-			MathHelper.floor_double(this.posZ)
-		) <= 1.0F)
-			return false
-
-		val entityList: java.util.List[_] = this.worldObj
-				.getEntitiesWithinAABB(classOf[EntityPlayer],
-		            boundingBox.expand(radius, radius, radius))
-
-		var numberOfPlayersWatching: Int = 0
-
-		var index: Int = 0
-		for (index <- 0 until entityList.size()) {
-			val player: EntityPlayer = entityList.get(index).asInstanceOf[EntityPlayer]
-
-			if (this.isInFieldOfViewOf(player)) {
-				numberOfPlayersWatching = numberOfPlayersWatching + 1
-			}
-
-		}
-
-		numberOfPlayersWatching > 0
-	}
-
-	def isInFieldOfViewOf(entity: EntityLivingBase): Boolean = {
-		val entityVec: Vec3 = entity.getLookVec
-		var difVec: Vec3 = Vec3.createVectorHelper(
-			this.posX - entity.posX,
-			(this.boundingBox.minY + this.height.asInstanceOf[Double]) -
-					(entity.posY + entity.getEyeHeight.asInstanceOf[Double]),
-			this.posZ - entity.posZ
-		)
-		val lengthOfDif: Double = difVec.lengthVector()
-		difVec = difVec.normalize()
-		// Check for blocks between
-		val d1: Double = entityVec.dotProduct(difVec)
-
-		if (d1 > ((1.0D - 0.025D) / lengthOfDif)) {
-			entity.canEntityBeSeen(this)
-		}
-		else {
-			false
-		}
 	}
 
 	def setSpeed(speed: Double): Unit = {
@@ -402,7 +355,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 	override def attackEntityAsMob(entity: Entity): Boolean = {
 
-		if (entity != null && !this.canBeSeen_Multiplayer(this.boundingBox, 64D)) {
+		if (entity != null &&
+				!AngelUtility.canBeSeen_Multiplayer(this.worldObj, this, this.boundingBox, 64D)) {
 			var didAlternateAction: Boolean = false
 			var entityIsConvertting: Boolean = false
 			entity match {

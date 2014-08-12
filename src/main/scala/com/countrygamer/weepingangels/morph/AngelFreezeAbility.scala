@@ -1,6 +1,10 @@
 package com.countrygamer.weepingangels.morph
 
+import com.countrygamer.weepingangels.common.WeepingAngels
+import com.countrygamer.weepingangels.common.lib.AngelUtility
 import morph.api.Ability
+import net.minecraft.entity.SharedMonsterAttributes
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ResourceLocation
 
@@ -11,12 +15,14 @@ import net.minecraft.util.ResourceLocation
  */
 class AngelFreezeAbility() extends Ability() {
 
+	private val baseMovementSpeed: Double = 0.10000000149011612D
+
 	override def getType: String = {
-		"angelFreeze"
+		"timelock"
 	}
 
 	override def getIcon: ResourceLocation = {
-		null
+		new ResourceLocation(WeepingAngels.pluginID, "textures/blocks/Plinth.png")
 	}
 
 	override def kill(): Unit = {
@@ -24,6 +30,19 @@ class AngelFreezeAbility() extends Ability() {
 	}
 
 	override def tick(): Unit = {
+		this.getParent match {
+			case player: EntityPlayer =>
+				val isWatched: Boolean = AngelUtility.canBeSeen_Multiplayer(
+					player.worldObj, player, player.boundingBox, 64D)
+				var newMoveSpeed: Double = 0.0D
+				if (!isWatched) {
+					newMoveSpeed = 0.4D
+				}
+				player.getEntityAttribute(SharedMonsterAttributes.movementSpeed)
+						.setBaseValue(newMoveSpeed)
+
+			case _ =>
+		}
 
 	}
 
