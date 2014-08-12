@@ -18,6 +18,10 @@ import net.minecraft.util.DamageSource
  */
 object AngelPlayerHandler {
 
+	def get(player: EntityPlayer): AngelPlayer = {
+		ExtendedEntityHandler.getExtended(player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
+	}
+
 	@SubscribeEvent
 	def playerTickEvent(event: PlayerTickEvent): Unit = {
 		val side: Side = event.side
@@ -78,7 +82,7 @@ object AngelPlayerHandler {
 
 
 						if (!player.attackEntityFrom(DamageSource.causeMobDamage(angelEntity),
-								Float.MaxValue)) {
+							Float.MaxValue)) {
 							angelEntity.setDead()
 						}
 

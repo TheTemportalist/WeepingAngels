@@ -124,4 +124,14 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 		}
 	}
 
+	// Morph Compatibility
+
+	def getAngryState(): Byte = {
+		1
+	}
+
+	def getArmState(): Byte = {
+		2
+	}
+
 }
