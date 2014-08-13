@@ -1,5 +1,8 @@
 package com.countrygamer.weepingangels.common.lib
 
+import java.util
+
+import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.{AxisAlignedBB, MathHelper, Vec3}
@@ -60,6 +63,11 @@ object AngelUtility {
 		else {
 			false
 		}
+	}
+
+	def getNearbyAngels(entity: EntityLivingBase): util.List[_] = {
+		entity.worldObj.getEntitiesWithinAABB(classOf[EntityWeepingAngel],
+			entity.boundingBox.expand(20D, 20D, 20D))
 	}
 
 }

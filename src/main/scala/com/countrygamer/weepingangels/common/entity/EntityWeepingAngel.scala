@@ -208,8 +208,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			}
 		}
 
-		//if (!canBeSeen)
-		//		this.changeAngelMovement()
+		if (!canBeSeen)
+			this.changeAngelMovement()
 
 		super.onUpdate()
 
@@ -346,11 +346,6 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			}
 		}
 
-	}
-
-	def getAngelsNearby: util.List[_] = {
-		this.worldObj.getEntitiesWithinAABB(classOf[EntityWeepingAngel],
-			this.boundingBox.expand(20D, 20D, 20D))
 	}
 
 	override def attackEntityAsMob(entity: Entity): Boolean = {

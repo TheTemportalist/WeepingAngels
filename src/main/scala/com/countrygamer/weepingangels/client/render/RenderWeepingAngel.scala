@@ -1,10 +1,11 @@
 package com.countrygamer.weepingangels.client.render
 
+import com.countrygamer.cgo.common.lib.LogHelper
 import com.countrygamer.cgo.common.lib.util.General
 import com.countrygamer.weepingangels.client.render.models.ModelWeepingAngel
-import com.countrygamer.weepingangels.common.WAOptions
 import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
 import com.countrygamer.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
+import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import morph.api.Api
 import net.minecraft.client.Minecraft
@@ -47,6 +48,7 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 					if (morphedEntity != null && morphedEntity.equals(entity)) {
 						val angelPlayer: AngelPlayer = AngelPlayerHandler.get(player)
 						angel.setAngryState(angelPlayer.getAngryState())
+						LogHelper.info(WeepingAngels.pluginName, "fetching arm data")
 						angel.setArmState(angelPlayer.getArmState())
 
 					}

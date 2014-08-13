@@ -1,7 +1,9 @@
 package com.countrygamer.weepingangels.common.extended
 
+import com.countrygamer.cgo.common.lib.LogHelper
 import com.countrygamer.cgo.wrapper.common.extended.ExtendedEntity
-import com.countrygamer.weepingangels.common.WAOptions
+import com.countrygamer.weepingangels.common.lib.AngelUtility
+import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 
@@ -127,11 +129,36 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 	// Morph Compatibility
 
 	def getAngryState(): Byte = {
-		0
+		var ticksSinceLastAttacked: Int = 0
+		if (this.player.getAITarget != null) {
+			ticksSinceLastAttacked = this.player.ticksExisted - this.player.func_142015_aE
+		}
+
+		if (ticksSinceLastAttacked >= 2400) // two minutes
+			1
+		else
+			0
 	}
 
 	def getArmState(): Byte = {
-		0
+		LogHelper.info(WeepingAngels.pluginName, (this.player.getLastAttacker != null) + "")
+		if (this.player.getLastAttacker != null) {
+			val ticksSinceLastAttack = this.player.ticksExisted - this.player.getLastAttackerTime
+			LogHelper.info(WeepingAngels.pluginName, ticksSinceLastAttack + "")
+			if (ticksSinceLastAttack <= 1200) {
+				// one minute
+				return 2
+			}
+
+		}
+
+		val nearbyAngels: java.util.List[_] = AngelUtility.getNearbyAngels(this.player)
+
+		if (nearbyAngels.size() > 0) {
+			return 0
+		}
+
+		1
 	}
 
 }
