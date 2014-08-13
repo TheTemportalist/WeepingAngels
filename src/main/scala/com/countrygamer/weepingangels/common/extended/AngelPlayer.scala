@@ -18,6 +18,8 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 	private var angelHealth: Float = 0.0F
 	private var fractionalHealth: Float = 0.0F
 	private var ticksUntilNextRegen: Int = 0
+	private var ticksWhenAttack: Int = -1
+	private var ticksWhenAttacked: Int = -1
 
 	// Default Constructor
 	{
@@ -128,28 +130,30 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	// Morph Compatibility
 
-	def getAngryState(): Byte = {
-		var ticksSinceLastAttacked: Int = 0
-		if (this.player.getAITarget != null) {
-			ticksSinceLastAttacked = this.player.ticksExisted - this.player.func_142015_aE
-		}
+	def setIsAttacking(): Unit = {
+		LogHelper.info(WeepingAngels.pluginName,
+			"Player is attacking, last ticks: " + this.ticksWhenAttack)
+		this.ticksWhenAttack = this.player.ticksExisted
+	}
 
-		if (ticksSinceLastAttacked >= 2400) // two minutes
+	def setIsAttacked(): Unit = {
+		LogHelper.info(WeepingAngels.pluginName,
+			"Player is attacked, last ticks: " + this.ticksWhenAttacked)
+		this.ticksWhenAttacked = this.player.ticksExisted
+	}
+
+	def getAngryState(): Byte = {
+		val ticksSinceLastAttacked: Int = this.player.ticksExisted - this.ticksWhenAttacked
+		if (ticksSinceLastAttacked >= 0 && ticksSinceLastAttacked <= WAOptions.morphedAngryTicks)
 			1
 		else
 			0
 	}
 
 	def getArmState(): Byte = {
-		LogHelper.info(WeepingAngels.pluginName, (this.player.getLastAttacker != null) + "")
-		if (this.player.getLastAttacker != null) {
-			val ticksSinceLastAttack = this.player.ticksExisted - this.player.getLastAttackerTime
-			LogHelper.info(WeepingAngels.pluginName, ticksSinceLastAttack + "")
-			if (ticksSinceLastAttack <= 1200) {
-				// one minute
-				return 2
-			}
-
+		val ticksSinceLastAttack: Int = this.player.ticksExisted - this.ticksWhenAttack
+		if (ticksSinceLastAttack >= 0 && ticksSinceLastAttack <= WAOptions.morphedChaseTicks) {
+			return 2
 		}
 
 		val nearbyAngels: java.util.List[_] = AngelUtility.getNearbyAngels(this.player)

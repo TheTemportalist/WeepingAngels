@@ -7,9 +7,11 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent
 import cpw.mods.fml.relauncher.Side
+import morph.api.Api
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.DamageSource
+import net.minecraftforge.event.entity.living.LivingAttackEvent
 
 /**
  *
@@ -108,6 +110,35 @@ object AngelPlayerHandler {
 
 		}
 
+	}
+
+	@SubscribeEvent
+	def onLivingAttack(event: LivingAttackEvent): Unit = {
+		event.entityLiving match {
+			case player: EntityPlayer =>
+				// hurt entity is player
+				this.onLivingAttack_do(player, isAttacker = false)
+			case _ =>
+				event.source.getSourceOfDamage match {
+					case player: EntityPlayer =>
+						// caused by player
+						this.onLivingAttack_do(player, isAttacker = true)
+					case _ =>
+				}
+		}
+	}
+
+	private def onLivingAttack_do(player: EntityPlayer, isAttacker: Boolean): Unit = {
+		if (Api.getMorphEntity(player.getCommandSenderName, true)
+				.isInstanceOf[EntityWeepingAngel]) {
+			val angelPlayer: AngelPlayer = AngelPlayerHandler.get(player)
+			if (isAttacker) {
+				angelPlayer.setIsAttacking()
+			}
+			else {
+				angelPlayer.setIsAttacked()
+			}
+		}
 	}
 
 }

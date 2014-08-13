@@ -37,6 +37,9 @@ object WAOptions extends OptionRegister {
 	var angelsLookForTorches: Boolean = false
 	var angelMaxSpeed: Float = 0.4F
 
+	var morphedAngryTicks: Int = 1200
+	var morphedChaseTicks: Int = 600
+
 	override def register(): Unit = {
 		val stats: String = "Statistics"
 
@@ -157,6 +160,20 @@ object WAOptions extends OptionRegister {
 			"Angel ignores armor",
 			"Angels ignore a player's armor when they hurt a player",
 			false
+		)
+
+		this.morphedAngryTicks = Config.getAndComment(this.config, stats,
+			"Morphed Angry Length",
+			"When morphed as a lonely assassin," +
+					" you will stay angry at anyone who attacks for your this many TICKS",
+			1200
+		)
+
+		this.morphedChaseTicks = Config.getAndComment(this.config, stats,
+			"Morphed Chase Length",
+			"When morphed as a lonely assassin," +
+					" you will chase a target (after attacking them) for this many TICKS",
+			600
 		)
 
 	}

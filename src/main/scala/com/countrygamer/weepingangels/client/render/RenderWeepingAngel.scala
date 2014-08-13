@@ -47,9 +47,16 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 							.getMorphEntity(player.getCommandSenderName, true)
 					if (morphedEntity != null && morphedEntity.equals(entity)) {
 						val angelPlayer: AngelPlayer = AngelPlayerHandler.get(player)
-						angel.setAngryState(angelPlayer.getAngryState())
-						LogHelper.info(WeepingAngels.pluginName, "fetching arm data")
-						angel.setArmState(angelPlayer.getArmState())
+						val angry: Byte = angelPlayer.getAngryState()
+						val arm: Byte = angelPlayer.getArmState()
+
+						LogHelper.info(WeepingAngels.pluginName, angry + "")
+						angel.setAngryState(angry)
+						LogHelper.info(WeepingAngels.pluginName, angel.getAngryState + "")
+
+						LogHelper.info(WeepingAngels.pluginName, arm + "")
+						angel.setArmState(arm)
+						LogHelper.info(WeepingAngels.pluginName, angel.getArmState + "")
 
 					}
 				}
