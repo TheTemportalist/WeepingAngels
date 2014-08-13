@@ -106,6 +106,14 @@ object AngelPlayerHandler {
 					angelPlayer.clearRegenTicks()
 				}
 
+				if (Api.getMorphEntity(player.getCommandSenderName, false)
+						.isInstanceOf[EntityWeepingAngel]) {
+					if (player.motionY > 0.4F) {
+						player.motionY = 0.0F
+						angelPlayer.syncEntity()
+					}
+				}
+
 			}
 
 		}

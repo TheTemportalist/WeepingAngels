@@ -1,11 +1,12 @@
 package com.countrygamer.weepingangels.common.extended
 
-import com.countrygamer.cgo.common.lib.LogHelper
 import com.countrygamer.cgo.wrapper.common.extended.ExtendedEntity
+import com.countrygamer.weepingangels.common.WAOptions
 import com.countrygamer.weepingangels.common.lib.AngelUtility
-import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
+import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.world.World
 
 /**
  *
@@ -29,11 +30,19 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	// End Constructor
 
+	override def init(entity: Entity, world: World): Unit = {
+		this.ticksWhenAttack = -1
+		this.ticksWhenAttacked = -1
+
+	}
+
 	override def saveNBTData(tagCom: NBTTagCompound): Unit = {
 		tagCom.setBoolean("isConverting", this.isConverting)
 		tagCom.setFloat("angelHealth", this.angelHealth)
 		tagCom.setFloat("fractionalHealth", this.fractionalHealth)
 		tagCom.setInteger("ticksUntilNextRegen", this.ticksUntilNextRegen)
+		tagCom.setInteger("ticksWhenAttack", this.ticksWhenAttack)
+		tagCom.setInteger("ticksWhenAttacked", this.ticksWhenAttacked)
 
 	}
 
@@ -42,6 +51,8 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 		this.angelHealth = tagCom.getFloat("angelHealth")
 		this.fractionalHealth = tagCom.getFloat("fractionalHealth")
 		this.ticksUntilNextRegen = tagCom.getInteger("ticksUntilNextRegen")
+		this.ticksWhenAttack = tagCom.getInteger("ticksWhenAttack")
+		this.ticksWhenAttacked = tagCom.getInteger("ticksWhenAttacked")
 
 	}
 
@@ -131,20 +142,18 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 	// Morph Compatibility
 
 	def setIsAttacking(): Unit = {
-		LogHelper.info(WeepingAngels.pluginName,
-			"Player is attacking, last ticks: " + this.ticksWhenAttack)
 		this.ticksWhenAttack = this.player.ticksExisted
+		this.syncEntity()
 	}
 
 	def setIsAttacked(): Unit = {
-		LogHelper.info(WeepingAngels.pluginName,
-			"Player is attacked, last ticks: " + this.ticksWhenAttacked)
 		this.ticksWhenAttacked = this.player.ticksExisted
+		this.syncEntity()
 	}
 
 	def getAngryState(): Byte = {
 		val ticksSinceLastAttacked: Int = this.player.ticksExisted - this.ticksWhenAttacked
-		if (ticksSinceLastAttacked >= 0 && ticksSinceLastAttacked <= WAOptions.morphedAngryTicks)
+		if (this.ticksWhenAttacked >= 0 && ticksSinceLastAttacked <= WAOptions.morphedAngryTicks)
 			1
 		else
 			0
@@ -152,7 +161,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	def getArmState(): Byte = {
 		val ticksSinceLastAttack: Int = this.player.ticksExisted - this.ticksWhenAttack
-		if (ticksSinceLastAttack >= 0 && ticksSinceLastAttack <= WAOptions.morphedChaseTicks) {
+		if (this.ticksWhenAttack >= 0 && ticksSinceLastAttack <= WAOptions.morphedChaseTicks) {
 			return 2
 		}
 
