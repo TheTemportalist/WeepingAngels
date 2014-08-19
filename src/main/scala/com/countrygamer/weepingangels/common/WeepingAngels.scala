@@ -6,7 +6,7 @@ import com.countrygamer.weepingangels.common.block.WABlocks
 import com.countrygamer.weepingangels.common.entity.{EntityWeepingAngel, WAEntity}
 import com.countrygamer.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
 import com.countrygamer.weepingangels.common.network.PacketModifyStatue
-import com.countrygamer.weepingangels.morph.AbilityTimelock
+import com.countrygamer.weepingangels.morph.AbilityQuantumLock
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
 import cpw.mods.fml.common.{Mod, SidedProxy}
 import morph.api.Ability
@@ -48,9 +48,9 @@ object WeepingAngels extends PluginWrapper {
 	def init(event: FMLInitializationEvent): Unit = {
 		super.initialize(event)
 
-		Ability.registerAbility("timelock", classOf[AbilityTimelock])
+		Ability.registerAbility("timelock", classOf[AbilityQuantumLock])
 		Ability.mapAbilities(classOf[EntityWeepingAngel],
-			new AbilityTimelock()
+			new AbilityQuantumLock()
 		)
 
 	}

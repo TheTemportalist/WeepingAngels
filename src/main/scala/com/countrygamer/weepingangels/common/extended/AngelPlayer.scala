@@ -18,6 +18,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 	private var isConverting: Boolean = false
 	private var angelHealth: Float = 0.0F
 	private var fractionalHealth: Float = 0.0F
+	private var isWatched: Boolean = false
 	private var ticksUntilNextRegen: Int = 0
 	private var ticksWhenAttack: Int = -1
 	private var ticksWhenAttacked: Int = -1
@@ -40,6 +41,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 		tagCom.setBoolean("isConverting", this.isConverting)
 		tagCom.setFloat("angelHealth", this.angelHealth)
 		tagCom.setFloat("fractionalHealth", this.fractionalHealth)
+		tagCom.setBoolean("isWatched", this.isWatched)
 		tagCom.setInteger("ticksUntilNextRegen", this.ticksUntilNextRegen)
 		tagCom.setInteger("ticksWhenAttack", this.ticksWhenAttack)
 		tagCom.setInteger("ticksWhenAttacked", this.ticksWhenAttacked)
@@ -50,6 +52,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 		this.isConverting = tagCom.getBoolean("isConverting")
 		this.angelHealth = tagCom.getFloat("angelHealth")
 		this.fractionalHealth = tagCom.getFloat("fractionalHealth")
+		this.isWatched = tagCom.getBoolean("isWatched")
 		this.ticksUntilNextRegen = tagCom.getInteger("ticksUntilNextRegen")
 		this.ticksWhenAttack = tagCom.getInteger("ticksWhenAttack")
 		this.ticksWhenAttacked = tagCom.getInteger("ticksWhenAttacked")
@@ -140,6 +143,15 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 	}
 
 	// Morph Compatibility
+
+	def setWatched(isWatched: Boolean): Unit = {
+		this.isWatched = isWatched
+		this.syncEntity()
+	}
+
+	def isQuantumLocked(): Boolean = {
+		this.isWatched
+	}
 
 	def setIsAttacking(): Unit = {
 		this.ticksWhenAttack = this.player.ticksExisted

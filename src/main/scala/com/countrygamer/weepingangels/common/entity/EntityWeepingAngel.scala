@@ -12,7 +12,6 @@ import net.minecraft.block.Block
 import net.minecraft.entity._
 import net.minecraft.entity.ai._
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.init.Blocks
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.util._
@@ -321,7 +320,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 		this.worldObj.setBlockToAir(x, y, z)
 
-		UtilDrops.spawnItemStack(this.worldObj, x, y, z, new ItemStack(block, 1, meta), this.rand)
+		UtilDrops.spawnItemStack(this.worldObj, x, y, z, new ItemStack(block, 1, meta), this.rand,
+			10)
 
 	}
 
@@ -357,7 +357,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			entity match {
 				case player: EntityPlayer =>
 					if (WAOptions.angelsCanConvertPlayers &&
-							this.rand.nextInt(100) < 100) {
+							this.rand.nextInt(100) < WAOptions.conversionChance) {
 						val angelPlayer: AngelPlayer = ExtendedEntityHandler
 								.getExtended(player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
 
@@ -431,7 +431,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		if (this.hasStolenInventory) {
 			for (i <- 0 until this.stolenInventory.length) {
 				UtilDrops.spawnItemStack(this.worldObj, this.posX, this.posY, this.posZ,
-					this.stolenInventory(i), this.rand)
+					this.stolenInventory(i), this.rand, 10)
 			}
 
 			this.stolenInventory = null
@@ -446,61 +446,13 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	}
 
 	override def attackEntityFrom(source: DamageSource, damage: Float): Boolean = {
-		if (source != null) {
-			val validSources: Boolean =
-				source == DamageSource.generic ||
-						source == DamageSource.magic ||
-						source.damageType.equals("player")
-
-			if (!validSources) {
-				return false
-			}
-
-			source.getSourceOfDamage match {
-				case player: EntityPlayer =>
-					var canDamage: Boolean = false
-					val heldStack: ItemStack = source.getSourceOfDamage.asInstanceOf[EntityPlayer]
-							.inventory.getCurrentItem
-
-					if (WAOptions.angelsOnlyHurtWithPickaxe) {
-						if (heldStack != null) {
-
-							var blockLevel: Block = Blocks.dirt
-
-							if (this.worldObj.difficultySetting == EnumDifficulty.PEACEFUL) {
-								blockLevel = Blocks.dirt // anything
-							}
-							else if (this.worldObj.difficultySetting == EnumDifficulty.EASY) {
-								blockLevel = Blocks.iron_ore // Stone or higher
-							}
-							else if (this.worldObj.difficultySetting == EnumDifficulty.NORMAL) {
-								blockLevel = Blocks.diamond_ore // Iron or higher
-							}
-							else if (this.worldObj.difficultySetting == EnumDifficulty.HARD) {
-								blockLevel = Blocks.obsidian // Diamond or higher
-							}
-
-							canDamage = heldStack.getItem.canHarvestBlock(blockLevel, heldStack) ||
-									heldStack.getItem.func_150897_b(blockLevel)
-
-						}
-					}
-					else {
-						canDamage = true
-					}
-
-					if (canDamage) {
-						return super.attackEntityFrom(source, damage)
-					}
-
-					return false
-
-				case _ =>
-					super.attackEntityFrom(source, damage)
-			}
-
+		if (AngelUtility.canAttackEntityFrom(this.worldObj, source, damage)) {
+			super.attackEntityFrom(source, damage)
+			true
 		}
-		false
+		else {
+			false
+		}
 	}
 
 	override def dropRareDrop(par1: Int): Unit = {

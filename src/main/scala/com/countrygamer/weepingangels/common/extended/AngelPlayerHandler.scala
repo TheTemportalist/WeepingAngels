@@ -3,6 +3,8 @@ package com.countrygamer.weepingangels.common.extended
 import com.countrygamer.cgo.wrapper.common.extended.ExtendedEntityHandler
 import com.countrygamer.weepingangels.common.WAOptions
 import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
+import com.countrygamer.weepingangels.common.lib.AngelUtility
+import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent
@@ -124,11 +126,22 @@ object AngelPlayerHandler {
 	def onLivingAttack(event: LivingAttackEvent): Unit = {
 		event.entityLiving match {
 			case player: EntityPlayer =>
+
+				if (!AngelPlayerHandler.isAngel(player)) return
+
 				// hurt entity is player
 				this.onLivingAttack_do(player, isAttacker = false)
+				// TODO, this needs configuring. Very OP
+				if (!AngelUtility
+						.canAttackEntityFrom(player.worldObj, event.source, event.ammount)) {
+					event.setCanceled(true)
+				}
 			case _ =>
 				event.source.getSourceOfDamage match {
 					case player: EntityPlayer =>
+
+						if (!AngelPlayerHandler.isAngel(player)) return
+
 						// caused by player
 						this.onLivingAttack_do(player, isAttacker = true)
 					case _ =>
@@ -136,17 +149,21 @@ object AngelPlayerHandler {
 		}
 	}
 
+	private def isAngel(player: EntityPlayer): Boolean = {
+		Api.getMorphEntity(player.getCommandSenderName,
+			FMLCommonHandler.instance().getEffectiveSide.isClient)
+				.isInstanceOf[EntityWeepingAngel]
+	}
+
 	private def onLivingAttack_do(player: EntityPlayer, isAttacker: Boolean): Unit = {
-		if (Api.getMorphEntity(player.getCommandSenderName, true)
-				.isInstanceOf[EntityWeepingAngel]) {
-			val angelPlayer: AngelPlayer = AngelPlayerHandler.get(player)
-			if (isAttacker) {
-				angelPlayer.setIsAttacking()
-			}
-			else {
-				angelPlayer.setIsAttacked()
-			}
+		val angelPlayer: AngelPlayer = AngelPlayerHandler.get(player)
+		if (isAttacker) {
+			angelPlayer.setIsAttacking()
 		}
+		else {
+			angelPlayer.setIsAttacked()
+		}
+
 	}
 
 }
