@@ -44,4 +44,5 @@ gradlew
 gradlew.bat
 output
 run
+run_server
 test
