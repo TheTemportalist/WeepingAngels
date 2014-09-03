@@ -46,7 +46,7 @@ dependencies {
     compile("com.countrygamer.cgo:CGOrigin:${config.minecraft_version}-3+:dev")
 }
 
-version = "3.0.1"
+version = "3.0.2"
 
 if (System.getenv().BUILD_NUMBER != null) {
     version = version + "_build-" + System.getenv().BUILD_NUMBER
