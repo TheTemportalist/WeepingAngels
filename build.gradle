@@ -1,3 +1,4 @@
+// Download repo things, this is required stuffs
 buildscript {
     repositories {
         mavenCentral()
@@ -15,23 +16,13 @@ buildscript {
     }
 }
 
-repositories {
-    maven {
-    	url = "http://maven.dries007.net/content/repositories/ccm/"
-    }
-}
-
+// this is scala source
 apply plugin: 'scala'
 apply plugin: 'forge'
 apply plugin: 'maven'
 
-configurations {
-	compile
-	deplayJars
-}
-
+// Load the config for general stats
 ext.configFile = file "../CGOrigin/CG.properties"
-
 configFile.withReader {
     // Load config.  It shall from now be referenced as simply config or project.config
     def prop = new Properties()
@@ -39,31 +30,39 @@ configFile.withReader {
     project.ext.config = new ConfigSlurper().parse prop
 }
 
-group = "com.countrygamer.weepingangels"
-archivesBaseName = "WeepingAngels"
-
-dependencies {
-    compile("com.countrygamer.cgo:CGOrigin:${config.minecraft_version}-3+:dev")
+// Load the config for this project
+ext.projectPropFile = file "props/project.properties"
+projectPropFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.projectConfig = new ConfigSlurper().parse prop
 }
 
-version = "3.0.2"
-
-if (System.getenv().BUILD_NUMBER != null) {
-    version = version + "_build-" + System.getenv().BUILD_NUMBER
-}
+// Store the data for this project
+group = "${projectConfig.prefix}.${projectConfig.modid}"
+archivesBaseName = "${projectConfig.modName}"
+version = "${projectConfig.version}"
 
 minecraft {
+    // Make the mc version in the style of "1.7.10-10.13.0.1208"
+    // Used to update forge locally
     version = "${config.minecraft_version}-${config.forge_version}"
+    // set the assets
     runDir = "${config.assets_path}"
 
+    // Replacements
+    // the version replacement
     replace "@PLUGIN_VERSION@", project.version
-    replaceIn "WeepingAngels.scala"
+    // replacements go in the main file
+    replaceIn "${projectConfig.mainFile}"
+
 }
 
+// This is used to set the local version
 version = "${config.minecraft_version}-$version"
 
-processResources
-{
+// Used for processing, dont meddle
+processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
@@ -82,6 +81,28 @@ processResources
     }
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Start Jenkins Things ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// Load the config
+ext.gitFile = file "props/git.properties"
+gitFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.gitConfig = new ConfigSlurper().parse prop
+}
+
+configurations {
+    compile
+    deployJars
+}
+
+// If on the jenkins system, append the build number to the jar name
+if (System.getenv().BUILD_NUMBER != null) {
+    version = version + "_build-" + System.getenv().BUILD_NUMBER
+}
+
+// The next 3 tasks are little tasks for compiling different versions of the code
+
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
     classifier = 'src'
@@ -89,7 +110,7 @@ task sourcesJar(type: Jar) {
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
-    from (sourceSets.main.allSource.srcDirs) {
+    from(sourceSets.main.allSource.srcDirs) {
         include '**/*.java'
         include '**/*.scala'
     }
@@ -102,12 +123,13 @@ artifacts {
     archives deobfJar
 }
 
+// This links with jenkins system
 uploadArchives {
-    if (project.hasProperty("mavenUser") && project.hasProperty("mavenPassword")) {
+    if (project.hasProperty("dddUser") && project.hasProperty("dddPass")) {
         repositories {
             mavenDeployer {
-                repository(url: "http://maven.dries007.net/content/repositories/ccm/") {
-                    authentication(userName: mavenUser, password: mavenPassword)
+                repository(url: "http://doubledoordev.net:8081/artifactory/mods") {
+                    authentication(userName: dddUser, password: dddPass)
                 }
                 pom {
                     groupId = project.group
@@ -116,24 +138,24 @@ uploadArchives {
                     project {
                         name project.archivesBaseName
                         packaging 'jar'
-                        description 'CoG-WeepingAngels'
-                        url 'https://github.com/TheCountryGamer/WeepingAngels'
+                        description '${gitConfig.gitName}'
+                        url 'https://github.com/TheCountryGamer/${gitConfig.gitName}'
 
                         scm {
-                            url 'https://github.com/TheCountryGamer/WeepingAngels'
-                            connection 'scm:git:git://github.com/TheCountryGamer/WeepingAngels.git'
-                            developerConnection 'scm:git:git@github.com:TheCountryGamer/WeepingAngels.git'
+                            url 'https://github.com/TheCountryGamer/${gitConfig.gitName}'
+                            connection 'scm:git:git://github.com/TheCountryGamer/${gitConfig.gitName}.git'
+                            developerConnection 'scm:git:git@github.com:TheCountryGamer/${gitConfig.gitName}.git'
                         }
 
                         issueManagement {
                             system 'github'
-                            url 'https://github.com/TheCountryGamer/WeepingAngels/issues'
+                            url 'https://github.com/TheCountryGamer/${gitConfig.gitName}/issues'
                         }
 
-                        licenses  {
-                            license  {
-                                name 'Apache License Version 2.0'
-                                url 'https://github.com/TheCountryGamer/WeepingAngels/blob/master/LICENSE'
+                        licenses {
+                            license {
+                                name '${gitConfig.license}'
+                                url 'https://github.com/TheCountryGamer/${gitConfig.gitName}/blob/master/LICENSE'
                                 distribution 'repo'
                             }
                         }
@@ -150,4 +172,171 @@ uploadArchives {
             }
         }
     }
-}    
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Start CurseForge Things ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+apply plugin: "curseforge"
+
+// Only if not on jenkins
+if (System.getenv().BUILD_NUMBER == null) {
+    // Load the config
+    ext.curseFile = file "../curse.properties"    
+    curseFile.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        project.ext.curseConfig = new ConfigSlurper().parse prop
+    }
+}
+ext.curseforgeFile = file "props/curseforge.properties"
+curseforgeFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.curseforgeConfig = new ConfigSlurper().parse prop
+}
+
+// get the changelog
+def log = getChangelog()
+
+curse {
+    if (System.getenv().BUILD_NUMBER == null) {
+        apiKey = curseConfig.curseforge_key
+        projectId = curseforgeConfig.projectID
+        changelog = log
+        releaseType = curseforgeConfig.releaseType
+    }
+}
+
+task pushToCurse(group: 'versioning', description: 'Pushes all outstanding commits to curseforge') << {
+    setLastCursePush(curseforgeConfig.lastCurseforgePush, getLastGitPush())
+    pushGitCommit()
+}
+
+curse.dependsOn(pushToCurse)
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Curseforge Groovy Methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+private String getGitPushMessage() {
+    return "Update git.prop and curseforge.prop, pre curse push"
+}
+
+private String getLastGitPush() {
+    def outStream = new ByteArrayOutputStream()
+    def lastGitPush = ""
+    try {
+        exec {
+            executable = "git"
+            args = ["rev-parse", "origin/master"]
+            standardOutput = outStream
+        }
+        lastGitPush = outStream.toString().trim()
+    }
+    catch (e) {
+        logger.quiet "Error while fetching last git tag: $e"
+    }
+    return lastGitPush
+}
+
+private void setLastCursePush(String prevGitKey, String nextGitKey) {
+    StringBuilder token = new StringBuilder()
+    StringBuilder value = new StringBuilder()
+    token.append("lastCurseforgePush=")
+    value.append("lastCurseforgePush=")
+    token.append(prevGitKey)
+    value.append(nextGitKey)
+
+    ant.replace(file: "curseforge.properties", token: token.toString(), value: value.toString())
+}
+
+private String getRawChangelog() {
+    def outStream = new ByteArrayOutputStream()
+    String changelog = ""
+    String lastGitPush = "${curseforgeConfig.lastCurseforgePush}"
+
+    try {
+        exec {
+            executable = "git"
+            args = ["log", "--pretty=%s~%b", "$lastGitPush..HEAD"]
+            standardOutput = outStream
+        }
+
+        changelog = outStream.toString().trim()
+    }
+    catch (e) {
+        logger.quiet "Error while generating theChangelog: $e"
+    }
+
+    return changelog
+}
+
+private String getChangelog() {
+    String changelog = getRawChangelog()
+    final String[] split = changelog.split("\n")
+    
+    final StringBuilder result = new StringBuilder()
+
+    result.append("Changelog:\n")
+
+    result.append("\t")
+    result.append(getGitPushMessage())
+    result.append("\r\n")
+
+    for (String s : split) {
+        if (s.length() == 0) continue
+
+        final String[] titleVbody = s.split("~")
+        String temp = "\t" + titleVbody[0]
+
+        for (int i = 1; i < titleVbody.length; i++) {
+            temp = temp + "\n\t\t" + titleVbody[i]
+        }
+
+        temp = temp + "\r\n"
+        result.append(temp)
+    }
+
+    result.toString()
+}
+
+private void pushGitCommit() {
+    exec {
+        executable = 'git'
+        args = ['add', '-A']
+    }
+    exec {
+        executable = 'git'
+        args = ['commit', '-m', getGitPushMessage()]
+    }
+    exec {
+        executable = 'git'
+        args = ['push']
+    }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Start Test Tasks ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+task baseTest() << {
+    logger.quiet project.group
+    logger.quiet minecraft.version
+    logger.quiet project.version
+    logger.quiet project.archivesBaseName
+}
+
+task jenkinsTest() << {
+    logger.quiet project.version
+    logger.quiet System.getenv().BUILD_NUMBER
+    logger.quiet gitConfig.gitName
+    logger.quiet gitConfig.license
+}
+
+task curseTest() << {
+    logger.quiet "--"
+    logger.quiet curseConfig.curseforge_key
+    logger.quiet curseforgeConfig.projectID
+    logger.quiet curseforgeConfig.releaseType
+    logger.quiet "--"
+    logger.quiet curseforgeConfig.lastCurseforgePush
+    logger.quiet "--"
+    logger.quiet log
+    logger.quiet "--"
+}
+
