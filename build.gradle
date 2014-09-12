@@ -41,6 +41,7 @@ projectPropFile.withReader {
 // Store the data for this project
 group = "${projectConfig.prefix}.${projectConfig.modid}"
 archivesBaseName = "${projectConfig.modName}"
+
 version = "${projectConfig.version}"
 
 minecraft {
@@ -60,6 +61,24 @@ minecraft {
 
 // This is used to set the local version
 version = "${config.minecraft_version}-$version"
+
+repositories {
+    maven {
+        name "DDD repo"
+        url "http://doubledoordev.net/maven/"
+    }
+}
+
+dependencies {
+     compile("com.countrygamer.cgo:CGOrigin:${config.minecraft_version}-3+:dev")
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// If on the jenkins system, append the build number to the jar name
+if (System.getenv().BUILD_NUMBER != null) {
+    version = version + "_build-" + System.getenv().BUILD_NUMBER
+}
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Used for processing, dont meddle
 processResources {
@@ -94,11 +113,6 @@ gitFile.withReader {
 configurations {
     compile
     deployJars
-}
-
-// If on the jenkins system, append the build number to the jar name
-if (System.getenv().BUILD_NUMBER != null) {
-    version = version + "_build-" + System.getenv().BUILD_NUMBER
 }
 
 // The next 3 tasks are little tasks for compiling different versions of the code
