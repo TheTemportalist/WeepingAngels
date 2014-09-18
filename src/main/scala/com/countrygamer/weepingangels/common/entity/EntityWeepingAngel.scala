@@ -183,28 +183,27 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 		}
 
-		if (WAOptions.angelsLookForTorches && canBeSeen) {
-			if (!(this.worldObj.isDaytime && this.isInSkylight)) {
+		val canRemoveLight: Boolean = WAOptions.angelsLookForTorches && canBeSeen &&
+				(if (this.isInSkylight) !this.worldObj.isDaytime else true)
+		if (canRemoveLight) {
+			val coordsOfSource: Vec3 = this.findNearestTorch()
 
-				val coordsOfSource: Vec3 = this.findNearestTorch()
+			if (coordsOfSource != null) {
+				val ticksUntilSourceBreak: Int = this.getLightSourceKillDelay
+				if (ticksUntilSourceBreak <= 0) {
 
-				if (coordsOfSource != null) {
-					val ticksUntilSourceBreak: Int = this.getLightSourceKillDelay
-					if (ticksUntilSourceBreak <= 0) {
+					this.breakLightSource(coordsOfSource)
 
-						this.breakLightSource(coordsOfSource)
+					this.setLightSourceKillDelay(this.lightSourceKillDelay_Max)
 
-						this.setLightSourceKillDelay(this.lightSourceKillDelay_Max)
-
-					}
-					else {
-						this.setLightSourceKillDelay(ticksUntilSourceBreak - 1)
-
-					}
+				}
+				else {
+					this.setLightSourceKillDelay(ticksUntilSourceBreak - 1)
 
 				}
 
 			}
+
 		}
 
 		if (!canBeSeen)
