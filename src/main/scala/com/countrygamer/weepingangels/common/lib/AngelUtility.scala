@@ -29,23 +29,26 @@ object AngelUtility {
 		) <= 1.0F)
 			return false
 
+		this.canBeSeen(world, entity, boundingBox, radius, classOf[EntityPlayer]) ||
+				this.canBeSeen(world, entity, boundingBox, radius, classOf[EntityWeepingAngel])
+	}
+
+	private def canBeSeen(world: World, entity: EntityLivingBase, boundingBox: AxisAlignedBB,
+			radius: Double, clazz: Class[_ <: EntityLivingBase]): Boolean = {
 		val entityList: java.util.List[_] = world
-				.getEntitiesWithinAABB(classOf[EntityPlayer],
-		            boundingBox.expand(radius, radius, radius))
-
-		var numberOfPlayersWatching: Int = 0
-
-		var index: Int = 0
-		for (index <- 0 until entityList.size()) {
-			val player: EntityPlayer = entityList.get(index).asInstanceOf[EntityPlayer]
-
-			if (this.isInFieldOfViewOf(player, entity)) {
-				numberOfPlayersWatching = numberOfPlayersWatching + 1
+				.getEntitiesWithinAABB(clazz, boundingBox.expand(radius, radius, radius))
+		for (i <- 0 until entityList.size()) {
+			val e: EntityLivingBase = entityList.get(i).asInstanceOf[EntityLivingBase]
+			if (this.isInFieldOfViewOf(e, entity)) {
+				e match {
+					case angel: EntityWeepingAngel =>
+						return angel.getArmState > 0
+					case _ =>
+						return true
+				}
 			}
-
 		}
-
-		numberOfPlayersWatching > 0
+		false
 	}
 
 	def isInFieldOfViewOf(entity: EntityLivingBase, thisEntity: EntityLivingBase): Boolean = {
