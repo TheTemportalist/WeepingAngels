@@ -1,7 +1,8 @@
-package com.countrygamer.weepingangels.common.block
+package com.countrygamer.weepingangels.common.init
 
 import com.countrygamer.cgo.wrapper.common.registries.BlockRegister
 import com.countrygamer.weepingangels.common.WeepingAngels
+import com.countrygamer.weepingangels.common.block.BlockStatue
 import com.countrygamer.weepingangels.common.tile.TileEntityStatue
 import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.block.Block

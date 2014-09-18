@@ -2,6 +2,7 @@ package com.countrygamer.weepingangels.common.block
 
 import java.util
 
+import com.countrygamer.cgo.common.lib.util.UtilDrops
 import com.countrygamer.cgo.wrapper.common.block.BlockWrapperTE
 import com.countrygamer.weepingangels.common.tile.TileEntityStatue
 import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
@@ -114,23 +115,15 @@ class BlockStatue(material: Material, pluginID: String, name: String,
 
 		}
 
+		if (!world.isRemote && meta == 0)
+			UtilDrops.spawnItemStack(world, x + 0.5, y, z + 0.5, new ItemStack(this, 1, 0),
+				world.rand, 10)
+
 	}
 
 	override def getDrops(world: World, x: Int, y: Int, z: Int, metadata: Int,
 			fortune: Int): util.ArrayList[ItemStack] = {
-		val drops: util.ArrayList[ItemStack] = super.getDrops(world, x, y, z, metadata, fortune)
-		if (metadata != 0) {
-			drops.clear()
-		}
-		else {
-			val tileEntity: TileEntity = world.getTileEntity(x, y, z)
-			if (tileEntity != null && tileEntity.isInstanceOf[TileEntityStatue]) {
-				if (tileEntity.asInstanceOf[TileEntityStatue].isComingToLife) {
-					drops.clear()
-				}
-			}
-		}
-		drops
+		new util.ArrayList[ItemStack]()
 	}
 
 	override def onBlockPlacedBy(world: World, x: Int, y: Int, z: Int, entity: EntityLivingBase,

@@ -2,12 +2,14 @@ package com.countrygamer.weepingangels.common
 
 import com.countrygamer.cgo.common.RegisterHelper
 import com.countrygamer.cgo.wrapper.common.PluginWrapper
-import com.countrygamer.weepingangels.common.block.WABlocks
-import com.countrygamer.weepingangels.common.entity.{EntityWeepingAngel, WAEntity}
+import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
 import com.countrygamer.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
+import com.countrygamer.weepingangels.common.generation.VaultGenerator
+import com.countrygamer.weepingangels.common.init.{WABlocks, WAEntity}
 import com.countrygamer.weepingangels.common.network.PacketModifyStatue
 import com.countrygamer.weepingangels.morph.AbilityQuantumLock
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
+import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.common.{Mod, SidedProxy}
 import morph.api.Ability
 
@@ -47,6 +49,8 @@ object WeepingAngels extends PluginWrapper {
 	@Mod.EventHandler
 	def init(event: FMLInitializationEvent): Unit = {
 		super.initialize(event)
+
+		GameRegistry.registerWorldGenerator(VaultGenerator, 0)
 
 		Ability.registerAbility("timelock", classOf[AbilityQuantumLock])
 		Ability.mapAbilities(classOf[EntityWeepingAngel],

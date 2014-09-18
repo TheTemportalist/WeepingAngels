@@ -4,8 +4,8 @@ import java.util
 
 import com.countrygamer.cgo.common.lib.util.{UtilDrops, UtilVector}
 import com.countrygamer.cgo.wrapper.common.extended.ExtendedEntityHandler
-import com.countrygamer.weepingangels.common.block.WABlocks
 import com.countrygamer.weepingangels.common.extended.AngelPlayer
+import com.countrygamer.weepingangels.common.init.WABlocks
 import com.countrygamer.weepingangels.common.lib.AngelUtility
 import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
 import net.minecraft.block.Block
@@ -40,7 +40,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		this.targetTasks.addTask(2,
 			new EntityAINearestAttackableTarget(this, classOf[EntityPlayer], 0, true))
 
-		this.setSize(0.87F, 2.0F)
+		this.setSize(0.6F, 2.0F)
 		this.stepHeight = 1.0F
 
 	}
