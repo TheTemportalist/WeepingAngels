@@ -4,7 +4,7 @@ import com.countrygamer.cgo.wrapper.common.registries.EntityRegister
 import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
 import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
 import cpw.mods.fml.common.registry.EntityRegistry
-import net.minecraft.entity.{EntityList, EnumCreatureType}
+import net.minecraft.entity.EnumCreatureType
 import net.minecraft.world.biome.BiomeGenBase
 
 /**
@@ -22,8 +22,8 @@ object WAEntity extends EntityRegister {
 	}
 
 	override def addEntityMappings: Unit = {
-		EntityList.addMapping(classOf[EntityWeepingAngel], "Weeping Angel", this.getNewEntityID(),
-			0x808080, 0xD1D1D1)
+		EntityRegistry.registerGlobalEntityID(classOf[EntityWeepingAngel], "Weeping Angel",
+			this.getNewEntityID(), 0x808080, 0xD1D1D1)
 
 	}
 
