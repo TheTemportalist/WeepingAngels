@@ -88,6 +88,7 @@ object AngelPlayerHandler {
 						if (!player.attackEntityFrom(DamageSource.causeMobDamage(angelEntity),
 							Float.MaxValue)) {
 							angelEntity.setDead()
+							// TODO Maybe return here, to prevent anything from occuring after death
 						}
 
 					}
