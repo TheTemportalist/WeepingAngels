@@ -1,15 +1,18 @@
 package com.countrygamer.weepingangels.client.render.models
 
 import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.model.{ModelBase, ModelRenderer}
 import net.minecraft.entity.Entity
 import net.minecraft.util.MathHelper
+import org.lwjgl.opengl.GL11
 
 /**
  *
  *
  * @author CountryGamer
  */
+@SideOnly(Side.CLIENT)
 class ModelWeepingAngel() extends ModelBase() {
 
 	private var leftfoot: ModelRenderer = null
@@ -154,23 +157,42 @@ class ModelWeepingAngel() extends ModelBase() {
 	override def render(entity: Entity, f: Float, f1: Float, f2: Float, f3: Float, f4: Float,
 			f5: Float): Unit = {
 		setRotationAngles(f, f1, f2, f3, f4, f5, entity)
-		leftfoot.render(f5)
-		rightfoot.render(f5)
-		leftwing1.render(f5)
-		leftwing2.render(f5)
-		leftwing3.render(f5)
-		leftwing4.render(f5)
-		rightwing1.render(f5)
-		rightwing2.render(f5)
-		rightwing3.render(f5)
-		rightwing4.render(f5)
-		head.render(f5)
-		body.render(f5)
-		rightarm.render(f5)
-		leftarm.render(f5)
-		rightleg.render(f5)
-		leftleg.render(f5)
 
+		if (this.isChild) {
+			val f6: Float = 2.0F
+			GL11.glPushMatrix
+			GL11.glScalef(1.0F / f6, 1.0F / f6, 1.0F / f6)
+			GL11.glTranslatef(0.0F, 24.0F * f5, 0.0F)
+			this.head.render(f5)
+			this.leftfoot.render(f5)
+			this.rightfoot.render(f5)
+			this.body.render(f5)
+			this.rightarm.render(f5)
+			this.leftarm.render(f5)
+			this.rightleg.render(f5)
+			this.leftleg.render(f5)
+			GL11.glPopMatrix
+		}
+		else {
+			GL11.glPushMatrix
+			this.leftfoot.render(f5)
+			this.rightfoot.render(f5)
+			this.leftwing1.render(f5)
+			this.leftwing2.render(f5)
+			this.leftwing3.render(f5)
+			this.leftwing4.render(f5)
+			this.rightwing1.render(f5)
+			this.rightwing2.render(f5)
+			this.rightwing3.render(f5)
+			this.rightwing4.render(f5)
+			this.head.render(f5)
+			this.body.render(f5)
+			this.rightarm.render(f5)
+			this.leftarm.render(f5)
+			this.rightleg.render(f5)
+			this.leftleg.render(f5)
+			GL11.glPopMatrix
+		}
 	}
 
 	override def setRotationAngles(f: Float, f1: Float, f2: Float, f3: Float, f4: Float, f5: Float,

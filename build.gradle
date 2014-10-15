@@ -258,7 +258,7 @@ private void setLastCursePush(String prevGitKey, String nextGitKey) {
     token.append(prevGitKey)
     value.append(nextGitKey)
 
-    ant.replace(file: "curseforge.properties", token: token.toString(), value: value.toString())
+    ant.replace(file: "props/curseforge.properties", token: token.toString(), value: value.toString())
 }
 
 private String getRawChangelog() {

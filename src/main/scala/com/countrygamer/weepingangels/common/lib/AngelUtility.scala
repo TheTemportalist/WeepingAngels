@@ -33,8 +33,9 @@ object AngelUtility {
 				this.canBeSeen(world, entity, boundingBox, radius, classOf[EntityWeepingAngel])
 	}
 
-	private def canBeSeen(world: World, entity: EntityLivingBase, boundingBox: AxisAlignedBB,
+	def canBeSeen(world: World, entity: EntityLivingBase, boundingBox: AxisAlignedBB,
 			radius: Double, clazz: Class[_ <: EntityLivingBase]): Boolean = {
+		/*
 		val entityList: java.util.List[_] = world
 				.getEntitiesWithinAABB(clazz, boundingBox.expand(radius, radius, radius))
 		for (i <- 0 until entityList.size()) {
@@ -42,13 +43,73 @@ object AngelUtility {
 			if (this.isInFieldOfViewOf(e, entity)) {
 				e match {
 					case angel: EntityWeepingAngel =>
-						return angel.getArmState > 0
+						if (angel.getArmState > 0)
+							return true
 					case _ =>
 						return true
 				}
 			}
 		}
 		false
+		*/
+		!this.getLookingList(world, entity, boundingBox, radius, clazz).isEmpty
+	}
+
+	def getLookingList(world: World, entity: EntityLivingBase, boundingBox: AxisAlignedBB,
+			radius: Double, clazz: Class[_ <: EntityLivingBase]): util.List[EntityLivingBase] = {
+		val entityList: java.util.List[_] = world
+				.getEntitiesWithinAABB(clazz, boundingBox.expand(radius, radius, radius))
+		val lookingList: util.List[EntityLivingBase] = new util.ArrayList[EntityLivingBase]()
+		for (i <- 0 until entityList.size()) {
+			val e: EntityLivingBase = entityList.get(i).asInstanceOf[EntityLivingBase]
+			if (this.isInFieldOfViewOf(e, entity)) {
+				e match {
+					case angel: EntityWeepingAngel =>
+						if (angel.getArmState > 0)
+							lookingList.add(angel)
+					case _ =>
+						lookingList.add(e)
+				}
+			}
+		}
+		lookingList
+	}
+
+	/**
+	 * Will return the closest entity to the passed entity that can see the passed entity
+	 * @param world
+	 * @param entity
+	 * @param boundingBox
+	 * @param radius
+	 * @param clazz
+	 * @return
+	 */
+	def getEntityLooking(world: World, entity: EntityLivingBase, boundingBox: AxisAlignedBB,
+			radius: Double, clazz: Class[_ <: EntityLivingBase]): EntityLivingBase = {
+		val lookingList: util.List[EntityLivingBase] = this.getLookingList(
+			world, entity, boundingBox, radius, clazz
+		)
+
+		if (!lookingList.isEmpty) {
+			var retEntity: EntityLivingBase = null
+			var retDistance: Float = radius.asInstanceOf[Float]
+			var lookingDistance: Float = 0.0F
+			for (i <- 0 until lookingList.size()) {
+				lookingList.get(i) match {
+					case player: EntityPlayer =>
+						lookingDistance = entity.getDistanceToEntity(lookingList.get(i))
+						if (lookingDistance < retDistance) {
+							retDistance = lookingDistance
+							retEntity = lookingList.get(i)
+						}
+					case _ =>
+				}
+			}
+			retEntity
+		}
+		else {
+			null
+		}
 	}
 
 	def isInFieldOfViewOf(entity: EntityLivingBase, thisEntity: EntityLivingBase): Boolean = {
@@ -137,4 +198,12 @@ object AngelUtility {
 		false
 	}
 
+	def getDecrepitation(age: Int): Int = {
+		if (age <= 0) {
+			return 0
+		}
+		// f(age) = -age + 6000
+		// where age is in terms of 6000 -> 0 (can divide by 1200, otherwise known as ticks per decrepitation)
+		WAOptions.maxDecrepitation_amount - (age / WAOptions.ticksPerDecrepitation)
+	}
 }

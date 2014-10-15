@@ -1,5 +1,6 @@
 package com.countrygamer.weepingangels.client.gui
 
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.gui.GuiButton
 
 /**
@@ -7,6 +8,7 @@ import net.minecraft.client.gui.GuiButton
  *
  * @author CountryGamer
  */
+@SideOnly(Side.CLIENT)
 class GuiButtonIterator(id: Int, x: Int, y: Int, w: Int, h: Int, val list: Array[String])
 		extends GuiButton(id, x, y, w, h, "") {
 

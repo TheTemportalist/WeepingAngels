@@ -1,7 +1,7 @@
 package com.countrygamer.weepingangels.client.gui
 
-import com.countrygamer.cgo.client.gui.GuiScreenWrapper
-import com.countrygamer.cgo.common.network.PacketHandler
+import com.countrygamer.cgo.library.common.nethandler.PacketHandler
+import com.countrygamer.cgo.wrapper.client.gui.GuiScreenWrapper
 import com.countrygamer.weepingangels.common.WeepingAngels
 import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
 import com.countrygamer.weepingangels.common.network.PacketModifyStatue

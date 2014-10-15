@@ -12,6 +12,6 @@ import net.minecraft.client.gui.GuiScreen
  */
 @SideOnly(Side.CLIENT)
 class GuiConfig(guiScreen: GuiScreen)
-		extends GuiConfigWrapper(guiScreen, WeepingAngels.pluginID, WeepingAngels) {
+		extends GuiConfigWrapper(guiScreen, WeepingAngels, WeepingAngels.pluginID) {
 
 }

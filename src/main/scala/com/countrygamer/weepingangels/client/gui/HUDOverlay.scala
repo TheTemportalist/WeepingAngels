@@ -1,6 +1,6 @@
 package com.countrygamer.weepingangels.client.gui
 
-import com.countrygamer.cgo.common.lib.util.UtilRender
+import com.countrygamer.cgo.library.client.utility.Rendering
 import com.countrygamer.cgo.wrapper.common.extended.ExtendedEntityHandler
 import com.countrygamer.weepingangels.common.extended.AngelPlayer
 import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
@@ -70,7 +70,7 @@ object HUDOverlay extends Gui() {
 			val healthBarX: Int = left + 0
 			val healthBarY: Int = top
 
-			UtilRender.bindResource(this.healthTexture)
+			Rendering.bindResource(this.healthTexture)
 
 			// Draw background hearts
 			for (i <- 0 until WAOptions.maxAngelHealth / 2) {
@@ -113,7 +113,7 @@ object HUDOverlay extends Gui() {
 
 		GL11.glDisable(GL11.GL_ALPHA_TEST)
 
-		UtilRender.bindResource(this.blackout)
+		Rendering.bindResource(this.blackout)
 
 		val tessellator: Tessellator = Tessellator.instance
 		tessellator.startDrawingQuads()

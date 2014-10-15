@@ -1,10 +1,10 @@
 package com.countrygamer.weepingangels.client.render
 
-import com.countrygamer.cgo.common.lib.util.General
 import com.countrygamer.weepingangels.client.render.models.ModelWeepingAngel
 import com.countrygamer.weepingangels.common.WAOptions
 import com.countrygamer.weepingangels.common.entity.EntityWeepingAngel
 import com.countrygamer.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
+import cpw.mods.fml.common.Loader
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import morph.api.Api
 import net.minecraft.client.Minecraft
@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.RenderLiving
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.{Entity, EntityLiving, EntityLivingBase}
 import net.minecraft.util.ResourceLocation
+import org.lwjgl.opengl.GL11
 
 /**
  *
@@ -30,7 +31,7 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 
 	// End Constructor
 
-	override def getEntityTexture(p_110775_1_ : Entity): ResourceLocation = {
+	override def getEntityTexture(entity: Entity): ResourceLocation = {
 		this.texture
 	}
 
@@ -40,7 +41,7 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 		entity match {
 			case angel: EntityWeepingAngel =>
 
-				if (General.isModLoaded("Morph")) {
+				if (Loader.isModLoaded("Morph")) {
 					val player: EntityPlayer = Minecraft.getMinecraft.thePlayer
 					val morphedEntity: EntityLivingBase = Api
 							.getMorphEntity(player.getCommandSenderName, true)
@@ -62,6 +63,11 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 		}
 
 		super.doRender(entity, d1, d2, d3, f1, f2)
+	}
+
+	override def bindEntityTexture(entity: Entity): Unit = {
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D,
+			entity.asInstanceOf[EntityWeepingAngel].getTextureID())
 	}
 
 }

@@ -2,7 +2,7 @@ package com.countrygamer.weepingangels.common.block
 
 import java.util
 
-import com.countrygamer.cgo.common.lib.util.UtilDrops
+import com.countrygamer.cgo.library.common.utility.Drops
 import com.countrygamer.cgo.wrapper.common.block.BlockWrapperTE
 import com.countrygamer.weepingangels.common.tile.TileEntityStatue
 import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
@@ -116,8 +116,9 @@ class BlockStatue(material: Material, pluginID: String, name: String,
 		}
 
 		if (!world.isRemote && meta == 0)
-			UtilDrops.spawnItemStack(world, x + 0.5, y, z + 0.5, new ItemStack(this, 1, 0),
-				world.rand, 10)
+			Drops.spawnItemStack(
+				world, x + 0.5, y, z + 0.5, new ItemStack(this, 1, 0), world.rand, 10
+			)
 
 	}
 

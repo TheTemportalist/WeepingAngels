@@ -2,3 +2,6 @@
 tile.weepingangels:Plinth.name=Angel Plinth
 
 entity.WeepingAngel.name=Weeping Angel
+
+item.weepingangels:Angel's Tear.name=Angel's Tear
+item.weepingangels:Arrow.name=Arrow

@@ -1,6 +1,6 @@
 package com.countrygamer.weepingangels.client.render
 
-import com.countrygamer.cgo.common.lib.util.UtilRender
+import com.countrygamer.cgo.library.client.utility.Rendering
 import com.countrygamer.cgo.wrapper.client.render.TERenderer
 import com.countrygamer.weepingangels.client.render.models.ModelWeepingAngel
 import com.countrygamer.weepingangels.common.WAOptions
@@ -70,9 +70,9 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 
 			statueTE.getFacialState match {
 				case 0 =>
-					UtilRender.bindResource(WAOptions.weepingAngel1)
+					Rendering.bindResource(WAOptions.weepingAngel1)
 				case 1 =>
-					UtilRender.bindResource(WAOptions.weepingAngel2)
+					Rendering.bindResource(WAOptions.weepingAngel2)
 			}
 
 			// Render the model
@@ -89,7 +89,7 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 			GL11.glPushMatrix()
 
 			// Bind the texture for blocks
-			UtilRender.bindResource(TextureMap.locationBlocksTexture)
+			Rendering.bindResource(TextureMap.locationBlocksTexture)
 
 			// Dont light me up!
 			RenderHelper.disableStandardItemLighting()

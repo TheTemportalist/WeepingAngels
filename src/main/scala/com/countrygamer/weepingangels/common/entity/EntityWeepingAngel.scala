@@ -1,31 +1,42 @@
 package com.countrygamer.weepingangels.common.entity
 
+import java.awt.Color
+import java.awt.image.BufferedImage
+import java.io.InputStream
 import java.util
+import java.util.Random
+import javax.imageio.ImageIO
 
-import com.countrygamer.cgo.common.lib.util.{UtilDrops, UtilVector}
+import com.countrygamer.cgo.library.common.utility.{Drops, Teleport}
 import com.countrygamer.cgo.wrapper.common.extended.ExtendedEntityHandler
 import com.countrygamer.weepingangels.common.extended.AngelPlayer
-import com.countrygamer.weepingangels.common.init.WABlocks
+import com.countrygamer.weepingangels.common.init.{WABlocks, WAItems}
 import com.countrygamer.weepingangels.common.lib.AngelUtility
 import com.countrygamer.weepingangels.common.{WAOptions, WeepingAngels}
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.block.Block
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.texture.{SimpleTexture, TextureUtil}
 import net.minecraft.entity._
 import net.minecraft.entity.ai._
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
+import net.minecraft.init.Items
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.util._
 import net.minecraft.world.{EnumDifficulty, EnumSkyBlock, World}
+import org.apache.commons.io.IOUtils
 
 /**
  *
  *
  * @author CountryGamer
  */
-class EntityWeepingAngel(world: World) extends EntityCreature(world) {
+class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 
-	val lightSourceKillDelay_Max: Int = 20 * 10
+	//val lightSourceKillDelay_Max: Int = 20 * 10
 	var stolenInventory: Array[ItemStack] = null
+	var hasProcreated: Boolean = false
 
 	// Default Constructor
 	{
@@ -41,7 +52,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			new EntityAINearestAttackableTarget(this, classOf[EntityPlayer], 0, true))
 
 		this.setSize(0.6F, 2.0F)
-		this.stepHeight = 1.0F
+		this.stepHeight = 2.0F
+		this.setGrowingAge((WAOptions.decrepitationAge_max * 1.25).asInstanceOf[Int])
 
 	}
 
@@ -50,9 +62,14 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	override def entityInit(): Unit = {
 		super.entityInit()
 
+		// angry state
 		this.dataWatcher.addObject(16, 0.asInstanceOf[Byte])
+		// arm state
 		this.dataWatcher.addObject(17, 0.asInstanceOf[Byte])
-		this.dataWatcher.addObject(18, this.lightSourceKillDelay_Max)
+		// decrepetation texture id
+		this.dataWatcher.addObject(18, -1)
+		// voice throw delay
+		this.dataWatcher.addObject(19, WAOptions.throwVoiceDelay_Max.asInstanceOf[Byte])
 
 	}
 
@@ -76,6 +93,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			tagCom.setInteger("inventorySize", this.stolenInventory.length)
 		}
 
+		tagCom.setBoolean("hasProcreated", this.hasProcreated)
+
 	}
 
 	override def readEntityFromNBT(tagCom: NBTTagCompound): Unit = {
@@ -97,6 +116,8 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		else {
 			this.stolenInventory = null
 		}
+
+		this.hasProcreated = tagCom.getBoolean("hasProcreated")
 
 	}
 
@@ -122,6 +143,39 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 	def getLightSourceKillDelay: Int = {
 		this.dataWatcher.getWatchableObjectInt(18)
+	}
+
+	def getVoiceThrowDelay(): Int = {
+		this.dataWatcher.getWatchableObjectByte(19).asInstanceOf[Int]
+	}
+
+	def setVoiceThrowDelay(delay: Int): Unit = {
+		this.dataWatcher.updateObject(19, delay.asInstanceOf[Byte])
+	}
+
+	def decrementVoiceThrowDelay(): Unit = {
+		this.setVoiceThrowDelay(this.getVoiceThrowDelay() - 1)
+	}
+
+	def getNewThrowVoiceDelay(): Int = {
+		this.rand.nextInt(WAOptions.throwVoiceDelay_Max - WAOptions.throwVoiceDelay_Min) +
+				WAOptions.throwVoiceDelay_Min
+	}
+
+	def tryThrowVoice(target: EntityPlayer): Unit = {
+		if (this.worldObj.isRemote) {
+			val soundX: Double = (2 * target.posX) - this.posX
+			val soundY: Double = this.posY //(2 * target.posY) - this.posY
+			val soundZ: Double = (2 * target.posZ) - this.posZ
+			this.worldObj.playSoundEffect(
+				soundX, soundY, soundZ,
+				this.getRandomMobSound(), this.getSoundVolume, this.getSoundPitch
+			)
+		}
+	}
+
+	def getRandomMobSound(): String = {
+		WAOptions.mobSounds(this.rand.nextInt(WAOptions.mobSounds.length))
 	}
 
 	override def applyEntityAttributes(): Unit = {
@@ -176,13 +230,33 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			this.rotationYaw = this.prevRotationYaw
 			this.rotationYawHead = this.prevRotationYawHead
 
+			if (WAOptions.angelThrowsVoice) {
+				if (this.getVoiceThrowDelay() <= 0) {
+					val lookingPlayer: EntityPlayer = AngelUtility
+							.getEntityLooking(this.worldObj, this, this.boundingBox, 64D,
+					            classOf[EntityPlayer]).asInstanceOf[EntityPlayer]
+					if (lookingPlayer != null) {
+						this.tryThrowVoice(lookingPlayer)
+					}
+					this.setVoiceThrowDelay(this.getNewThrowVoiceDelay())
+				}
+				else {
+					this.decrementVoiceThrowDelay()
+				}
+			}
+
 		}
 		else {
 			// Angel can move
-			this.setSpeed(WAOptions.angelMaxSpeed)
+			var speed: Double = WAOptions.angelMaxSpeed
+			if (this.isChild) speed = speed * 2
+			if (this.getSpeed() != speed) {
+				this.setSpeed(speed)
+			}
 
 		}
 
+		/*
 		val canRemoveLight: Boolean = WAOptions.angelsLookForTorches && canBeSeen &&
 				(if (this.isInSkylight) !this.worldObj.isDaytime else true)
 		if (canRemoveLight) {
@@ -194,7 +268,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 					this.breakLightSource(coordsOfSource)
 
-					this.setLightSourceKillDelay(this.lightSourceKillDelay_Max)
+					//this.setLightSourceKillDelay(this.lightSourceKillDelay_Max)
 
 				}
 				else {
@@ -205,9 +279,18 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			}
 
 		}
+		*/
 
-		if (!canBeSeen)
+		if (!canBeSeen) {
 			this.changeAngelMovement()
+			if (!this.hasProcreated && this.entityToAttack == null &&
+					this.findPlayerToAttack() == null) {
+				if (this.getGrowingAge >= 24000 * 4 && this.rand.nextInt(50) == 0) {
+					this.procreate(null)
+					this.hasProcreated = true
+				}
+			}
+		}
 
 		super.onUpdate()
 
@@ -222,6 +305,14 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		}
 
 		super.onLivingUpdate()
+
+		if (this.getTextureID() < 0) {
+			this.onAgeChanged()
+		}
+	}
+
+	def getSpeed(): Double = {
+		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getBaseValue
 	}
 
 	def setSpeed(speed: Double): Unit = {
@@ -319,8 +410,9 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 		this.worldObj.setBlockToAir(x, y, z)
 
-		UtilDrops.spawnItemStack(this.worldObj, x, y, z, new ItemStack(block, 1, meta), this.rand,
-			10)
+		Drops.spawnItemStack(
+			this.worldObj, x, y, z, new ItemStack(block, 1, meta), this.rand, 10
+		)
 
 	}
 
@@ -354,7 +446,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 			var didAlternateAction: Boolean = false
 			var entityIsConvertting: Boolean = false
 			entity match {
-				case player: EntityPlayer =>
+				case player: EntityPlayerMP =>
 					if (WAOptions.angelsCanConvertPlayers &&
 							this.rand.nextInt(100) < WAOptions.conversionChance) {
 						val angelPlayer: AngelPlayer = ExtendedEntityHandler
@@ -364,7 +456,7 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 							angelPlayer.startConversion()
 							angelPlayer.setAngelHealth(0.0F)
 							angelPlayer.clearRegenTicks()
-
+							this.rejuvinate(1, 0.25D)
 						}
 
 						didAlternateAction = true
@@ -374,8 +466,10 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 					if (!didAlternateAction && WAOptions.angelsCanTeleportPlayers &&
 							this.rand.nextInt(100) < WAOptions.teleportationChance) {
-						UtilVector.teleportPlayer(player, WAOptions.teleportationMinRange,
-							WAOptions.teleportationMaxRange, player.posX, player.posZ, true, true)
+						Teleport.toPointRandom(
+							player, WAOptions.teleportationMinRange, WAOptions.teleportationMaxRange
+						)
+						this.rejuvinate(1, 1.0D)
 						this.worldObj.playSoundAtEntity(player,
 							WeepingAngels.pluginID + ":teleport_activate", 1.0F, 1.0F)
 						didAlternateAction = true
@@ -405,6 +499,26 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		false
 	}
 
+	def rejuvinate(times: Int, factor: Double): Unit = {
+		val crement: Int = (2000 * factor).asInstanceOf[Int]
+		for (i <- 0 until times) {
+			var nextAge: Int = 0
+			if (this.isChild) {
+				nextAge = this.getGrowingAge + crement
+				if (nextAge > 0) {
+					nextAge = 0
+				}
+			}
+			else {
+				nextAge = this.getGrowingAge - crement
+				if (nextAge < 0) {
+					nextAge = 0
+				}
+			}
+			this.setGrowingAge(nextAge)
+		}
+	}
+
 	override def attackEntity(entity: Entity, distanceToEntity: Float): Unit = {
 
 		if (entity != null && distanceToEntity < 2.0D) {
@@ -429,8 +543,10 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 	def dropStolenInventory(): Unit = {
 		if (this.hasStolenInventory) {
 			for (i <- 0 until this.stolenInventory.length) {
-				UtilDrops.spawnItemStack(this.worldObj, this.posX, this.posY, this.posZ,
-					this.stolenInventory(i), this.rand, 10)
+				Drops.spawnItemStack(
+					this.worldObj, this.posX, this.posY, this.posZ, this.stolenInventory(i),
+					this.rand, 10
+				)
 			}
 
 			this.stolenInventory = null
@@ -451,6 +567,27 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 		}
 		else {
 			false
+		}
+	}
+
+	override def knockBack(attackingEntity: Entity, amount: Float, x: Double, z: Double): Unit = {
+	}
+
+	override def dropFewItems(hitRecentlyByPlayer: Boolean, looting: Int): Unit = {
+		if (this.rand.nextInt(100) < 20) {
+			val angelTearStack: ItemStack = new ItemStack(WAItems.angelTear, 1, 0)
+			val tagCom: NBTTagCompound = new NBTTagCompound
+			val tearType: String = if (this.rand.nextBoolean()) "Teleportation"
+			else "Time Manipulation"
+			if (tearType.equals("Teleportation")) {
+				tagCom.setInteger("uses", 5)
+			}
+			else if (tearType.equals("Time Manipulation")) {
+				tagCom.setInteger("uses", 1)
+			}
+			tagCom.setString("type", tearType)
+			angelTearStack.setTagCompound(tagCom)
+			this.entityDropItem(angelTearStack, 0.0F)
 		}
 	}
 
@@ -484,6 +621,128 @@ class EntityWeepingAngel(world: World) extends EntityCreature(world) {
 
 			lightLevel <= this.rand.nextInt(WAOptions.maxLightLevelForSpawn)
 		}
+	}
+
+	override def createChild(otherAngel: EntityAgeable): EntityAgeable = {
+		new EntityWeepingAngel(this.worldObj)
+	}
+
+	def procreate(otherAngel: EntityWeepingAngel): Unit = {
+		val ageable: EntityAgeable = this.createChild(otherAngel)
+
+		if (ageable != null) {
+			//this.setGrowingAge(6000)
+			this.entityToAttack = null
+			if (otherAngel != null) {
+				//otherAngel.setGrowingAge(6000)
+				otherAngel.entityToAttack = null
+			}
+			ageable.setGrowingAge(-24000 * 4)
+			//ageable.setSize(0.3F, 1.0F)
+
+			ageable.setLocationAndAngles(
+				this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch
+			)
+
+			this.worldObj.spawnEntityInWorld(ageable)
+
+		}
+
+	}
+
+	override def interact(player: EntityPlayer): Boolean = {
+		val itemstack: ItemStack = player.inventory.getCurrentItem
+		if (itemstack != null && itemstack.getItem == Items.spawn_egg) {
+			if (!this.worldObj.isRemote) {
+				val oclass: Class[_] = EntityList.getClassFromID(itemstack.getItemDamage)
+				if (oclass != null && oclass.isAssignableFrom(this.getClass)) {
+					val entityageable: EntityAgeable = this.createChild(this)
+					if (entityageable != null) {
+						entityageable.setGrowingAge(-24000 * 4)
+						entityageable
+								.setLocationAndAngles(this.posX, this.posY, this.posZ, 0.0F, 0.0F)
+						this.worldObj.spawnEntityInWorld(entityageable)
+						if (itemstack.hasDisplayName) {
+							entityageable.setCustomNameTag(itemstack.getDisplayName)
+						}
+						if (!player.capabilities.isCreativeMode) {
+							itemstack.stackSize -= 1
+							if (itemstack.stackSize <= 0) {
+								player.inventory
+										.setInventorySlotContents(player.inventory.currentItem,
+								            null.asInstanceOf[ItemStack])
+							}
+						}
+					}
+				}
+			}
+			true
+		}
+		else {
+			false
+		}
+	}
+
+	override def setGrowingAge(tickAge: Int): Unit = {
+		val wasChild: Boolean = this.isChild || tickAge <= -96000
+
+		super.setGrowingAge(tickAge)
+
+		if (this.isChild) {
+			this.setSize(0.3F, 1.0F)
+		}
+
+		if (!wasChild && this.getGrowingAge <= 0) {
+			this.setDead()
+		}
+
+		if (wasChild && this.getGrowingAge >= 0) {
+			this.setGrowingAge(WAOptions.decrepitationAge_max)
+		}
+
+		this.onAgeChanged()
+
+	}
+
+	@SideOnly(Side.CLIENT)
+	def onAgeChanged() {
+		val image: BufferedImage = this.decrepitize(WAOptions.weepingAngel1)
+
+		try {
+			val obj: SimpleTexture = new SimpleTexture(null)
+			obj.deleteGlTexture()
+			TextureUtil.uploadTextureImageAllocate(obj.getGlTextureId, image, false, false)
+			this.setTextureID(obj.getGlTextureId)
+		}
+		catch {
+			case e: Exception =>
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	def decrepitize(angelTex: ResourceLocation): BufferedImage = {
+		val stream: InputStream = Minecraft.getMinecraft.getResourceManager.getResource(angelTex)
+				.getInputStream
+		val image: BufferedImage = ImageIO.read(stream)
+		IOUtils.closeQuietly(stream)
+
+		val corruption: Int = AngelUtility.getDecrepitation(this.getGrowingAge)
+		for (i <- 1 to corruption) {
+			val rand: Random = new Random(this.hashCode() * i)
+			val x: Int = rand.nextInt(image.getWidth)
+			val y: Int = rand.nextInt(image.getHeight)
+			image.setRGB(x, y, new Color(image.getRGB(x, y)).darker().getRGB)
+		}
+
+		image
+	}
+
+	def getTextureID(): Int = {
+		this.dataWatcher.getWatchableObjectInt(18)
+	}
+
+	def setTextureID(id: Int): Unit = {
+		this.dataWatcher.updateObject(18, id)
 	}
 
 }

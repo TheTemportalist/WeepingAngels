@@ -1,6 +1,6 @@
 package com.countrygamer.weepingangels.common.network
 
-import com.countrygamer.cgo.common.network.PacketTEWrapper
+import com.countrygamer.cgo.wrapper.common.network.PacketTEWrapper
 import com.countrygamer.weepingangels.common.tile.TileEntityStatue
 import io.netty.buffer.ByteBuf
 import net.minecraft.entity.player.EntityPlayer

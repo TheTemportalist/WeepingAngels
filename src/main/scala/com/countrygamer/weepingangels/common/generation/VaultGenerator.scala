@@ -2,7 +2,7 @@ package com.countrygamer.weepingangels.common.generation
 
 import java.util.Random
 
-import com.countrygamer.cgo.common.lib.LogHelper
+import com.countrygamer.cgo.library.common.lib.LogHelper
 import com.countrygamer.weepingangels.common.WeepingAngels
 import com.countrygamer.weepingangels.common.init.WABlocks
 import com.countrygamer.weepingangels.common.tile.TileEntityStatue
