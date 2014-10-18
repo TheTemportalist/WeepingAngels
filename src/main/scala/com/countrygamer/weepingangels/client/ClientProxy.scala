@@ -16,7 +16,6 @@ import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.entity.RenderArrow
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.Vec3
 import net.minecraft.world.World
 import net.minecraftforge.common.MinecraftForge
 
@@ -45,8 +44,8 @@ class ClientProxy() extends CommonProxy with IModGuiFactory {
 
 	}
 
-	override def getClientElement(ID: Int, player: EntityPlayer, world: World, coord: Vec3,
-			tileEntity: TileEntity): AnyRef = {
+	override def getClientElement(ID: Int, player: EntityPlayer, world: World, x: Int, y: Int,
+			z: Int, tileEntity: TileEntity): AnyRef = {
 		if (ID == WAOptions.statueGui && tileEntity.isInstanceOf[TileEntityStatue]) {
 			return new GuiStatue(tileEntity.asInstanceOf[TileEntityStatue])
 		}

@@ -22,7 +22,7 @@ apply plugin: 'forge'
 apply plugin: 'maven'
 
 // Load the config for general stats
-ext.configFile = file "../CGOrigin/CG.properties"
+ext.configFile = file "../CG-Origin/CG.properties"
 configFile.withReader {
     // Load config.  It shall from now be referenced as simply config or project.config
     def prop = new Properties()
@@ -70,7 +70,7 @@ repositories {
 }
 
 dependencies {
-     compile("com.countrygamer.cgo:CGOrigin:${config.minecraft_version}-3+:dev")
+    compile("com.countrygamer.cgo:CGOrigin:${config.minecraft_version}-3+:dev")
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -194,7 +194,7 @@ apply plugin: "curseforge"
 // Only if not on jenkins
 if (System.getenv().BUILD_NUMBER == null) {
     // Load the config
-    ext.curseFile = file "../curse.properties"    
+    ext.curseFile = file "../curse.properties"
     curseFile.withReader {
         def prop = new Properties()
         prop.load(it)
@@ -285,7 +285,7 @@ private String getRawChangelog() {
 private String getChangelog() {
     String changelog = getRawChangelog()
     final String[] split = changelog.split("\n")
-    
+
     final StringBuilder result = new StringBuilder()
 
     result.append("Changelog:\n")

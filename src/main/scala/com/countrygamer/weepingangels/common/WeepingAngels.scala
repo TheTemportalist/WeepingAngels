@@ -31,7 +31,7 @@ import net.minecraftforge.event.entity.player.{ArrowLooseEvent, ArrowNockEvent}
 @Mod(modid = WeepingAngels.pluginID, name = WeepingAngels.pluginName, version = "@PLUGIN_VERSION@",
 	modLanguage = "scala",
 	guiFactory = WeepingAngels.clientProxy,
-	dependencies = "required-after:Forge@[10.13,);required-after:cgo@[3.1,);after:Morph@[0,);"
+	dependencies = "required-after:Forge@[10.13,);required-after:cgo@[3.2,);after:Morph@[0,);"
 )
 object WeepingAngels extends PluginWrapper {
 
