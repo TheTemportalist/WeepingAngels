@@ -7,10 +7,10 @@
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authors": ["CountryGamer"],
+  "authors": ["TheTemportalist"],
   "credits": "",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": ["cgo"]
+  "dependencies": ["origin"]
 }
 ]
