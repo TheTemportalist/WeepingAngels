@@ -37,8 +37,8 @@ object WeepingAngels extends PluginWrapper {
 
 	final val pluginID = "weepingangels"
 	final val pluginName = "Weeping Angels"
-	final val clientProxy = "com.countrygamer.weepingangels.client.ClientProxy"
-	final val serverProxy = "om.countrygamer.weepingangels.server.ServerProxy"
+	final val clientProxy = "com.temportalist.weepingangels.client.ClientProxy"
+	final val serverProxy = "om.temportalist.weepingangels.server.ServerProxy"
 
 	@SidedProxy(
 		clientSide = this.clientProxy,
