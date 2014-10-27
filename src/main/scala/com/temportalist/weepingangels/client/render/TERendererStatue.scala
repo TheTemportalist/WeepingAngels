@@ -27,17 +27,6 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 	// Get an instance of the angel model
 	val angelModel: ModelWeepingAngel = new ModelWeepingAngel()
 
-	// Default Constructor
-	{
-
-	}
-
-	// End Constructor
-
-	// Other Constructors
-
-	// End Constructors
-
 	override protected def render(tileEntity: TileEntity, renderPartialTicks: Float,
 			f5: Float): Unit = {
 		// Check for an invalid
@@ -64,6 +53,7 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 
 			// Create a new entity instance to modify
 			this.angelEntity = new EntityWeepingAngel(statueTE.getWorldObj)
+			this.angelModel.isChild = false
 
 			this.angelEntity.setAngryState(statueTE.getFacialState.asInstanceOf[Byte])
 			this.angelEntity.setArmState(statueTE.getArmState.asInstanceOf[Byte])

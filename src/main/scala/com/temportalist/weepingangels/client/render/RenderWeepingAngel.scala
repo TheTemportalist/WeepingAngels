@@ -24,13 +24,6 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 
 	var texture: ResourceLocation = WAOptions.weepingAngel1
 
-	// Default Constructor
-	{
-
-	}
-
-	// End Constructor
-
 	override def getEntityTexture(entity: Entity): ResourceLocation = {
 		this.texture
 	}
