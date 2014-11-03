@@ -219,15 +219,12 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 			this.isJumping = false
 
 		// Get whether angel can be seen
-		val canBeSeen: Boolean = AngelUtility
-				.canBeSeen_Multiplayer(this.worldObj, this, this.boundingBox, 64D)
+		val canBeSeen: Boolean = this.canBeSeen()
 
 		if (canBeSeen) {
 			// Angel is quantum locked
 
 			this.setSpeed(0.0D)
-			this.rotationPitch = this.prevRotationPitch
-			this.rotationYaw = this.prevRotationYaw
 			this.rotationYawHead = this.prevRotationYawHead
 
 			if (WAOptions.angelThrowsVoice) {
@@ -309,6 +306,10 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 		if (this.getTextureID() < 0) {
 			this.onAgeChanged()
 		}
+	}
+
+	def canBeSeen(): Boolean = {
+		AngelUtility.canBeSeen_Multiplayer(this.worldObj, this, this.boundingBox, 64D)
 	}
 
 	def getSpeed(): Double = {
