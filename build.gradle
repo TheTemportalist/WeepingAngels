@@ -22,6 +22,17 @@ apply plugin: 'forge'
 
 apply from: 'OriginGradle/index.gradle'
 
+repositories {
+    maven {
+        name "DDD repo"
+        url "http://doubledoordev.net/maven/"
+    }
+}
+
+dependencies {
+    compile("com.temportalist.origin:Origin:${config.minecraft_version}-4+:dev")
+}
+
 // Used for processing, dont meddle
 processResources {
     // this will ensure that this task is redone when the versions change.
