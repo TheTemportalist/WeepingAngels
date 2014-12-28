@@ -1,0 +1,3 @@
+[submodule "OriginGradle"]
+	path = OriginGradle
+	url = git@github.com:TheTemportalist/OriginGradle.git
