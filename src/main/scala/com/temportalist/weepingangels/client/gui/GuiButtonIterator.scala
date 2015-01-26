@@ -1,6 +1,6 @@
 package com.temportalist.weepingangels.client.gui
 
-import cpw.mods.fml.relauncher.{Side, SideOnly}
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.gui.GuiButton
 
 /**

@@ -10,7 +10,7 @@ import net.minecraft.world.World
  *
  * @author TheTemportalist
  */
-class CommonProxy() extends ProxyWrapper {
+class ProxyCommon() extends ProxyWrapper {
 
 	override def registerRender(): Unit = {}
 

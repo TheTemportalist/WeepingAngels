@@ -1,0 +1,6 @@
+{
+	"parent": "origin:item/itemname",
+	"textures": {
+		"layer0": "weepingangels:blocks/Plinth"
+	}
+}

@@ -4,16 +4,14 @@ import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.WAOptions
 import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
 import com.temportalist.weepingangels.common.lib.AngelUtility
-import cpw.mods.fml.common.FMLCommonHandler
-import cpw.mods.fml.common.eventhandler.SubscribeEvent
-import cpw.mods.fml.common.gameevent.TickEvent
-import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent
-import cpw.mods.fml.relauncher.Side
-import morph.api.Api
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.DamageSource
 import net.minecraftforge.event.entity.living.LivingAttackEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.gameevent.TickEvent
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent
+import net.minecraftforge.fml.relauncher.Side
 
 /**
  *
@@ -59,7 +57,7 @@ object AngelPlayerHandler {
 						            player.rotationYaw, player.rotationPitch)
 
 						if (WAOptions.angelsTakePlayerName) {
-							angelEntity.setCustomNameTag(player.getCommandSenderName)
+							angelEntity.setCustomNameTag(player.getName)
 						}
 
 						if (WAOptions.angelsStealPlayerInventory) {
@@ -109,13 +107,15 @@ object AngelPlayerHandler {
 					angelPlayer.clearRegenTicks()
 				}
 
-				if (Api.getMorphEntity(player.getCommandSenderName, false)
+				/*
+				if (Api.getMorphEntity(player.getName, false)
 						.isInstanceOf[EntityWeepingAngel]) {
 					if (player.motionY > 0.4F) {
 						player.motionY = 0.0F
 						angelPlayer.syncEntity()
 					}
 				}
+				*/
 
 			}
 
@@ -151,9 +151,12 @@ object AngelPlayerHandler {
 	}
 
 	private def isAngel(player: EntityPlayer): Boolean = {
-		Api.getMorphEntity(player.getCommandSenderName,
+		/*
+		Api.getMorphEntity(player.getName,
 			FMLCommonHandler.instance().getEffectiveSide.isClient)
 				.isInstanceOf[EntityWeepingAngel]
+		*/
+		false
 	}
 
 	private def onLivingAttack_do(player: EntityPlayer, isAttacker: Boolean): Unit = {

@@ -1,0 +1,92 @@
+// New matrix
+		GL11.glPushMatrix()
+
+		// Check the metadata
+		if (statueTE.getBlockMetadata == 0) {
+			// New matrix
+			GL11.glPushMatrix()
+
+			// Rotate back rightside up (due to entity rendering)
+			GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F)
+			// Translate to correct positioning
+			GL11.glTranslatef(0.0F, -1.5F, 0.0F)
+
+			// Rotate the statue according to the rotation stored in the statue's data
+			GL11.glRotatef(statueTE.getRotation, 0.0F, 1.0F, 0.0F)
+
+			// Create a new entity instance to modify
+			this.angelEntity = new EntityWeepingAngel(statueTE.getWorld)
+			this.angelModel.isChild = false
+
+			this.angelEntity.setAngryState(statueTE.getFacialState.asInstanceOf[Byte])
+			this.angelEntity.setArmState(statueTE.getArmState.asInstanceOf[Byte])
+
+			statueTE.getFacialState match {
+				case 0 =>
+					Rendering.bindResource(WAOptions.weepingAngel1)
+				case 1 =>
+					Rendering.bindResource(WAOptions.weepingAngel2)
+			}
+
+			// Render the model
+			this.angelModel
+					.render(angelEntity, 0.0F, 0.0F, 0.0F, 0.0F,
+			            0.0F, f5)
+
+			//GL11.glTranslatef(0.0F, 1.5F, 0.0F)
+
+			// End matrix for entity rendering
+			GL11.glPopMatrix()
+
+			// New matrix for slab rendering
+			GL11.glPushMatrix()
+
+			// Bind the texture for blocks
+			Rendering.bindResource(TextureMap.locationBlocksTexture)
+
+			// Dont light me up!
+			RenderHelper.disableStandardItemLighting()
+
+			// Blend fucntions
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+			GL11.glEnable(GL11.GL_BLEND)
+
+			// Weird rendering stuff
+			if (Minecraft.isAmbientOcclusionEnabled) {
+				GL11.glShadeModel(GL11.GL_SMOOTH)
+			}
+			else {
+				GL11.glShadeModel(GL11.GL_FLAT)
+			}
+
+			// Tessellation!
+			TessRenderer.startQuads()
+
+			// Translate so that actualy coords can be passed
+			TessRenderer.getRenderer().setTranslation(
+				-(statueTE.getPos.getX + 0.5),
+				-(statueTE.getPos.getY + 0.5),
+				-(statueTE.getPos.getZ + 0.5)
+			)
+
+			// Render the slab
+			Minecraft.getMinecraft.getBlockRendererDispatcher.renderBlock(
+				Blocks.stone_slab.getDefaultState, statueTE.getPos, statueTE.getWorld,
+				TessRenderer.getTess().getWorldRenderer
+			)
+
+			// Actually draw it
+			TessRenderer.draw()
+			// Reset translation
+			TessRenderer.getRenderer().setTranslation(0, 0, 0)
+
+			// Reenable lighting
+			RenderHelper.enableStandardItemLighting()
+
+			// End matrix for slab render
+			GL11.glPopMatrix()
+
+		}
+
+		// End matrix for rendering
+		GL11.glPopMatrix()

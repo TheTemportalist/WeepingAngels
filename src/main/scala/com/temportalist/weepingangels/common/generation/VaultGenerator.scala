@@ -3,17 +3,19 @@ package com.temportalist.weepingangels.common.generation
 import java.util.Random
 
 import com.temportalist.origin.library.common.lib.LogHelper
+import com.temportalist.origin.library.common.lib.vec.V3O
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.init.WABlocks
-import com.temportalist.weepingangels.common.tile.TileEntityStatue
-import cpw.mods.fml.common.IWorldGenerator
-import net.minecraft.block.Block
+import com.temportalist.weepingangels.common.tile.TEStatue
+import net.minecraft.block._
+import net.minecraft.block.state.IBlockState
 import net.minecraft.init.Blocks
 import net.minecraft.tileentity.{TileEntityChest, TileEntityMobSpawner}
-import net.minecraft.util.{AxisAlignedBB, WeightedRandomChestContent}
+import net.minecraft.util.{EnumFacing, BlockPos, AxisAlignedBB, WeightedRandomChestContent}
 import net.minecraft.world.World
 import net.minecraft.world.chunk.IChunkProvider
 import net.minecraftforge.common.ChestGenHooks
+import net.minecraftforge.fml.common.IWorldGenerator
 
 /**
  *
@@ -34,179 +36,174 @@ object VaultGenerator extends IWorldGenerator {
 			return
 		}
 
-		val centerX: Int = chunkX * random.nextInt(16)
-		val centerZ: Int = chunkZ * random.nextInt(16)
-		val topY: Int = this.getTopY(world, centerX, centerZ)
+		val x: Int = chunkX * random.nextInt(16)
+		val z: Int = chunkZ * random.nextInt(16)
+		val topY: Int = this.getTopY(world, x, z)
 		if (topY < 0) {
 			return
 		}
 		val tubeLength: Int = random.nextInt(lowestY - highestY + 1) + lowestY
-		val centerY: Int = topY - 6 - tubeLength
+		val y: Int = topY - 6 - tubeLength
+		val centerPos: BlockPos = new BlockPos(x, y, z)
 
-		this.clearArea(world, centerX, centerY, centerZ)
-		this.makeWalls(world, centerX, centerY, centerZ, random)
-		this.makeEntrance(world, centerX, centerY, centerZ, random)
-		this.makeFeatures(world, centerX, centerY, centerZ, random)
-		this.makeTube(world, centerX, centerY, centerZ, random, tubeLength)
+		this.clearArea(world, centerPos)
+		this.makeWalls(world, centerPos, random)
+		this.makeEntrance(world, centerPos, random)
+		this.makeFeatures(world, centerPos, random)
+		this.makeTube(world, centerPos, random, tubeLength)
 
 		//LogHelper.info("", centerX + ":" + centerY + ":" + centerZ)
 
 	}
 
 	def getTopY(world: World, x: Int, z: Int): Int = {
-		var y: Int = 128
-		while (y >= 20) {
-			val block: Block = world.getBlock(x, y, z)
+		val pos: V3O = new V3O(x, 128, z)
+		while (pos.y >= 20) {
+			val state: IBlockState = pos.getBlockState(world)
+			val block: Block = state.getBlock
 			if (block != Blocks.air) {
-				val box: AxisAlignedBB = block.getCollisionBoundingBoxFromPool(world, x, y, z)
+				val box: AxisAlignedBB = block
+						.getCollisionBoundingBox(world, pos.toBlockPos(), state)
 				if (box != null && this.isSameScaleAABB(
-					box, AxisAlignedBB.getBoundingBox(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)
+					box, AxisAlignedBB.fromBounds(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)
 				)) {
-					return y
+					return pos.y_i()
 				}
 			}
-			y -= 1
+			pos.down()
 		}
 		-1
 	}
 
 	def isSameScaleAABB(box1: AxisAlignedBB, box2: AxisAlignedBB): Boolean = {
-		box1.maxX - box1.minX == box2.maxX - box2.minX &&
-				box1.maxY - box1.minY == box2.maxY - box2.minY &&
-				box1.maxZ - box1.minZ == box2.maxZ - box2.minZ
+		V3O.from(box1) == V3O.from(box2)
 	}
 
-	def clearArea(world: World, centerX: Int, centerY: Int, centerZ: Int): Unit = {
-		for (x <- centerX - 4 to centerX + 4) {
-			for (z <- centerZ - 4 to centerZ + 10) {
-				for (y <- centerY + 1 to centerY + 6) {
-					world.setBlockToAir(x, y, z)
+	def clearArea(world: World, pos: BlockPos): Unit = {
+		for (x <- pos.getX - 4 to pos.getX + 4) {
+			for (z <- pos.getZ - 4 to pos.getZ + 10) {
+				for (y <- pos.getY + 1 to pos.getY + 6) {
+					world.setBlockToAir(new BlockPos(x, y, z))
 				}
 			}
 		}
 	}
 
-	def makeWalls(world: World, centerX: Int, centerY: Int, centerZ: Int, random: Random): Unit = {
-		for (z <- centerZ - 4 to centerZ + 10) {
-			for (y <- centerY + 1 to centerY + 6) {
-				this.setBlock(world, centerX - 4, y, z, random)
-				this.setBlock(world, centerX + 4, y, z, random)
+	def makeWalls(world: World, pos: BlockPos, random: Random): Unit = {
+		for (z <- pos.getZ - 4 to pos.getZ + 10) {
+			for (y <- pos.getY + 1 to pos.getY + 6) {
+				this.setBlock(world, random, new BlockPos(pos.getX - 4, y, z))
+				this.setBlock(world, random, new BlockPos(pos.getX + 4, y, z))
 			}
 		}
-		for (x <- centerX - 4 to centerX + 4) {
-			for (y <- centerY + 1 to centerY + 6) {
-				this.setBlock(world, x, y, centerZ - 4, random)
-				this.setBlock(world, x, y, centerZ + 10, random)
+		for (x <- pos.getX - 4 to pos.getX + 4) {
+			for (y <- pos.getY + 1 to pos.getY + 6) {
+				this.setBlock(world, random, new BlockPos(x, y, pos.getZ - 4))
+				this.setBlock(world, random, new BlockPos(x, y, pos.getZ + 10))
 			}
 		}
-		for (x <- centerX - 4 to centerX + 4) {
-			for (z <- centerZ - 4 to centerZ + 10) {
-				this.setBlock(world, x, centerY + 1, z, random)
-				this.setBlock(world, x, centerY + 6, z, random)
+		for (x <- pos.getX - 4 to pos.getX + 4) {
+			for (z <- pos.getY - 4 to pos.getY + 10) {
+				this.setBlock(world, random, new BlockPos(x, pos.getY + 1, z))
+				this.setBlock(world, random, new BlockPos(x, pos.getY + 6, z))
 			}
 		}
-		for (x <- centerX - 4 to centerX + 4) {
-			for (y <- centerY + 2 to centerY + 5) {
-				this.setBlock(world, x, y, centerZ + 2, random)
+		for (x <- pos.getX - 4 to pos.getX + 4) {
+			for (y <- pos.getY + 2 to pos.getY + 5) {
+				this.setBlock(world, random, new BlockPos(x, y, pos.getZ + 2))
 			}
 		}
 	}
 
-	def makeEntrance(world: World, centerX: Int, centerY: Int, centerZ: Int,
-			random: Random): Unit = {
+	def makeEntrance(world: World, centerPos: BlockPos, random: Random): Unit = {
 		//this.setBlock(centerX + 0, centerY + 0, centerZ + 0, random)
 
+		val pos: BlockPos = centerPos.up(2)
 		// top middle
-		this.setBlock(world, centerX + 0, centerY + 2, centerZ + 0, random)
+		this.setBlock(world, random, pos)
 		// stairs to path
-		this.setBlock(world, centerX - 1, centerY + 2, centerZ + 0, Blocks.stone_brick_stairs, 0)
-		this.setBlock(world, centerX + 1, centerY + 2, centerZ + 0, Blocks.stone_brick_stairs, 1)
-		this.setBlock(world, centerX + 0, centerY + 2, centerZ - 1, Blocks.stone_brick_stairs, 2)
+		this.setBlock(world, this.getStairs(EnumFacing.EAST), pos.west())
+		this.setBlock(world, this.getStairs(EnumFacing.WEST), pos.east())
+		this.setBlock(world, this.getStairs(EnumFacing.SOUTH), pos.north())
 		// path start into vault
-		this.setBlock(world, centerX + 0, centerY + 2, centerZ + 1, random)
+		this.setBlock(world, random, pos.south(1))
 		// make hole into vault
-		this.setBlock(world, centerX + 0, centerY + 3, centerZ + 2, Blocks.iron_bars, 0)
-		this.setBlock(world, centerX + 0, centerY + 4, centerZ + 2, Blocks.iron_bars, 0)
+		this.setBlock(world, pos.up(1).south(2), Blocks.iron_bars.getDefaultState)
+		this.setBlock(world, pos.up(2).south(2), Blocks.iron_bars.getDefaultState)
 		// make 3 stairs into vault (post bars)
-		this.setBlock(world, centerX - 1, centerY + 2, centerZ + 3, Blocks.stone_brick_stairs, 0)
-		this.setBlock(world, centerX + 1, centerY + 2, centerZ + 3, Blocks.stone_brick_stairs, 1)
-		this.setBlock(world, centerX + 0, centerY + 2, centerZ + 3, Blocks.stone_brick_stairs, 3)
+		this.setBlock(world, this.getStairs(EnumFacing.EAST), pos.west(1).south(3))
+		this.setBlock(world, this.getStairs(EnumFacing.WEST), pos.east(1).south(3))
+		this.setBlock(world, this.getStairs(EnumFacing.NORTH), pos.east(1).south(3))
 		// entrance pillars
-		this.makePillar(world, centerX + 1, centerY + 2, centerZ + 1, random)
-		this.makePillar(world, centerX + 1, centerY + 2, centerZ - 1, random)
-		this.makePillar(world, centerX - 1, centerY + 2, centerZ + 1, random)
-		this.makePillar(world, centerX - 1, centerY + 2, centerZ - 1, random)
+		this.makePillar(world, random, pos.east().south())
+		this.makePillar(world, random, pos.east().north())
+		this.makePillar(world, random, pos.west().south())
+		this.makePillar(world, random, pos.west().north())
 		// walling in the back (excess)
-		this.makePillar(world, centerX - 3, centerY + 2, centerZ - 2, random)
-		this.makePillar(world, centerX - 3, centerY + 2, centerZ - 3, random)
-		this.makePillar(world, centerX - 2, centerY + 2, centerZ - 2, random)
-		this.makePillar(world, centerX - 2, centerY + 2, centerZ - 3, random)
+		this.makePillar(world, random, pos.west(3).north(2))
+		this.makePillar(world, random, pos.west(3).north(3))
+		this.makePillar(world, random, pos.west(2).north(2))
+		this.makePillar(world, random, pos.west(2).north(3))
 		// ^
-		this.makePillar(world, centerX + 3, centerY + 2, centerZ - 2, random)
-		this.makePillar(world, centerX + 3, centerY + 2, centerZ - 3, random)
-		this.makePillar(world, centerX + 2, centerY + 2, centerZ - 2, random)
-		this.makePillar(world, centerX + 2, centerY + 2, centerZ - 3, random)
+		this.makePillar(world, random, pos.east(3).north(2))
+		this.makePillar(world, random, pos.east(3).north(3))
+		this.makePillar(world, random, pos.east(2).north(2))
+		this.makePillar(world, random, pos.east(2).north(3))
 
 	}
 
-	def makePillar(world: World, x: Int, y: Int, z: Int, random: Random): Unit = {
-		this.setBlock(world, x, y + 0, z, random)
-		this.setBlock(world, x, y + 1, z, random)
-		this.setBlock(world, x, y + 2, z, random)
-		this.setBlock(world, x, y + 3, z, random)
+	def makePillar(world: World, random: Random, pos: BlockPos): Unit = {
+		this.setBlock(world, pos, random)
+		this.setBlock(world, pos.up(), random)
+		this.setBlock(world, pos.up(2), random)
+		this.setBlock(world, pos.up(3), random)
 	}
 
-	def makeFeatures(world: World, centerX: Int, centerY: Int, centerZ: Int,
-			random: Random): Unit = {
+	def makeFeatures(world: World, centerPos: BlockPos, random: Random): Unit = {
+		val pos: BlockPos = centerPos.south(6)
+		val statuePos: BlockPos = pos.up(2)
+		val radius: Int = 3 // radius
 		// 7 Statues
-		val centerZ1: Int = centerZ + 6
-		this.setStatue(world, centerX + 0, centerY + 2, centerZ1 + 3, 0.0F)
-		this.setStatue(world, centerX - 3, centerY + 2, centerZ1 + 3, 45.0F)
-		this.setStatue(world, centerX + 3, centerY + 2, centerZ1 + 3, 315.0F)
-		this.setStatue(world, centerX - 3, centerY + 2, centerZ1 + 0, 90.0F)
-		this.setStatue(world, centerX + 3, centerY + 2, centerZ1 + 0, 270.0F)
-		this.setStatue(world, centerX - 3, centerY + 2, centerZ1 - 3, 135.0F)
-		this.setStatue(world, centerX + 3, centerY + 2, centerZ1 - 3, 225.0F)
+		this.setStatue(world, 0, statuePos.south(radius))
+		this.setStatue(world, 45, statuePos.west(radius).south(radius))
+		this.setStatue(world, 315, statuePos.east(radius).south(radius))
+		this.setStatue(world, 90, statuePos.west(radius))
+		this.setStatue(world, 270, statuePos.east(radius))
+		this.setStatue(world, 135, statuePos.west(radius).north(radius))
+		this.setStatue(world, 225, statuePos.east(radius).north(radius))
 
-		var special: Array[Int] = null
-		var x: Int = centerX
-		val y: Int = centerY + 1
-		var z: Int = centerZ1
+		val spawnerVec: V3O = new V3O(centerPos).up()
+		this.getLootOffsetPos(spawnerVec, random, radius)
+		val spawnerPos: BlockPos = spawnerVec.toBlockPos()
 
-		special = this.getSpecialPlacement(random)
-		x += special(0)
-		z += special(1)
 		// 1 Spawner
-		this.setBlock(world, x, y, z, Blocks.mob_spawner, 0)
-		val teMob: TileEntityMobSpawner = world.getTileEntity(x, y, z)
-				.asInstanceOf[TileEntityMobSpawner]
-		if (teMob != null) {
-			teMob.func_145881_a().setEntityName("Weeping Angel")
-		}
-		else {
-			LogHelper.info(WeepingAngels.pluginName,
-				"Failed to fetch mob spawner entity at (" + x + ", " + y + ", " + z + ")"
-			)
+		this.setBlock(world, spawnerPos, Blocks.mob_spawner.getDefaultState)
+		world.getTileEntity(spawnerPos) match {
+			case spawner: TileEntityMobSpawner =>
+				spawner.getSpawnerBaseLogic.setEntityName("Weeping Angel")
+			case _ =>
+				LogHelper.info(WeepingAngels.MODNAME,
+					"Failed to fetch mob spawner entity at (" + spawnerPos.getX + ", " +
+							spawnerPos.getY + ", " + spawnerPos.getZ + ")"
+				)
 		}
 
 		// 2 Chests
-		this.setChest(world, centerX, y, centerZ1, random)
-		this.setChest(world, centerX, y, centerZ1, random)
+		this.setChest(world, pos, random, radius)
+		this.setChest(world, pos, random, radius)
 
 	}
 
-	def setChest(world: World, x: Int, y: Int, z: Int, random: Random): Unit = {
-		val special: Array[Int] = this.getSpecialPlacement(random)
-		val x1: Int = x + special(0)
-		val z1: Int = z + special(1)
+	def setChest(world: World, pos: BlockPos, random: Random, radius: Int): Unit = {
+		val chestVec: V3O = new V3O(pos)
+		this.getLootOffsetPos(chestVec, random, radius)
+		if (chestVec.toBlockPos() == pos) return
+		val chestPos: BlockPos = chestVec.toBlockPos()
 
-		if (x1 == x && z1 == z)
-			return
-
-		val block: Block = world.getBlock(x1, y, z1)
-		if (block != Blocks.mob_spawner && block != Blocks.chest) {
-			this.setBlock(world, x1, y, z1, Blocks.chest, 0)
-			val teChest: TileEntityChest = world.getTileEntity(x1, y, z1)
+		val state: IBlockState = world.getBlockState(chestPos)
+		if (state.getBlock != Blocks.mob_spawner && state.getBlock != Blocks.chest) {
+			this.setBlock(world, chestPos, Blocks.chest.getDefaultState)
+			val teChest: TileEntityChest = world.getTileEntity(chestPos)
 					.asInstanceOf[TileEntityChest]
 			if (teChest != null) {
 				WeightedRandomChestContent.generateChestContents(random,
@@ -216,33 +213,29 @@ object VaultGenerator extends IWorldGenerator {
 		}
 	}
 
-	def getSpecialPlacement(random: Random): Array[Int] = {
-		// (0 -> 8) / 7 = 0
+	def getLootOffsetPos(vec: V3O, random: Random, radius: Int): Unit = {
 		random.nextInt(64) / 8 match {
 			case 0 =>
-				Array[Int](0, 3)
+				vec.south(radius)
 			case 1 =>
-				Array[Int](-3, 3)
+				vec.west(radius).south(radius)
 			case 2 =>
-				Array[Int](3, 3)
+				vec.east(radius).south(radius)
 			case 3 =>
-				Array[Int](-3, 0)
+				vec.west(radius)
 			case 4 =>
-				Array[Int](3, 0)
+				vec.east(radius)
 			case 5 =>
-				Array[Int](-3, -3)
+				vec.west(radius).north(radius)
 			case 6 =>
-				Array[Int](3, -3)
-			case _ => // 1/8 chance not to spawn a spawner
-				Array[Int](0, 0)
+				vec.east(radius).north(radius)
+			case _ =>
 		}
 	}
 
-	def makeTube(world: World, centerX: Int, centerY: Int, centerZ: Int, random: Random,
+	def makeTube(world: World, centerPos: BlockPos, random: Random,
 			height: Int): Unit = {
-		var x: Int = centerX
-		val y: Int = centerY + 7
-		var z: Int = centerZ
+		var pos: BlockPos = centerPos.up(7)
 
 		// 0 = down
 		// 1 = up
@@ -250,88 +243,105 @@ object VaultGenerator extends IWorldGenerator {
 		// 3 = south -Z
 		// 4 = west +X
 		// 5 = east -X
-		var ladderMeta: Int = -1
+		var ladderFacing: EnumFacing = EnumFacing.NORTH
 
 		random.nextInt(3) match {
 			case 0 =>
-				z -= 3
-				ladderMeta = 3
+				pos = pos.north(3)
+				ladderFacing = EnumFacing.SOUTH
 			case 1 =>
-				x += 3
-				ladderMeta = 4
+				pos = pos.east(3)
+				ladderFacing = EnumFacing.WEST
 			case 2 =>
-				x -= 3
-				ladderMeta = 5
+				pos = pos.west(3)
+				ladderFacing = EnumFacing.EAST
 			case _ =>
 				return
 		}
 
-		this.setBlock(world, x, y - 1, z, Blocks.air, 0)
-		for (y1 <- y to y + height) {
-			this.setBlock(world, x - 1, y1, z + 0, random)
-			this.setBlock(world, x - 1, y1, z - 1, random)
-			this.setBlock(world, x - 1, y1, z + 1, random)
-			this.setBlock(world, x + 0, y1, z + 0, Blocks.air, 0)
-			this.setBlock(world, x + 0, y1, z - 1, random)
-			this.setBlock(world, x + 0, y1, z + 1, random)
-			this.setBlock(world, x + 1, y1, z + 0, random)
-			this.setBlock(world, x + 1, y1, z - 1, random)
-			this.setBlock(world, x + 1, y1, z + 1, random)
+		this.setBlock(world, pos.down(), Blocks.air.getDefaultState)
+		for (y <- pos.getY to pos.getY + height) {
+			val pos2: BlockPos = pos.up(y)
+			this.setBlock(world, random, pos2.west())
+			this.setBlock(world, random, pos2.west().north())
+			this.setBlock(world, random, pos2.west().south())
+			this.setBlock(world, Blocks.air.getDefaultState, pos2)
+			this.setBlock(world, random, pos2.north())
+			this.setBlock(world, random, pos2.south())
+			this.setBlock(world, random, pos2.east())
+			this.setBlock(world, random, pos2.east().north())
+			this.setBlock(world, random, pos2.east().south())
 		}
 
 		// ~~~~~~~~~~~~~~
 		// Make ladder
-		for (y1 <- y - 4 to y + height) {
+		for (y <- pos.getY - 4 to pos.getY + height) {
 			if (random.nextInt(this.ladderRarity) != 0)
-				this.setBlock(world, x, y1, z, Blocks.ladder, ladderMeta)
+				this.setBlock(world, pos.up(y),
+					Blocks.ladder.getDefaultState.withProperty(BlockLadder.FACING, ladderFacing)
+				)
 		}
 
-		this.makeTubeEntrance(world, x, y + height, z, random)
+		this.makeTubeEntrance(world, pos.up(height), random)
 
 	}
 
-	def makeTubeEntrance(world: World, x: Int, y: Int, z: Int, random: Random): Unit = {
-		// 8 1 2
-		// 7 - 3
-		// 6 5 4
-		this.setBlock(world, x + 0, y + 1, z + 1, Blocks.stone_brick_stairs, 3)
-		this.setBlock(world, x - 1, y + 1, z + 1, Blocks.stone_brick_stairs, 3)
-		this.setBlock(world, x - 1, y + 1, z + 0, Blocks.stone_brick_stairs, 0)
-		this.setBlock(world, x - 1, y + 1, z - 1, Blocks.stone_brick_stairs, 0)
-		this.setBlock(world, x + 0, y + 1, z - 1, Blocks.stone_brick_stairs, 2)
-		this.setBlock(world, x + 1, y + 1, z - 1, Blocks.stone_brick_stairs, 2)
-		this.setBlock(world, x + 1, y + 1, z + 0, Blocks.stone_brick_stairs, 1)
-		this.setBlock(world, x + 1, y + 1, z + 1, Blocks.stone_brick_stairs, 1)
+	def makeTubeEntrance(world: World, pos: BlockPos, random: Random): Unit = {
 
-		this.setBlock(world, x, y + 1, z, Blocks.trapdoor, 8)
-		this.setStatue(world, x, y + 2, z, random.nextFloat() * 360)
+		this.setBlock(world, this.getStairs(EnumFacing.NORTH), pos.up().south())
+		this.setBlock(world, this.getStairs(EnumFacing.NORTH), pos.west().up().south())
+		this.setBlock(world, this.getStairs(EnumFacing.EAST), pos.west().up())
+		this.setBlock(world, this.getStairs(EnumFacing.EAST), pos.west().up().north())
+		this.setBlock(world, this.getStairs(EnumFacing.SOUTH), pos.up().north())
+		this.setBlock(world, this.getStairs(EnumFacing.SOUTH), pos.east().up().north())
+		this.setBlock(world, this.getStairs(EnumFacing.WEST), pos.east().up())
+		this.setBlock(world, this.getStairs(EnumFacing.WEST), pos.east().up().south())
+
+		this.setBlock(world, pos.up(), Blocks.trapdoor.getDefaultState.
+				withProperty(BlockTrapDoor.FACING, EnumFacing.NORTH).
+				withProperty(BlockTrapDoor.OPEN, false).
+				withProperty(BlockTrapDoor.HALF, BlockTrapDoor.DoorHalf.TOP)
+		)
+		this.setStatue(world, random.nextFloat() * 360, pos.up(2))
 
 	}
 
-	def setStatue(world: World, x: Int, y: Int, z: Int, rot: Float): Unit = {
-		this.setBlock(world, x, y, z, WABlocks.statue, 0)
-		val te: TileEntityStatue = world.getTileEntity(x, y, z).asInstanceOf[TileEntityStatue]
-		if (te != null) {
-			te.setRotation(rot)
+	def getStairs(enumFacing: EnumFacing): IBlockState = {
+		Blocks.stone_brick_stairs.getDefaultState.withProperty(
+			BlockStairs.FACING, EnumFacing.NORTH
+		)
+	}
+
+	def setStatue(world: World, rot: Float, pos: BlockPos): Unit = {
+		this.setBlock(world, pos, WABlocks.statue.getDefaultState)
+		world.getTileEntity(pos) match {
+			case te: TEStatue =>
+				te.setRotation(rot)
+			case _ =>
+				LogHelper.info(WeepingAngels.MODNAME,
+					"Failed to fetch statue entity at (" + pos.getX + ", " + pos.getY + ", " +
+							pos.getZ + ")"
+				)
 		}
-		else {
-			LogHelper.info(WeepingAngels.pluginName,
-				"Failed to fetch statue entity at (" + x + ", " + y + ", " + z + ")"
-			)
-		}
 	}
 
-	def setBlock(world: World, x: Int, y: Int, z: Int, random: Random): Unit = {
-		val blockMeta: Array[Any] = this.getBlock(random)
-		this.setBlock(world, x, y, z, blockMeta(0).asInstanceOf[Block],
-			blockMeta(1).asInstanceOf[Int])
+	def setBlock(world: World, random: Random, pos: BlockPos): Unit = {
+		this.setBlock(world, pos, random)
 	}
 
-	def setBlock(world: World, x: Int, y: Int, z: Int, block: Block, meta: Int): Unit = {
-		world.setBlock(x, y, z, block, meta, 2)
+	def setBlock(world: World, pos: BlockPos, random: Random): Unit = {
+		this.setBlock(world, pos, this.getBlock(random))
 	}
 
-	def getBlock(random: Random): Array[Any] = {
+	def setBlock(world: World, state: IBlockState, pos: BlockPos): Unit = {
+		this.setBlock(world, pos, state)
+	}
+
+	def setBlock(world: World, pos: BlockPos, state: IBlockState): Unit = {
+		world.setBlockState(pos, state, 2)
+	}
+
+	def getBlock(random: Random): IBlockState = {
 		val chance: Int = random.nextInt(100) + 1
 		/*
 		50% brick
@@ -342,22 +352,28 @@ object VaultGenerator extends IWorldGenerator {
 		 */
 		if (chance <= 50) {
 			// 1 - 50 (50%)
-			Array[Any](Blocks.stonebrick, 0)
+			Blocks.stonebrick.getDefaultState.withProperty(
+				BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.DEFAULT
+			)
 		}
 		else if (chance <= 75) {
 			// 51 - 75 (25%)
-			Array[Any](Blocks.stonebrick, 1)
+			Blocks.stonebrick.getDefaultState.withProperty(
+				BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.MOSSY
+			)
 		}
 		else if (chance <= 87) {
 			// 76 - 87 (12%)
-			Array[Any](Blocks.cobblestone, 0)
+			Blocks.cobblestone.getDefaultState
 		}
 		else if (chance <= 99) {
 			// 88 - 99 (12%)
-			Array[Any](Blocks.stonebrick, 2)
+			Blocks.stonebrick.getDefaultState.withProperty(
+				BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.CRACKED
+			)
 		}
 		else {
-			Array[Any](Blocks.air, 0)
+			Blocks.air.getDefaultState
 		}
 	}
 

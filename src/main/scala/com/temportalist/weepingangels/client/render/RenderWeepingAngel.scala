@@ -3,16 +3,11 @@ package com.temportalist.weepingangels.client.render
 import com.temportalist.weepingangels.client.render.models.ModelWeepingAngel
 import com.temportalist.weepingangels.common.WAOptions
 import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
-import com.temportalist.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
-import cpw.mods.fml.common.Loader
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import morph.api.Api
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.entity.RenderLiving
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.{Entity, EntityLiving, EntityLivingBase}
+import net.minecraft.entity.{Entity, EntityLiving}
 import net.minecraft.util.ResourceLocation
-import org.lwjgl.opengl.GL11
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 /**
  *
@@ -20,7 +15,10 @@ import org.lwjgl.opengl.GL11
  * @author TheTemportalist
  */
 @SideOnly(Side.CLIENT)
-class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
+class RenderWeepingAngel() extends RenderLiving(
+	Minecraft.getMinecraft.getRenderManager,
+	new ModelWeepingAngel(), 0.5F
+) {
 
 	var texture: ResourceLocation = WAOptions.weepingAngel1
 
@@ -33,17 +31,18 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 
 		entity match {
 			case angel: EntityWeepingAngel =>
-
+				/*
 				if (Loader.isModLoaded("Morph")) {
 					val player: EntityPlayer = Minecraft.getMinecraft.thePlayer
 					val morphedEntity: EntityLivingBase = Api
-							.getMorphEntity(player.getCommandSenderName, true)
+							.getMorphEntity(player.getName, true)
 					if (morphedEntity != null && morphedEntity.equals(entity)) {
 						val angelPlayer: AngelPlayer = AngelPlayerHandler.get(player)
 						angel.setAngryState(angelPlayer.getAngryState())
 						angel.setArmState(angelPlayer.getArmState())
 					}
 				}
+				*/
 
 				if (angel.getAngryState > 0) {
 					this.texture = WAOptions.weepingAngel2
@@ -58,9 +57,16 @@ class RenderWeepingAngel() extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 		super.doRender(entity, d1, d2, d3, f1, f2)
 	}
 
-	override def bindEntityTexture(entity: Entity): Unit = {
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-			entity.asInstanceOf[EntityWeepingAngel].getTextureID())
+	/*
+	override def bindEntityTexture(entity: Entity): Boolean = {
+		entity match {
+			case angel: EntityWeepingAngel =>
+				GlStateManager.bindTexture(angel.getTextureID())
+				true
+			case _ =>
+				false
+		}
 	}
+	*/
 
 }

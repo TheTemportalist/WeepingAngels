@@ -4,10 +4,10 @@ import com.temportalist.origin.library.common.nethandler.PacketHandler
 import com.temportalist.origin.wrapper.client.gui.GuiScreenWrapper
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.network.PacketSetTime
-import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 /**
  *
@@ -23,8 +23,8 @@ class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenWrapper() {
 	override def initGui(): Unit = {
 		super.initGui()
 
-		val guiL: Int = this.getGuiLeft()
-		val guiT: Int = this.getGuiTop()
+		val guiL: Int = this.getX()
+		val guiT: Int = this.getY()
 
 		this.dawn = this.makeButton(guiL + 10, guiT + 10, 40, 20, "Dawn")
 		this.noon = this.makeButton(guiL + 60, guiT + 10, 40, 20, "Noon")
@@ -54,7 +54,7 @@ class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenWrapper() {
 			setTime = 17500
 		}
 		if (setTime >= 0) {
-			PacketHandler.sendToServer(WeepingAngels.pluginID,
+			PacketHandler.sendToServer(WeepingAngels.MODID,
 				new PacketSetTime(setTime)
 			)
 		}

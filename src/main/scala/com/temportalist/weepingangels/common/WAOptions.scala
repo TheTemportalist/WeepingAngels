@@ -203,9 +203,9 @@ object WAOptions extends OptionRegister {
 
 	}
 
-	final val weepingAngel1: ResourceLocation = new ResourceLocation(WeepingAngels.pluginID,
+	final val weepingAngel1: ResourceLocation = new ResourceLocation(WeepingAngels.MODID,
 		"textures/model/entity/weepingangel.png")
-	final val weepingAngel2: ResourceLocation = new ResourceLocation(WeepingAngels.pluginID,
+	final val weepingAngel2: ResourceLocation = new ResourceLocation(WeepingAngels.MODID,
 		"textures/model/entity/weepingangel-angry.png")
 
 }

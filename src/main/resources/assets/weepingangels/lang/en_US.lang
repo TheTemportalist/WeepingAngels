@@ -1,7 +1,7 @@
 
-tile.weepingangels:Plinth.name=Angel Plinth
+tile.weepingangels:plinth.name=Angel Plinth
 
 entity.WeepingAngel.name=Weeping Angel
 
-item.weepingangels:Angel's Tear.name=Angel's Tear
-item.weepingangels:Arrow.name=Arrow
+item.weepingangels:angelTear.name=Angel's Tear
+item.weepingangels:angelArrow.name=Arrow

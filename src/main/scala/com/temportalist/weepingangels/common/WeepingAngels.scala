@@ -1,19 +1,13 @@
 package com.temportalist.weepingangels.common
 
 import com.temportalist.origin.library.common.helpers.RegisterHelper
-import com.temportalist.origin.wrapper.common.PluginWrapper
+import com.temportalist.origin.wrapper.common.ModWrapper
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.entity.{EntityAngelArrow, EntityWeepingAngel}
 import com.temportalist.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
 import com.temportalist.weepingangels.common.generation.VaultGenerator
 import com.temportalist.weepingangels.common.init.{WABlocks, WAEntity, WAItems}
 import com.temportalist.weepingangels.common.network.{PacketModifyStatue, PacketSetTime}
-import com.temportalist.weepingangels.morph.AbilityQuantumLock
-import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
-import cpw.mods.fml.common.eventhandler.SubscribeEvent
-import cpw.mods.fml.common.registry.GameRegistry
-import cpw.mods.fml.common.{Mod, SidedProxy}
-import morph.api.Ability
 import net.minecraft.enchantment.{Enchantment, EnchantmentHelper}
 import net.minecraft.entity.boss.EntityDragon
 import net.minecraft.entity.monster.EntityEnderman
@@ -22,49 +16,52 @@ import net.minecraft.init.Items
 import net.minecraft.world.World
 import net.minecraftforge.event.entity.living.LivingAttackEvent
 import net.minecraftforge.event.entity.player.{ArrowLooseEvent, ArrowNockEvent}
+import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.registry.GameRegistry
+import net.minecraftforge.fml.common.{Mod, SidedProxy}
 
 /**
  *
  *
  * @author TheTemportalist
  */
-@Mod(modid = WeepingAngels.pluginID, name = WeepingAngels.pluginName, version = "@PLUGIN_VERSION@",
+@Mod(modid = WeepingAngels.MODID, name = WeepingAngels.MODNAME, version = "@PLUGIN_VERSION@",
 	modLanguage = "scala",
 	guiFactory = WeepingAngels.clientProxy,
-	dependencies = "required-after:Forge@[10.13,);required-after:origin@[3.3,);after:Morph@[0,);"
+	dependencies = "required-after:origin@[4,);after:Morph@[0,);"
 )
-object WeepingAngels extends PluginWrapper {
+object WeepingAngels extends ModWrapper {
 
-	final val pluginID = "weepingangels"
-	final val pluginName = "Weeping Angels"
-	final val clientProxy = "com.temportalist.weepingangels.client.ClientProxy"
-	final val serverProxy = "com.temportalist.weepingangels.server.ServerProxy"
+	final val MODID = "weepingangels"
+	final val MODNAME = "Weeping Angels"
+	final val clientProxy = "com.temportalist.weepingangels.client.ProxyClient"
+	final val serverProxy = "com.temportalist.weepingangels.server.ProxyServer"
 
 	@SidedProxy(
 		clientSide = this.clientProxy,
 		serverSide = this.serverProxy
 	)
-	var proxy: CommonProxy = null
+	var proxy: ProxyCommon = null
 
 	@Mod.EventHandler
 	def preInit(event: FMLPreInitializationEvent): Unit = {
-		super.preInitialize(this.pluginID, this.pluginName, event, this.proxy, WAOptions, WABlocks,
+		super.preInitialize(this.MODID, this.MODNAME, event, this.proxy, WAOptions, WABlocks,
 			WAItems, WAEntity)
 
 		RegisterHelper.registerExtendedPlayer("Extended Angel Player", classOf[AngelPlayer],
 			deathPersistance = false)
 
-		RegisterHelper.registerHandler(AngelPlayerHandler, null)
-		RegisterHelper.registerHandler(this, null)
+		RegisterHelper.registerHandlers(AngelPlayerHandler, this.proxy)
 
-		RegisterHelper.registerPacketHandler(this.pluginID, classOf[PacketModifyStatue],
+		RegisterHelper.registerPacketHandler(this.MODID, classOf[PacketModifyStatue],
 			classOf[PacketSetTime])
 
 	}
 
 	@Mod.EventHandler
 	def init(event: FMLInitializationEvent): Unit = {
-		super.initialize(event)
+		super.initialize(event, this.proxy)
 
 		GameRegistry.registerWorldGenerator(VaultGenerator, 0)
 
@@ -73,14 +70,6 @@ object WeepingAngels extends PluginWrapper {
 	@Mod.EventHandler
 	def postInit(event: FMLPostInitializationEvent): Unit = {
 		super.postInitialize(event)
-
-		Ability.registerAbility("timelock", classOf[AbilityQuantumLock])
-		Ability.mapAbilities(classOf[EntityWeepingAngel],
-			new AbilityQuantumLock(),
-			Ability.createNewAbilityByType("hostile", new Array[String](0)),
-			Ability.createNewAbilityByType("step", Array[String]("3F")),
-			Ability.createNewAbilityByType("fireImmunity", new Array[String](0))
-		)
 
 	}
 

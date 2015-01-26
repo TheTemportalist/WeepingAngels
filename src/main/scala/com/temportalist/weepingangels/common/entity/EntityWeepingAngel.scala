@@ -7,24 +7,25 @@ import java.util
 import java.util.Random
 import javax.imageio.ImageIO
 
-import com.temportalist.origin.library.common.utility.{Drops, Teleport}
+import com.temportalist.origin.library.common.lib.vec.V3O
+import com.temportalist.origin.library.common.utility.{Drops, Teleport, WorldHelper}
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.extended.AngelPlayer
-import com.temportalist.weepingangels.common.init.{WABlocks, WAItems}
+import com.temportalist.weepingangels.common.init.WAItems
 import com.temportalist.weepingangels.common.lib.AngelUtility
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
-import cpw.mods.fml.relauncher.{Side, SideOnly}
-import net.minecraft.block.Block
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.texture.{SimpleTexture, TextureUtil}
 import net.minecraft.entity._
 import net.minecraft.entity.ai._
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.init.Items
-import net.minecraft.item.{Item, ItemStack}
+import net.minecraft.item.ItemStack
 import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
+import net.minecraft.pathfinding.PathNavigateGround
 import net.minecraft.util._
 import net.minecraft.world.{EnumDifficulty, EnumSkyBlock, World}
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import org.apache.commons.io.IOUtils
 
 /**
@@ -43,13 +44,14 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 		this.experienceValue = 50
 		this.isImmuneToFire = true
 
-		this.getNavigator.setBreakDoors(true)
+		this.getNavigator.asInstanceOf[PathNavigateGround].setBreakDoors(true)
 		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, classOf[EntityPlayer], 1.0D, false))
 		this.tasks.addTask(3, new EntityAIWatchClosest(this, classOf[EntityPlayer], 8.0F))
 		this.tasks.addTask(4, new EntityAILookIdle(this))
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true))
-		this.targetTasks.addTask(2,
-			new EntityAINearestAttackableTarget(this, classOf[EntityPlayer], 0, true))
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(
+			this, classOf[EntityPlayer], true
+		))
 
 		this.setSize(0.6F, 2.0F)
 		this.stepHeight = 2.0F
@@ -189,24 +191,20 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 	}
 
 	override def getLivingSound: String = {
-		WeepingAngels.pluginID + ":stone"
+		WeepingAngels.MODID + ":stone"
 	}
 
 	override def getHurtSound: String = {
-		WeepingAngels.pluginID + ":light"
+		WeepingAngels.MODID + ":light"
 	}
 
 	override def getDeathSound: String = {
-		WeepingAngels.pluginID + ":crumble"
-	}
-
-	override def isAIEnabled: Boolean = {
-		true
+		WeepingAngels.MODID + ":crumble"
 	}
 
 	override def onUpdate(): Unit = {
 		// Kill if neccessary
-		if (!this.worldObj.isRemote && this.worldObj.difficultySetting == EnumDifficulty.PEACEFUL) {
+		if (!this.worldObj.isRemote && this.worldObj.getDifficulty == EnumDifficulty.PEACEFUL) {
 			this.setDead()
 		}
 
@@ -230,7 +228,7 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 			if (WAOptions.angelThrowsVoice) {
 				if (this.getVoiceThrowDelay() <= 0) {
 					val lookingPlayer: EntityPlayer = AngelUtility
-							.getEntityLooking(this.worldObj, this, this.boundingBox, 64D,
+							.getEntityLooking(this.worldObj, this, this.getEntityBoundingBox, 64D,
 					            classOf[EntityPlayer]).asInstanceOf[EntityPlayer]
 					if (lookingPlayer != null) {
 						this.tryThrowVoice(lookingPlayer)
@@ -280,8 +278,7 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 
 		if (!canBeSeen) {
 			this.changeAngelMovement()
-			if (!this.hasProcreated && this.entityToAttack == null &&
-					this.findPlayerToAttack() == null) {
+			if (!this.hasProcreated && this.getAITarget == null) {
 				if (this.getGrowingAge >= 24000 * 4 && this.rand.nextInt(50) == 0) {
 					this.procreate(null)
 					this.hasProcreated = true
@@ -309,7 +306,7 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 	}
 
 	def canBeSeen(): Boolean = {
-		AngelUtility.canBeSeen_Multiplayer(this.worldObj, this, this.boundingBox, 64D)
+		AngelUtility.canBeSeen_Multiplayer(this.worldObj, this, this.getEntityBoundingBox, 64D)
 	}
 
 	def getSpeed(): Double = {
@@ -320,53 +317,56 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(speed)
 	}
 
+	/* todo
 	override def findPlayerToAttack(): Entity = {
 		this.worldObj.getClosestPlayerToEntity(this, 64.0D) // range
 	}
+	*/
 
 	def isInSkylight: Boolean = {
-		this.worldObj.canBlockSeeTheSky(
-			MathHelper.floor_double(this.posX),
-			MathHelper.floor_double(this.posY),
-			MathHelper.floor_double(this.posZ)
-		)
+		this.worldObj.canSeeSky(this.getPosition)
 	}
 
-	def findNearestTorch(): Vec3 = {
+	def findNearestTorch(): V3O = {
 		val radius: Double = 16.0D
 		val maxDistance: Double = radius * radius * radius
 
 		val minX: Int = (MathHelper.floor_double(this.posX) - radius).asInstanceOf[Int]
-		val minY: Int = (MathHelper.floor_double(this.boundingBox.minY) - radius).asInstanceOf[Int]
+		val minY: Int = (MathHelper.floor_double(this.getEntityBoundingBox.minY) - radius)
+				.asInstanceOf[Int]
 		val minZ: Int = (MathHelper.floor_double(this.posZ) - radius).asInstanceOf[Int]
 		val maxX: Int = (MathHelper.floor_double(this.posX) + radius).asInstanceOf[Int]
-		val maxY: Int = (MathHelper.floor_double(this.boundingBox.minY) + radius).asInstanceOf[Int]
+		val maxY: Int = (MathHelper.floor_double(this.getEntityBoundingBox.minY) + radius)
+				.asInstanceOf[Int]
 		val maxZ: Int = (MathHelper.floor_double(this.posZ) + radius).asInstanceOf[Int]
 
-		val validSources: java.util.List[Vec3] = new util.ArrayList[Vec3]()
+		val validSources: java.util.List[V3O] = new util.ArrayList[V3O]()
 		for (y <- minY to maxY) {
 			for (x <- minX to maxX) {
 				for (z <- minZ to maxZ) {
-					if (this.isValidLightSource(x, y, z, maxDistance)) {
-						validSources.add(Vec3.createVectorHelper(x, y, z))
+					val pos: V3O = new V3O(x, y, z)
+					if (this.isValidLightSource(pos.toBlockPos(), maxDistance)) {
+						validSources.add(pos)
 					}
 				}
 			}
 		}
 
-		var closest: Vec3 = null
+		var closest: V3O = null
 		var closestDistance: Double = maxDistance
 		for (i <- 0 until validSources.size()) {
-			val coords: Vec3 = validSources.get(i)
+			val coords: V3O = validSources.get(i)
 
 			val horizontalDistance: Double =
 				MathHelper.sqrt_double(
-					Math.pow(this.posX - coords.xCoord, 2) +
-							Math.pow(this.posZ - coords.zCoord, 2))
+					Math.pow(this.posX - coords.x, 2) +
+							Math.pow(this.posZ - coords.z, 2)
+				)
 			val distance: Double =
 				MathHelper.sqrt_double(
-					Math.pow(this.boundingBox.minY - coords.yCoord, 2) +
-							Math.pow(horizontalDistance, 2))
+					Math.pow(this.getEntityBoundingBox.minY - coords.y, 2) +
+							Math.pow(horizontalDistance, 2)
+				)
 
 			if (distance < closestDistance) {
 				closest = coords
@@ -378,43 +378,29 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 		closest
 	}
 
-	def isValidLightSource(x: Int, y: Int, z: Int, maxDistance: Double): Boolean = {
+	def isValidLightSource(pos: BlockPos, maxDistance: Double): Boolean = {
 
 		val horizontalDistance: Double =
 			MathHelper.sqrt_double(
-				Math.pow(this.posX - x, 2) + Math.pow(this.posZ - z, 2))
+				Math.pow(this.posX - pos.getX, 2) + Math.pow(this.posZ - pos.getZ, 2))
 		val distance: Double =
 			MathHelper.sqrt_double(
-				Math.pow(this.boundingBox.minY - y, 2) + Math.pow(horizontalDistance, 2))
+				Math.pow(this.getEntityBoundingBox.minY - pos.getY, 2) + Math.pow(horizontalDistance, 2))
 
 		if (distance <= maxDistance) {
-
-			val block: Block = this.worldObj.getBlock(x, y, z)
-
-			if (block.getLightValue > 0) {
+			if (this.getEntityWorld.getBlockState(pos).getBlock.getLightValue > 0) {
 				return true
 			}
-
 		}
 
 		false
 	}
 
-	def breakLightSource(coords: Vec3): Unit = {
-
-		val x: Int = coords.xCoord.asInstanceOf[Int]
-		val y: Int = coords.yCoord.asInstanceOf[Int]
-		val z: Int = coords.zCoord.asInstanceOf[Int]
-
-		val block: Block = this.worldObj.getBlock(x, y, z)
-		val meta: Int = this.worldObj.getBlockMetadata(x, y, z)
-
-		this.worldObj.setBlockToAir(x, y, z)
-
+	def breakLightSource(pos: BlockPos): Unit = {
 		Drops.spawnItemStack(
-			this.worldObj, x, y, z, new ItemStack(block, 1, meta), this.rand, 10
+			this.worldObj, pos, this.getEntityWorld.getBlockState(pos), this.rand, 10
 		)
-
+		this.getEntityWorld.setBlockToAir(pos)
 	}
 
 	def changeAngelMovement(): Unit = {
@@ -443,7 +429,8 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 	override def attackEntityAsMob(entity: Entity): Boolean = {
 
 		if (entity != null &&
-				!AngelUtility.canBeSeen_Multiplayer(this.worldObj, this, this.boundingBox, 64D)) {
+				!AngelUtility
+						.canBeSeen_Multiplayer(this.worldObj, this, this.getEntityBoundingBox, 64D)) {
 			var didAlternateAction: Boolean = false
 			var entityIsConvertting: Boolean = false
 			entity match {
@@ -472,7 +459,7 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 						)
 						this.rejuvinate(1, 1.0D)
 						this.worldObj.playSoundAtEntity(player,
-							WeepingAngels.pluginID + ":teleport_activate", 1.0F, 1.0F)
+							WeepingAngels.MODID + ":teleport_activate", 1.0F, 1.0F)
 						didAlternateAction = true
 
 					}
@@ -520,14 +507,6 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 		}
 	}
 
-	override def attackEntity(entity: Entity, distanceToEntity: Float): Unit = {
-
-		if (entity != null && distanceToEntity < 2.0D) {
-			this.attackEntityAsMob(entity)
-		}
-
-	}
-
 	override def onDeath(source: DamageSource): Unit = {
 		super.onDeath(source)
 
@@ -545,8 +524,7 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 		if (this.hasStolenInventory) {
 			for (i <- 0 until this.stolenInventory.length) {
 				Drops.spawnItemStack(
-					this.worldObj, this.posX, this.posY, this.posZ, this.stolenInventory(i),
-					this.rand, 10
+					this.worldObj, this.getPosition, this.stolenInventory(i), this.rand, 10
 				)
 			}
 
@@ -592,35 +570,33 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 		}
 	}
 
+	/* todo
 	override def dropRareDrop(par1: Int): Unit = {
 		this.dropItem(Item.getItemFromBlock(WABlocks.statue), 1)
 	}
+	*/
 
 	override def getCanSpawnHere: Boolean = {
-		this.worldObj.difficultySetting != EnumDifficulty.PEACEFUL &&
-				this.boundingBox.minY <= WAOptions.maximumSpawnHeight &&
-				this.isValidLightLevel && super.getCanSpawnHere()
+		this.worldObj.getDifficulty != EnumDifficulty.PEACEFUL &&
+				this.posY <= WAOptions.maximumSpawnHeight &&
+				this.isValidLightLevel && super.getCanSpawnHere
 	}
 
 	def isValidLightLevel: Boolean = {
-		val x: Int = MathHelper.floor_double(this.posX)
-		val y: Int = MathHelper.floor_double(this.boundingBox.minY)
-		val z: Int = MathHelper.floor_double(this.posZ)
+		val pos: BlockPos = new BlockPos(this.posX, this.getEntityBoundingBox.minY, this.posZ)
 
-		if (this.worldObj.getSavedLightValue(EnumSkyBlock.Sky, x, y, z) > this.rand.nextInt(32)) {
+		if (this.worldObj.getLightFor(EnumSkyBlock.SKY, pos) > this.rand.nextInt(32)) {
 			false
 		}
 		else {
-			var lightLevel: Int = this.worldObj.getBlockLightValue(x, y, z)
-
-			if (this.worldObj.isThundering()) {
-				val savedSkylightSubtracted: Int = this.worldObj.skylightSubtracted
-				this.worldObj.skylightSubtracted = 10
-				lightLevel = this.worldObj.getBlockLightValue(x, y, z)
-				this.worldObj.skylightSubtracted = savedSkylightSubtracted
+			var i: Int = this.worldObj.getLightFromNeighbors(pos)
+			if (this.worldObj.isThundering) {
+				val j: Int = this.worldObj.getSkylightSubtracted
+				this.worldObj.setSkylightSubtracted(10)
+				i = this.worldObj.getLightFromNeighbors(pos)
+				this.worldObj.setSkylightSubtracted(j)
 			}
-
-			lightLevel <= this.rand.nextInt(WAOptions.maxLightLevelForSpawn)
+			i <= this.rand.nextInt(WAOptions.maxLightLevelForSpawn)
 		}
 	}
 
@@ -633,10 +609,10 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 
 		if (ageable != null) {
 			//this.setGrowingAge(6000)
-			this.entityToAttack = null
+			this.setAttackTarget(null)
 			if (otherAngel != null) {
 				//otherAngel.setGrowingAge(6000)
-				otherAngel.entityToAttack = null
+				otherAngel.setAttackTarget(null)
 			}
 			ageable.setGrowingAge(-24000 * 4)
 			//ageable.setSize(0.3F, 1.0F)
@@ -701,7 +677,7 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 			this.setGrowingAge(WAOptions.decrepitationAge_max)
 		}
 
-		this.onAgeChanged()
+		if (WorldHelper.isServer()) this.onAgeChanged()
 
 	}
 

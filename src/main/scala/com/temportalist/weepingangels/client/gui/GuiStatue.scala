@@ -5,8 +5,9 @@ import com.temportalist.origin.wrapper.client.gui.GuiScreenWrapper
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
 import com.temportalist.weepingangels.common.network.PacketModifyStatue
-import com.temportalist.weepingangels.common.tile.TileEntityStatue
-import cpw.mods.fml.relauncher.{Side, SideOnly}
+import com.temportalist.weepingangels.common.tile.TEStatue
+import net.minecraft.client.Minecraft
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.gui.{GuiButton, GuiTextField}
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.renderer.{OpenGlHelper, RenderHelper}
@@ -19,7 +20,7 @@ import org.lwjgl.opengl.{GL11, GL12}
  * @author TheTemportalist
  */
 @SideOnly(Side.CLIENT)
-class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
+class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 	var facial: GuiButtonIterator = null
 	var arms: GuiButtonIterator = null
@@ -59,7 +60,7 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 		this.buttonList.asInstanceOf[java.util.List[GuiButton]].add(this.arms)
 
 		this.rotationField = new
-						GuiTextField(this.fontRendererObj, this.width / 2 - 50, 220, 100, 20)
+						GuiTextField(0, this.fontRendererObj, this.width / 2 - 50, 220, 100, 20)
 		this.setupTextField(this.rotationField, 100)
 
 		this.sub90 = new GuiButton(bID, this.rotationField.xPosition - 10 - 50 - 10 - 50,
@@ -97,20 +98,18 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 		if (this.facial.mousePressed(this.mc, mouseX, mouseY)) {
 			this.facial.onPressed(mouseButton)
 
-			PacketHandler.sync(WeepingAngels.pluginID, new
-							PacketModifyStatue(this.tileEntity.xCoord, this.tileEntity.yCoord,
-								this.tileEntity.zCoord, 1,
-								this.facial.getIndex.asInstanceOf[Float]))
+			PacketHandler.sync(WeepingAngels.MODID, new PacketModifyStatue(
+				this.tileEntity.getPos, 1, this.facial.getIndex.asInstanceOf[Float]
+			))
 
 		}
 
 		if (this.arms.mousePressed(this.mc, mouseX, mouseY)) {
 			this.arms.onPressed(mouseButton)
 
-			PacketHandler.sync(WeepingAngels.pluginID, new
-							PacketModifyStatue(this.tileEntity.xCoord, this.tileEntity.yCoord,
-								this.tileEntity.zCoord, 2,
-								this.arms.getIndex.asInstanceOf[Float]))
+			PacketHandler.sync(WeepingAngels.MODID, new PacketModifyStatue(
+				this.tileEntity.getPos, 2, this.arms.getIndex.asInstanceOf[Float]
+			))
 
 		}
 
@@ -150,9 +149,9 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 
 		}
 		else if (button.id == this.saveRotation.id) {
-			PacketHandler.sync(WeepingAngels.pluginID, new
-							PacketModifyStatue(this.tileEntity.xCoord, this.tileEntity.yCoord,
-								this.tileEntity.zCoord, 3, this.parseRotationFromField()))
+			PacketHandler.sync(WeepingAngels.MODID, new PacketModifyStatue(
+				this.tileEntity.getPos, 3, this.parseRotationFromField()
+			))
 
 		}
 
@@ -221,7 +220,8 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 
 	override def drawTitle(x: Int, y: Int): Unit = {
 		this.drawString(this.title,
-			this.getGuiLeft + (this.xSize / 2) - (this.getStringWidth(this.title) / 2), 10, -1)
+			this.getX() + (this.getWidth() / 2) - (this.getStringWidth(this.title) / 2), 10, -1
+		)
 	}
 
 	def drawStatue(x: Int, y: Int, scale: Int, rotation: Float, entity: EntityLivingBase): Unit = {
@@ -263,10 +263,10 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 		entity.rotationYawHead = entity.rotationYaw
 		entity.prevRotationYawHead = entity.rotationYaw
 		*/
-		GL11.glTranslatef(0.0F, entity.yOffset, 0.0F)
+		GL11.glTranslatef(0.0F, entity.getYOffset.asInstanceOf[Float], 0.0F)
 
-		RenderManager.instance.playerViewY = 180.0F
-		RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F)
+		this.getRM.playerViewY = 180.0F
+		this.getRM.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F)
 		/*
 		entity.renderYawOffset = f2
 		entity.rotationYaw = f3
@@ -285,5 +285,8 @@ class GuiStatue(val tileEntity: TileEntityStatue) extends GuiScreenWrapper() {
 		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit)
 
 	}
+
+	// todo move this to origin
+	def getRM: RenderManager = Minecraft.getMinecraft.getRenderManager
 
 }

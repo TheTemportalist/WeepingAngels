@@ -1,11 +1,11 @@
 package com.temportalist.weepingangels.client.render.models
 
 import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
-import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.model.{ModelBase, ModelRenderer}
+import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.Entity
 import net.minecraft.util.MathHelper
-import org.lwjgl.opengl.GL11
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 /**
  *
@@ -160,9 +160,9 @@ class ModelWeepingAngel() extends ModelBase() {
 
 		if (this.isChild) {
 			val f6: Float = 2.0F
-			GL11.glPushMatrix
-			GL11.glScalef(1.0F / f6, 1.0F / f6, 1.0F / f6)
-			GL11.glTranslatef(0.0F, 24.0F * f5, 0.0F)
+			GlStateManager.pushMatrix()
+			GlStateManager.scale(1.0F / f6, 1.0F / f6, 1.0F / f6)
+			GlStateManager.translate(0.0F, 24.0F * f5, 0.0F)
 			this.head.render(f5)
 			this.leftfoot.render(f5)
 			this.rightfoot.render(f5)
@@ -171,10 +171,10 @@ class ModelWeepingAngel() extends ModelBase() {
 			this.leftarm.render(f5)
 			this.rightleg.render(f5)
 			this.leftleg.render(f5)
-			GL11.glPopMatrix
+			GlStateManager.popMatrix()
 		}
 		else {
-			GL11.glPushMatrix
+			GlStateManager.pushMatrix()
 			this.leftfoot.render(f5)
 			this.rightfoot.render(f5)
 			this.leftwing1.render(f5)
@@ -191,7 +191,7 @@ class ModelWeepingAngel() extends ModelBase() {
 			this.leftarm.render(f5)
 			this.rightleg.render(f5)
 			this.leftleg.render(f5)
-			GL11.glPopMatrix
+			GlStateManager.popMatrix()
 		}
 	}
 
@@ -210,9 +210,9 @@ class ModelWeepingAngel() extends ModelBase() {
 					angleZ = Math.toRadians(5).asInstanceOf[Float]
 				}
 				if (angel.getArmState >= 2) {
-					val f6: Float = MathHelper.sin(onGround * 3.141593F)
-					var f7: Float = MathHelper.sin((1.0F - (1.0F - onGround)
-							* (1.0F - onGround)) * 3.141593F)
+					val f6: Float = MathHelper.sin(this.swingProgress * 3.141593F)
+					var f7: Float = MathHelper.sin((1.0F - (1.0F - this.swingProgress)
+							* (1.0F - this.swingProgress)) * 3.141593F)
 					rightarm.rotateAngleZ = 0.0F
 					leftarm.rotateAngleZ = 0.0F
 					rightarm.rotateAngleY = -(0.1F - f6 * 0.6F)

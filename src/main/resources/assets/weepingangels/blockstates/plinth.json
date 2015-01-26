@@ -1,0 +1,6 @@
+{
+	"variants": {
+		"is_bottom=true": {"model": "weepingangels:plinth"},
+		"is_bottom=false": {"model": "weepingangels:plinth"}
+	}
+}

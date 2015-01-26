@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.common.lib
 
 import java.util
-
+import com.temportalist.origin.library.common.lib.vec.V3O
 import com.temportalist.weepingangels.common.WAOptions
 import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
 import net.minecraft.block.Block
@@ -22,11 +22,7 @@ object AngelUtility {
 	def canBeSeen_Multiplayer(world: World, entity: EntityLivingBase, boundingBox: AxisAlignedBB,
 			radius: Double): Boolean = {
 
-		if (world.getFullBlockLightValue(
-			MathHelper.floor_double(entity.posX),
-			MathHelper.floor_double(entity.posY),
-			MathHelper.floor_double(entity.posZ)
-		) <= 1.0F)
+		if (world.getLight(entity.getPosition) <= 1.0F)
 			return false
 
 		this.canBeSeen(world, entity, boundingBox, radius, classOf[EntityPlayer]) ||
@@ -113,16 +109,12 @@ object AngelUtility {
 	}
 
 	def isInFieldOfViewOf(entity: EntityLivingBase, thisEntity: EntityLivingBase): Boolean = {
-		val entityLookVec: Vec3 = entity.getLook(1.0F) //.normalize()
-		val differenceVec: Vec3 = Vec3.createVectorHelper(
-				thisEntity.posX - entity.posX,
-				thisEntity.boundingBox.minY +
-						(thisEntity.height /* / 2.0F */).asInstanceOf[Double] -
-						(entity.posY + entity.getEyeHeight().asInstanceOf[Double]),
-				thisEntity.posZ - entity.posZ
-			)
+		val entityLookVec: V3O = new V3O(entity.getLook(1.0F))
+		val thisEntityPos: V3O = new V3O(thisEntity.getPositionVector).add(0, thisEntity.height, 0)
+		val entityPos: V3O = new V3O(entity.getPositionVector).add(0, entity.getEyeHeight, 0)
+		val differenceVec: V3O = thisEntityPos - entityPos
 
-		val lengthVec: Double = differenceVec.lengthVector()
+		val lengthVec: Double = differenceVec.magnitude()
 
 		val differenceVec_normal = differenceVec.normalize()
 
@@ -138,7 +130,7 @@ object AngelUtility {
 
 	def getNearbyAngels(entity: EntityLivingBase): util.List[_] = {
 		entity.worldObj.getEntitiesWithinAABB(classOf[EntityWeepingAngel],
-			entity.boundingBox.expand(20D, 20D, 20D))
+			entity.getBoundingBox.expand(20D, 20D, 20D))
 	}
 
 	def canAttackEntityFrom(world: World, source: DamageSource, damage: Float): Boolean = {
@@ -162,21 +154,21 @@ object AngelUtility {
 
 							var blockLevel: Block = Blocks.dirt
 
-							if (world.difficultySetting == EnumDifficulty.PEACEFUL) {
+							if (world.getDifficulty == EnumDifficulty.PEACEFUL) {
 								blockLevel = Blocks.dirt // anything
 							}
-							else if (world.difficultySetting == EnumDifficulty.EASY) {
+							else if (world.getDifficulty == EnumDifficulty.EASY) {
 								blockLevel = Blocks.iron_ore // Stone or higher
 							}
-							else if (world.difficultySetting == EnumDifficulty.NORMAL) {
+							else if (world.getDifficulty == EnumDifficulty.NORMAL) {
 								blockLevel = Blocks.diamond_ore // Iron or higher
 							}
-							else if (world.difficultySetting == EnumDifficulty.HARD) {
+							else if (world.getDifficulty == EnumDifficulty.HARD) {
 								blockLevel = Blocks.obsidian // Diamond or higher
 							}
 
 							canDamage = heldStack.getItem.canHarvestBlock(blockLevel, heldStack) ||
-									heldStack.getItem.func_150897_b(blockLevel)
+									heldStack.getItem.canHarvestBlock(blockLevel)
 
 						}
 					}
@@ -206,4 +198,5 @@ object AngelUtility {
 		// where age is in terms of 6000 -> 0 (can divide by 1200, otherwise known as ticks per decrepitation)
 		WAOptions.maxDecrepitation_amount - (age / WAOptions.ticksPerDecrepitation)
 	}
+
 }

@@ -1,5 +1,6 @@
 package com.temportalist.weepingangels.common.tile
 
+import com.temportalist.origin.library.common.lib.vec.V3O
 import com.temportalist.origin.wrapper.common.tile.TEWrapper
 import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
 import net.minecraft.init.Blocks
@@ -10,7 +11,7 @@ import net.minecraft.nbt.NBTTagCompound
  *
  * @author TheTemportalist
  */
-class TileEntityStatue() extends TEWrapper("Statue") {
+class TEStatue() extends TEWrapper("Statue") {
 
 	private var facialState: Int = 0
 	private var armState: Int = 0
@@ -86,18 +87,18 @@ class TileEntityStatue() extends TEWrapper("Statue") {
 	}
 
 	def comeToLife(): Unit = {
-		val angelEntity: EntityWeepingAngel = new EntityWeepingAngel(this.getWorldObj)
+		val angelEntity: EntityWeepingAngel = new EntityWeepingAngel(this.getWorld)
 
-		angelEntity.setPositionAndRotation(this.xCoord + 0.5, this.yCoord + 0.5, this.zCoord + 0.5,
-			this.getRotation, 0.0F)
+		val pos: V3O = new V3O(this).add(V3O.CENTER)
+		angelEntity.setPositionAndRotation(pos.x, pos.y, pos.z, this.getRotation, 0.0F)
 
-		if (!this.getWorldObj.isRemote) {
-			this.getWorldObj.spawnEntityInWorld(angelEntity)
+		if (!this.getWorld.isRemote) {
+			this.getWorld.spawnEntityInWorld(angelEntity)
 		}
 
 		this.isSpawning = true
 
-		this.getWorldObj.setBlock(this.xCoord, this.yCoord, this.zCoord, Blocks.stone_slab)
+		this.getWorld.setBlockState(this.getPos, Blocks.stone_slab.getDefaultState)
 
 	}
 

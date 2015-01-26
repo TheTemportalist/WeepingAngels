@@ -1,5 +1,12 @@
 *.class
 *.log
+.gradle
+build
+idea
+jars
+*.iml
+*.ipr
+*.iws
 
 # Package Files #
 *.jar
@@ -31,18 +38,3 @@ project/plugins/project/
 ehthumbs.db
 Thumbs.db
 
-.gradle
-build
-*.iml
-*.ipr
-*.iws
-devlog.txt
-eclipse
-gradle
-gradle.properties
-gradlew
-gradlew.bat
-output
-run
-run_server
-test
