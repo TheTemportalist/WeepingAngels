@@ -5,6 +5,7 @@ import net.minecraft.client.model.{ModelBase, ModelRenderer}
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.Entity
 import net.minecraft.util.MathHelper
+import net.minecraftforge.fml.common.FMLLog
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 /**
@@ -157,6 +158,8 @@ class ModelWeepingAngel() extends ModelBase() {
 	override def render(entity: Entity, f: Float, f1: Float, f2: Float, f3: Float, f4: Float,
 			f5: Float): Unit = {
 		setRotationAngles(f, f1, f2, f3, f4, f5, entity)
+
+		FMLLog.info("render angel")
 
 		if (this.isChild) {
 			val f6: Float = 2.0F

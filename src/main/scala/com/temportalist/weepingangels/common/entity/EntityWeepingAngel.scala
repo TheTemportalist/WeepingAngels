@@ -39,27 +39,21 @@ class EntityWeepingAngel(world: World) extends EntityAgeable(world) {
 	var stolenInventory: Array[ItemStack] = null
 	var hasProcreated: Boolean = false
 
-	// Default Constructor
-	{
-		this.experienceValue = 50
-		this.isImmuneToFire = true
+	this.experienceValue = 50
+	this.isImmuneToFire = true
 
-		this.getNavigator.asInstanceOf[PathNavigateGround].setBreakDoors(true)
-		this.tasks.addTask(2, new EntityAIAttackOnCollide(this, classOf[EntityPlayer], 1.0D, false))
-		this.tasks.addTask(3, new EntityAIWatchClosest(this, classOf[EntityPlayer], 8.0F))
-		this.tasks.addTask(4, new EntityAILookIdle(this))
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true))
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(
-			this, classOf[EntityPlayer], true
-		))
+	this.getNavigator.asInstanceOf[PathNavigateGround].setBreakDoors(true)
+	this.tasks.addTask(2, new EntityAIAttackOnCollide(this, classOf[EntityPlayer], 1.0D, false))
+	this.tasks.addTask(3, new EntityAIWatchClosest(this, classOf[EntityPlayer], 8.0F))
+	this.tasks.addTask(4, new EntityAILookIdle(this))
+	this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true))
+	this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(
+		this, classOf[EntityPlayer], true
+	))
 
-		this.setSize(0.6F, 2.0F)
-		this.stepHeight = 2.0F
-		this.setGrowingAge((WAOptions.decrepitationAge_max * 1.25).asInstanceOf[Int])
-
-	}
-
-	// End Constructor
+	this.setSize(0.6F, 2.0F)
+	this.stepHeight = 2.0F
+	this.setGrowingAge((WAOptions.decrepitationAge_max * 1.25).asInstanceOf[Int])
 
 	override def entityInit(): Unit = {
 		super.entityInit()
