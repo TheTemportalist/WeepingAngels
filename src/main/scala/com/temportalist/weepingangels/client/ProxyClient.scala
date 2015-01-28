@@ -5,7 +5,7 @@ import java.util
 import com.temportalist.weepingangels.client.gui.configFactory.GuiConfig
 import com.temportalist.weepingangels.client.gui.{GuiStatue, GuiTimeManipulation, HUDOverlay}
 import com.temportalist.weepingangels.client.render.{RenderAngel, TERendererStatue}
-import com.temportalist.weepingangels.common.entity.{EntityAngelArrow, EntityWeepingAngel}
+import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import com.temportalist.weepingangels.common.tile.TEStatue
 import com.temportalist.weepingangels.common.{ProxyCommon, WAOptions}
 import net.minecraft.client.Minecraft
@@ -38,7 +38,7 @@ class ProxyClient() extends ProxyCommon with IModGuiFactory {
 		FMLLog.info("\n\nREGISTER RENDERING\n")
 
 		RenderingRegistry.registerEntityRenderingHandler(
-			classOf[EntityWeepingAngel], new RenderAngel(Minecraft.getMinecraft.getRenderManager)
+			classOf[EntityAngel], new RenderAngel(Minecraft.getMinecraft.getRenderManager)
 		)
 		RenderingRegistry.registerEntityRenderingHandler(
 			classOf[EntityAngelArrow], new RenderArrow(Minecraft.getMinecraft.getRenderManager)

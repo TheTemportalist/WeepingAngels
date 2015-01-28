@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.common.init
 
 import com.temportalist.origin.library.common.register.EntityRegister
-import com.temportalist.weepingangels.common.entity.{EntityAngelArrow, EntityWeepingAngel}
+import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow, EntityWeepingAngel}
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import net.minecraft.entity.EnumCreatureType
 import net.minecraft.world.biome.BiomeGenBase
@@ -16,8 +16,11 @@ object WAEntity extends EntityRegister {
 
 	override def register(): Unit = {
 
-		EntityRegistry.registerGlobalEntityID(classOf[EntityWeepingAngel], "WeepingAngel",
-		EntityRegistry.findGlobalUniqueEntityId(), 0x808080, 0xD1D1D1)
+		//EntityRegistry.registerGlobalEntityID(classOf[EntityWeepingAngel], "WeepingAngel",
+		//EntityRegistry.findGlobalUniqueEntityId(), 0x808080, 0xD1D1D1)
+
+		this.addEntity(classOf[EntityAngel], "weepingangel", WeepingAngels)
+		this.addEgg(classOf[EntityAngel], 0x808080, 0xD1D1D1)
 
 		/*
 		this.addEntity(classOf[EntityWeepingAngel], "weepingangel", WeepingAngels)
