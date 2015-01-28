@@ -2,7 +2,7 @@ package com.temportalist.weepingangels.common.extended
 
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.WAOptions
-import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
+import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.lib.AngelUtility
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
@@ -49,12 +49,10 @@ object AngelPlayerHandler {
 					if (angelPlayer.getAngelHealth() >= WAOptions.maxAngelHealth) {
 						angelPlayer.stopConversion()
 
-						val angelEntity: EntityWeepingAngel = new
-										EntityWeepingAngel(player.worldObj)
+						val angelEntity: EntityAngel = new EntityAngel(player.worldObj)
 
-						angelEntity
-								.setPositionAndRotation(player.posX, player.posY, player.posZ,
-						            player.rotationYaw, player.rotationPitch)
+						angelEntity.setPositionAndRotation(player.posX, player.posY, player.posZ,
+							player.rotationYaw, player.rotationPitch)
 
 						if (WAOptions.angelsTakePlayerName) {
 							angelEntity.setCustomNameTag(player.getName)
@@ -79,8 +77,8 @@ object AngelPlayerHandler {
 
 						}
 
-						if (!player.worldObj.isRemote) player.worldObj
-								.spawnEntityInWorld(angelEntity)
+						if (!player.worldObj.isRemote)
+							player.worldObj.spawnEntityInWorld(angelEntity)
 
 
 						if (!player.attackEntityFrom(DamageSource.causeMobDamage(angelEntity),
@@ -109,7 +107,7 @@ object AngelPlayerHandler {
 
 				/*
 				if (Api.getMorphEntity(player.getName, false)
-						.isInstanceOf[EntityWeepingAngel]) {
+						.isInstanceOf[EntityAngel]) {
 					if (player.motionY > 0.4F) {
 						player.motionY = 0.0F
 						angelPlayer.syncEntity()
@@ -154,7 +152,7 @@ object AngelPlayerHandler {
 		/*
 		Api.getMorphEntity(player.getName,
 			FMLCommonHandler.instance().getEffectiveSide.isClient)
-				.isInstanceOf[EntityWeepingAngel]
+				.isInstanceOf[EntityAngel]
 		*/
 		false
 	}

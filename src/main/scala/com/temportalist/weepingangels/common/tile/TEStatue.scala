@@ -2,7 +2,7 @@ package com.temportalist.weepingangels.common.tile
 
 import com.temportalist.origin.library.common.lib.vec.V3O
 import com.temportalist.origin.wrapper.common.tile.TEWrapper
-import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
+import com.temportalist.weepingangels.common.entity.EntityAngel
 import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
 
@@ -26,7 +26,7 @@ class TEStatue() extends TEWrapper("Statue") {
 	// End Constructor
 
 	/**
-	 * Triggered when an EntityWeepingAngel touches this statue
+	 * Triggered when an EntityAngel touches this statue
 	 *
 	 */
 	def touchedByAngel(): Unit = {
@@ -87,7 +87,7 @@ class TEStatue() extends TEWrapper("Statue") {
 	}
 
 	def comeToLife(): Unit = {
-		val angelEntity: EntityWeepingAngel = new EntityWeepingAngel(this.getWorld)
+		val angelEntity: EntityAngel = new EntityAngel(this.getWorld)
 
 		val pos: V3O = new V3O(this).add(V3O.CENTER)
 		angelEntity.setPositionAndRotation(pos.x, pos.y, pos.z, this.getRotation, 0.0F)

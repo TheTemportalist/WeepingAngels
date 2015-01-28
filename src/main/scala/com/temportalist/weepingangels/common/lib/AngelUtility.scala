@@ -1,9 +1,10 @@
 package com.temportalist.weepingangels.common.lib
 
 import java.util
+
 import com.temportalist.origin.library.common.lib.vec.V3O
 import com.temportalist.weepingangels.common.WAOptions
-import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
+import com.temportalist.weepingangels.common.entity.EntityAngel
 import net.minecraft.block.Block
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
@@ -26,7 +27,7 @@ object AngelUtility {
 			return false
 
 		this.canBeSeen(world, entity, boundingBox, radius, classOf[EntityPlayer]) ||
-				this.canBeSeen(world, entity, boundingBox, radius, classOf[EntityWeepingAngel])
+				this.canBeSeen(world, entity, boundingBox, radius, classOf[EntityAngel])
 	}
 
 	def canBeSeen(world: World, entity: EntityLivingBase, boundingBox: AxisAlignedBB,
@@ -38,7 +39,7 @@ object AngelUtility {
 			val e: EntityLivingBase = entityList.get(i).asInstanceOf[EntityLivingBase]
 			if (this.isInFieldOfViewOf(e, entity)) {
 				e match {
-					case angel: EntityWeepingAngel =>
+					case angel: EntityAngel =>
 						if (angel.getArmState > 0)
 							return true
 					case _ =>
@@ -60,7 +61,7 @@ object AngelUtility {
 			val e: EntityLivingBase = entityList.get(i).asInstanceOf[EntityLivingBase]
 			if (this.isInFieldOfViewOf(e, entity)) {
 				e match {
-					case angel: EntityWeepingAngel =>
+					case angel: EntityAngel =>
 						if (angel.getArmState > 0)
 							lookingList.add(angel)
 					case _ =>
@@ -129,7 +130,7 @@ object AngelUtility {
 	}
 
 	def getNearbyAngels(entity: EntityLivingBase): util.List[_] = {
-		entity.worldObj.getEntitiesWithinAABB(classOf[EntityWeepingAngel],
+		entity.worldObj.getEntitiesWithinAABB(classOf[EntityAngel],
 			entity.getBoundingBox.expand(20D, 20D, 20D))
 	}
 

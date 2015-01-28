@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.common.init
 
 import com.temportalist.origin.library.common.register.EntityRegister
-import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow, EntityWeepingAngel}
+import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import net.minecraft.entity.EnumCreatureType
 import net.minecraft.world.biome.BiomeGenBase
@@ -50,7 +50,7 @@ object WAEntity extends EntityRegister {
 			if (biome != null && !(biome == BiomeGenBase.mushroomIsland ||
 					biome == BiomeGenBase.mushroomIslandShore)) {
 				EntityRegistry.addSpawn(
-					classOf[EntityWeepingAngel], WAOptions.spawnProbability, 1, 1,
+					classOf[EntityAngel], WAOptions.spawnProbability, 1, 1,
 					EnumCreatureType.MONSTER, biome
 				)
 

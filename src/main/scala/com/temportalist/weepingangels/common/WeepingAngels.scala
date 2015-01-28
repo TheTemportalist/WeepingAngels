@@ -3,7 +3,7 @@ package com.temportalist.weepingangels.common
 import com.temportalist.origin.library.common.helpers.RegisterHelper
 import com.temportalist.origin.wrapper.common.ModWrapper
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
-import com.temportalist.weepingangels.common.entity.{EntityAngelArrow, EntityWeepingAngel}
+import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import com.temportalist.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
 import com.temportalist.weepingangels.common.generation.VaultGenerator
 import com.temportalist.weepingangels.common.init.{WABlocks, WAEntity, WAItems}
@@ -181,11 +181,11 @@ object WeepingAngels extends ModWrapper {
 			return
 		}
 		val list: java.util.List[_] = dragon.worldObj.loadedEntityList
-		var angel: EntityWeepingAngel = null
+		var angel: EntityAngel = null
 		for (i <- 0 until list.size()) {
 			list.get(i) match {
 				case em: EntityEnderman =>
-					angel = new EntityWeepingAngel(dragon.worldObj)
+					angel = new EntityAngel(dragon.worldObj)
 					angel.setPositionAndRotation(
 						em.posX,
 						em.posY,

@@ -16,7 +16,7 @@ class EntityAngelArrow(world: World, shot: EntityLivingBase, f: Float)
 		extends EntityArrow(world, shot, f) {
 
 	def this(world: World) {
-		this(world, new EntityWeepingAngel(world), 0.0F)
+		this(world, new EntityAngel(world), 0.0F)
 	}
 
 	/**

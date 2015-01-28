@@ -4,7 +4,7 @@ import com.temportalist.origin.library.client.utility.TessRenderer
 import com.temportalist.origin.wrapper.client.render.TERenderer
 import com.temportalist.weepingangels.client.render.models.ModelWeepingAngel
 import com.temportalist.weepingangels.common.WAOptions
-import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
+import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.tile.TEStatue
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 
 	// create a variable for the entity instance
-	var angelEntity: EntityWeepingAngel = null
+	var angelEntity: EntityAngel = null
 	// Get an instance of the angel model
 	val angelModel: ModelWeepingAngel = new ModelWeepingAngel()
 

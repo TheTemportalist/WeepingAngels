@@ -3,15 +3,15 @@ package com.temportalist.weepingangels.client.gui
 import com.temportalist.origin.library.common.nethandler.PacketHandler
 import com.temportalist.origin.wrapper.client.gui.GuiScreenWrapper
 import com.temportalist.weepingangels.common.WeepingAngels
-import com.temportalist.weepingangels.common.entity.EntityWeepingAngel
+import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.network.PacketModifyStatue
 import com.temportalist.weepingangels.common.tile.TEStatue
 import net.minecraft.client.Minecraft
-import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.gui.{GuiButton, GuiTextField}
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.renderer.{OpenGlHelper, RenderHelper}
 import net.minecraft.entity.EntityLivingBase
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import org.lwjgl.opengl.{GL11, GL12}
 
 /**
@@ -32,7 +32,7 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 	var saveRotation: GuiButton = null
 
 	// Variable used for rendering
-	var angelEntity: EntityWeepingAngel = null
+	var angelEntity: EntityAngel = null
 
 	// Default Constructor
 	{
@@ -209,7 +209,7 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 			(y - 50).asInstanceOf[Float], new EntityWeepingAngel(this.mc.theWorld))
 		*/
 
-		this.angelEntity = new EntityWeepingAngel(this.mc.theWorld)
+		this.angelEntity = new EntityAngel(this.mc.theWorld)
 
 		this.angelEntity.setAngryState(this.tileEntity.getFacialState.asInstanceOf[Byte])
 		this.angelEntity.setArmState(this.tileEntity.getArmState.asInstanceOf[Byte])
