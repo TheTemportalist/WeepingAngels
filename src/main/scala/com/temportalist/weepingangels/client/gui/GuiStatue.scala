@@ -29,12 +29,13 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 	// Variable used for rendering
 	var angelEntity: EntityAngel = null
 
-	val m = Map(
+	val coords = Map(
 		"face" -> Array[Int](30, 40),
 		"arms" -> Array[Int](30, 70),
 		"rot" -> Array[Int](40, 100, 100, 20),
 		"corr" -> Array[Int](40, 130, 100, 20),
-		"bkgd" -> Array[Int](200, 20, 150, 170)
+		"bkgd" -> Array[Int](200, 20, 150, 170),
+		"angel" -> Array[Int](265, 180, 75)
 	)
 
 	this.setupGui("Edit Statue", null)
@@ -44,7 +45,8 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 		var bID: Int = 0
 
-		this.facial = new GuiButtonIterator(bID, 30, 40, Array(
+		this.facial = new GuiButtonIterator(bID,
+			this.coords.get("face").get(0), this.coords.get("face").get(1), Array(
 			"Calm", "Angry"
 		))
 		bID += 1

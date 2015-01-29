@@ -6,23 +6,23 @@ import java.io.InputStream
 import java.util.Random
 import javax.imageio.ImageIO
 
-import com.temportalist.origin.library.common.utility.{WorldHelper, Teleport, Drops}
+import com.temportalist.origin.library.common.utility.{Drops, Teleport, WorldHelper}
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.extended.AngelPlayer
 import com.temportalist.weepingangels.common.init.WAItems
 import com.temportalist.weepingangels.common.lib.AngelUtility
-import com.temportalist.weepingangels.common.{WeepingAngels, WAOptions}
+import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.texture.{TextureUtil, SimpleTexture}
+import net.minecraft.client.renderer.texture.{SimpleTexture, TextureUtil}
 import net.minecraft.entity._
 import net.minecraft.entity.ai._
-import net.minecraft.entity.player.{EntityPlayerMP, EntityPlayer}
+import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.{NBTTagList, NBTTagCompound}
+import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.pathfinding.PathNavigateGround
 import net.minecraft.util.{BlockPos, DamageSource, ResourceLocation}
-import net.minecraft.world.{EnumSkyBlock, EnumDifficulty, World}
+import net.minecraft.world.{EnumDifficulty, EnumSkyBlock, World}
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import org.apache.commons.io.IOUtils
 
