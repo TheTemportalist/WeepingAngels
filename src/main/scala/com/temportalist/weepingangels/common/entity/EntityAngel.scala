@@ -14,7 +14,6 @@ import com.temportalist.weepingangels.common.lib.AngelUtility
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.texture.{SimpleTexture, TextureUtil}
-import net.minecraft.command.CommandResultStats.Type
 import net.minecraft.entity._
 import net.minecraft.entity.ai._
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
@@ -625,7 +624,5 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 		}
 
 	}
-
-	override def setCommandStat(`type`: Type, amount: Int): Unit = super.setCommandStat(`type`, amount)
 
 }
