@@ -1,6 +1,6 @@
 package com.temportalist.weepingangels.common.lib
 
-import net.minecraft.block.properties.PropertyBool
+import net.minecraft.block.properties.PropertyInteger
 
 /**
  *
@@ -9,6 +9,6 @@ import net.minecraft.block.properties.PropertyBool
  */
 object States {
 
-	val STATUE_BOTTOM: PropertyBool = PropertyBool.create("is_bottom")
+	val STATUE_VERT: PropertyInteger = PropertyInteger.create("vertical", 0, 2)
 
 }

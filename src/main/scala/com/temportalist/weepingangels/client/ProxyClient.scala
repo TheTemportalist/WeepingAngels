@@ -18,7 +18,6 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.client.IModGuiFactory
 import net.minecraftforge.fml.client.IModGuiFactory.{RuntimeOptionCategoryElement, RuntimeOptionGuiHandler}
 import net.minecraftforge.fml.client.registry.{ClientRegistry, RenderingRegistry}
-import net.minecraftforge.fml.common.FMLLog
 
 /**
  *
@@ -32,8 +31,6 @@ class ProxyClient() extends ProxyCommon with IModGuiFactory {
 		ClientRegistry.bindTileEntitySpecialRenderer(
 			classOf[TEStatue], new TERendererStatue()
 		)
-
-		FMLLog.info("\n\nREGISTER RENDERING\n")
 
 		RenderingRegistry.registerEntityRenderingHandler(
 			classOf[EntityAngel], new RenderAngel(Minecraft.getMinecraft.getRenderManager)

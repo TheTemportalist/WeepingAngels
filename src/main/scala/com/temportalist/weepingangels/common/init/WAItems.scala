@@ -9,9 +9,9 @@ import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.item.ItemAngelTear
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
-import net.minecraft.item.{Item, ItemStack}
+import net.minecraft.item.ItemStack
 import net.minecraftforge.fml.common.registry.GameRegistry
-import net.minecraftforge.fml.relauncher.{SideOnly, Side}
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import net.minecraftforge.oredict.OreDictionary
 
 /**
@@ -21,8 +21,8 @@ import net.minecraftforge.oredict.OreDictionary
  */
 object WAItems extends ItemRegister {
 
-	var angelTear: Item = null
-	var angelArrow: Item = null
+	var angelTear: ItemWrapper = null
+	var angelArrow: ItemWrapper = null
 
 	override def register(): Unit = {
 
@@ -43,7 +43,7 @@ object WAItems extends ItemRegister {
 		if (OreDictionary.getOres("ghastTear").isEmpty) {
 			OreDictionary.registerOre("ghastTear", Items.ghast_tear)
 		}
-		OreDictionary.registerOre("ghastTear", this.angelArrow)
+		OreDictionary.registerOre("ghastTear", this.angelTear)
 
 	}
 

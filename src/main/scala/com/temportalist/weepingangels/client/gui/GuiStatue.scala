@@ -9,10 +9,10 @@ import com.temportalist.weepingangels.common.tile.TEStatue
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.{GuiButton, GuiTextField}
 import net.minecraft.client.renderer.entity.RenderManager
-import net.minecraft.client.renderer.{OpenGlHelper, RenderHelper}
+import net.minecraft.client.renderer.{GlStateManager, OpenGlHelper, RenderHelper}
 import net.minecraft.entity.EntityLivingBase
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
-import org.lwjgl.opengl.{GL11, GL12}
+import org.lwjgl.opengl.GL11
 
 /**
  *
@@ -209,12 +209,13 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 			(y - 50).asInstanceOf[Float], new EntityWeepingAngel(this.mc.theWorld))
 		*/
 
-		this.angelEntity = new EntityAngel(this.mc.theWorld)
-
+		if (this.angelEntity == null)
+			this.angelEntity = new EntityAngel(this.mc.theWorld)
 		this.angelEntity.setAngryState(this.tileEntity.getFacialState.asInstanceOf[Byte])
 		this.angelEntity.setArmState(this.tileEntity.getArmState.asInstanceOf[Byte])
-
-		this.drawStatue(x, y, 60, this.tileEntity.getRotation, this.angelEntity)
+		// todo corruption, similar to testatuerenderer
+		this.angelEntity.setYoungestAdult()
+		this.drawStatue(x, y, 60, -this.tileEntity.getRotation, this.angelEntity)
 
 	}
 
@@ -226,16 +227,19 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 	def drawStatue(x: Int, y: Int, scale: Int, rotation: Float, entity: EntityLivingBase): Unit = {
 
-		GL11.glEnable(GL11.GL_COLOR_MATERIAL)
+		GlStateManager.enableColorMaterial()
 
-		GL11.glPushMatrix
+		GlStateManager.pushMatrix()
 		// Move to position on screen
-		GL11.glTranslatef(x.asInstanceOf[Float], y.asInstanceOf[Float], 50.0F)
+		GlStateManager.translate(x.asInstanceOf[Float], y.asInstanceOf[Float], 50.0F)
 		// Scale
-		GL11.glScalef((-scale).asInstanceOf[Float], scale.asInstanceOf[Float],
-			scale.asInstanceOf[Float])
+		GlStateManager.scale(
+			(-scale).asInstanceOf[Float],
+			scale.asInstanceOf[Float],
+			scale.asInstanceOf[Float]
+		)
 		// Turn right side up
-		GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F)
+		GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F)
 		/*
 		val f2: Float = entity.renderYawOffset
 		val f3: Float = entity.rotationYaw
@@ -243,16 +247,17 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 		val f5: Float = entity.prevRotationYawHead
 		val f6: Float = entity.rotationYawHead
 		*/
-		GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F)
+		// todo apply and revert? what effect does this have?
+		GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F)
 		RenderHelper.enableStandardItemLighting
-		GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F)
+		GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F)
 		/*
 		GL11.glRotatef(
 			-(Math.atan((p_147046_4_ / 40.0F).asInstanceOf[Double]).asInstanceOf[Float]) * 20.0F,
 			1.0F, 0.0F, 0.0F)
 		*/
-		GL11.glRotatef(10.0F, 1.0F, 0.0F, 0.0F)
-		GL11.glRotatef(rotation, 0.0F, 1.0F, 0.0F)
+		GlStateManager.rotate(10.0F, 1.0F, 0.0F, 0.0F)
+		GlStateManager.rotate(rotation, 0.0F, 1.0F, 0.0F)
 		/*
 		entity.renderYawOffset =
 				Math.atan((p_147046_3_ / 40.0F).asInstanceOf[Double]).asInstanceOf[Float] * 20.0F
@@ -263,7 +268,7 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 		entity.rotationYawHead = entity.rotationYaw
 		entity.prevRotationYawHead = entity.rotationYaw
 		*/
-		GL11.glTranslatef(0.0F, entity.getYOffset.asInstanceOf[Float], 0.0F)
+		GlStateManager.translate(0.0F, entity.getYOffset.asInstanceOf[Float], 0.0F)
 
 		this.getRM.playerViewY = 180.0F
 		this.getRM.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F)
@@ -274,14 +279,14 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 		entity.prevRotationYawHead = f5
 		entity.rotationYawHead = f6
 		*/
-		GL11.glPopMatrix
+		GlStateManager.popMatrix()
 
 		RenderHelper.disableStandardItemLighting
 
-		GL11.glDisable(GL12.GL_RESCALE_NORMAL)
+		GlStateManager.disableRescaleNormal()
 
 		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit)
-		GL11.glDisable(GL11.GL_TEXTURE_2D)
+		GlStateManager.disableTexture2D()
 		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit)
 
 	}

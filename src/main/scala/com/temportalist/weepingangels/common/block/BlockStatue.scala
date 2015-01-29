@@ -13,9 +13,9 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.{EnumWorldBlockLayer, BlockPos, EnumFacing}
+import net.minecraft.util.{BlockPos, EnumFacing, EnumWorldBlockLayer}
 import net.minecraft.world.{IBlockAccess, World}
-import net.minecraftforge.fml.relauncher.{SideOnly, Side}
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 /**
  *
@@ -25,40 +25,45 @@ import net.minecraftforge.fml.relauncher.{SideOnly, Side}
 class BlockStatue(material: Material, name: String, teclass: Class[_ <: TileEntity])
 		extends BlockWrapperTE(material, WeepingAngels.MODID, name, teclass) {
 
+	val maxHeight: Int = 3
+	val maxHeight_Bound: Float = 2.5F
+
 	this.setHardness(2.0F)
 	this.setResistance(10.0F)
 	this.setStepSound(Block.soundTypeStone)
 
 	override def createBlockState(): BlockState = {
-		new BlockState(this, States.STATUE_BOTTOM)
+		/*
+		new ExtendedBlockState(this,
+			Array[IProperty](States.STATUE_VERT),
+			Array[IUnlistedProperty[_]](States.HAS_RENDERD)
+		)
+		*/
+		new BlockState(this, States.STATUE_VERT)
 	}
 
 	override def getActualState(state: IBlockState, worldIn: IBlockAccess,
 			pos: BlockPos): IBlockState = {
-		if (worldIn.getBlockState(pos.down()).getBlock == this &&
-				worldIn.getTileEntity(pos.down()) != null)
-			state.withProperty(States.STATUE_BOTTOM, false)
-		else
-			state.withProperty(States.STATUE_BOTTOM, true)
+		var pos2: BlockPos = pos
+		do {
+			if (worldIn.getBlockState(pos2).getBlock == this && worldIn.getTileEntity(pos2) != null)
+				return state.withProperty(States.STATUE_VERT, pos.getY - pos2.getY)
+			pos2 = pos2.down()
+		}
+		while (worldIn.getBlockState(pos2).getBlock == this && worldIn.getTileEntity(pos2) == null)
+		state
 	}
 
 	override def getMetaFromState(state: IBlockState): Int = {
-		if (state.getValue(States.STATUE_BOTTOM).asInstanceOf[Boolean]) 0
-		else 1
+		state.getValue(States.STATUE_VERT).asInstanceOf[Int]
 	}
 
 	override def getStateFromMeta(meta: Int): IBlockState = {
-		meta match {
-			case 0 =>
-				this.getDefaultState.withProperty(States.STATUE_BOTTOM, true)
-			case 1 =>
-				this.getDefaultState.withProperty(States.STATUE_BOTTOM, false)
-			case _ => this.getDefaultState
-		}
+		this.getDefaultState.withProperty(States.STATUE_VERT, meta)
 	}
 
 	override def hasTileEntity(state: IBlockState): Boolean = {
-		state.getValue(States.STATUE_BOTTOM).asInstanceOf[Boolean]
+		state.getValue(States.STATUE_VERT) == 0
 	}
 
 	override def isOpaqueCube: Boolean = false
@@ -71,45 +76,37 @@ class BlockStatue(material: Material, name: String, teclass: Class[_ <: TileEnti
 	override def getBlockLayer: EnumWorldBlockLayer = EnumWorldBlockLayer.CUTOUT_MIPPED
 
 	override def canPlaceBlockAt(worldIn: World, pos: BlockPos): Boolean = {
-		worldIn.getBlockState(pos).getBlock == Blocks.air &&
-				worldIn.getBlockState(pos.up()).getBlock == Blocks.air
+		for (y <- 0 until this.maxHeight)
+			if (worldIn.getBlockState(pos.up(y)).getBlock != Blocks.air)
+				return false
+		true
 	}
 
 	override def onBlockAdded(worldIn: World, pos: BlockPos, state: IBlockState): Unit = {
-		if (state.getValue(States.STATUE_BOTTOM).asInstanceOf[Boolean])
-			worldIn.setBlockState(pos.up(), state.withProperty(States.STATUE_BOTTOM, false))
+		if (state.getValue(States.STATUE_VERT) == 0) {
+			for (y <- 1 until this.maxHeight) {
+				worldIn.setBlockState(pos.up(y), state.withProperty(States.STATUE_VERT, y))
+			}
+		}
 	}
 
 	override def setBlockBoundsBasedOnState(worldIn: IBlockAccess, pos: BlockPos): Unit = {
-		val meta: Int = this.getMetaFromState(worldIn.getBlockState(pos))
-		this.setBlockBounds(0.0F, 0.0F - meta, 0.0F, 1F, 3F - meta, 1F)
+		val height: Int = worldIn.getBlockState(pos).getValue(States.STATUE_VERT).asInstanceOf[Int]
+		this.setBlockBounds(0.0F, 0 - height, 0.0F, 1F, this.maxHeight_Bound - height, 1F)
 	}
 
 	override def breakBlock(worldIn: World, pos: BlockPos, state: IBlockState): Unit = {
-		worldIn.removeTileEntity(pos)
+		val height: Int = state.getValue(States.STATUE_VERT).asInstanceOf[Int]
 
-		var nextPos: BlockPos = pos
-		var nextState: IBlockState = null
+		for (y <- 1 to height) worldIn.setBlockToAir(pos.down(y))
+		for (y <- 1 until this.maxHeight - height) worldIn.setBlockToAir(pos.up(y))
 
-		do {
-			nextPos = nextPos.up()
-			nextState = worldIn.getBlockState(nextPos)
-			if (nextState.getBlock == this)
-				worldIn.setBlockToAir(nextPos)
-		} while(nextState.getBlock == this)
-
-		nextPos = pos
-		do {
-			nextPos.down()
-			nextState = worldIn.getBlockState(nextPos)
-			if (nextState.getBlock == this)
-				worldIn.setBlockToAir(nextPos)
-		} while(nextState.getBlock == this)
-
-		if (this.isServer() && state.getValue(States.STATUE_BOTTOM) == true)
-			Drops.spawnItemStack(
+		if (state.getValue(States.STATUE_VERT) == 0) {
+			worldIn.removeTileEntity(pos)
+			if (this.isServer()) Drops.spawnItemStack(
 				worldIn, pos.add(.5, 0, .5), new ItemStack(this, 1, 0), worldIn.rand, 10
 			)
+		}
 
 	}
 
@@ -119,7 +116,7 @@ class BlockStatue(material: Material, name: String, teclass: Class[_ <: TileEnti
 		tile match {
 			case statue: TEStatue =>
 				var rotation: Float = placer.rotationYaw
-				if (placer.isSneaking) rotation = -rotation
+				if (placer.isSneaking) rotation = 360 - rotation
 				statue.setRotation(rotation)
 			case _ =>
 		}
@@ -129,9 +126,7 @@ class BlockStatue(material: Material, name: String, teclass: Class[_ <: TileEnti
 			playerIn: EntityPlayer, side: EnumFacing, hitX: Float, hitY: Float,
 			hitZ: Float): Boolean = {
 		if (!playerIn.isSneaking) {
-			var pos2: BlockPos = pos
-			if (state.getValue(States.STATUE_BOTTOM) == false)
-				pos2 = pos2.down()
+			val pos2: BlockPos = pos.down(state.getValue(States.STATUE_VERT).asInstanceOf[Int])
 			playerIn.openGui(
 				WeepingAngels, WAOptions.statueGui, worldIn, pos2.getX, pos2.getY, pos2.getZ
 			)

@@ -598,6 +598,10 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 		}
 	}
 
+	def setYoungestAdult(): Unit = {
+		this.setGrowingAge(0)
+	}
+
 	override def setGrowingAge(tickAge: Int): Unit = {
 		val wasChild: Boolean = this.isChild || tickAge <= -96000
 
@@ -612,7 +616,7 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 		}
 
 		if (wasChild && this.getGrowingAge >= 0) {
-			this.setGrowingAge(WAOptions.decrepitationAge_max)
+			this.setYoungestAdult()
 		}
 
 		if (WorldHelper.isClient()) {
