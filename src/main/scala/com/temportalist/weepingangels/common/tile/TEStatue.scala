@@ -16,6 +16,7 @@ class TEStatue() extends TEWrapper("Statue") {
 	private var facialState: Int = 0
 	private var armState: Int = 0
 	private var rotation: Float = 0.0F
+	private var corruption: Int = 0
 	private var isSpawning: Boolean = false
 
 	// Default Constructor
@@ -39,6 +40,7 @@ class TEStatue() extends TEWrapper("Statue") {
 		tagCom.setInteger("facialState", this.facialState)
 		tagCom.setInteger("armState", this.armState)
 		tagCom.setFloat("rotation", this.rotation)
+		tagCom.setInteger("corruption", this.corruption)
 		tagCom.setBoolean("isSpawing", this.isSpawning)
 
 	}
@@ -49,6 +51,7 @@ class TEStatue() extends TEWrapper("Statue") {
 		this.facialState = tagCom.getInteger("facialState")
 		this.armState = tagCom.getInteger("armState")
 		this.rotation = tagCom.getFloat("rotation")
+		this.corruption = tagCom.getInteger("corruption")
 		this.isSpawning = tagCom.getBoolean("isSpawning")
 
 	}
@@ -75,6 +78,14 @@ class TEStatue() extends TEWrapper("Statue") {
 
 	def getRotation: Float = {
 		this.rotation
+	}
+
+	def setCorruption(corr: Int): Unit = {
+		this.corruption = corr
+	}
+
+	def getCorruption(): Int = {
+		this.corruption
 	}
 
 	/**

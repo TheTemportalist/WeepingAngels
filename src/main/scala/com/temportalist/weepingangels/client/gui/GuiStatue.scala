@@ -31,11 +31,11 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 	val coords = Map(
 		"face" -> Array[Int](30, 40),
-		"arms" -> Array[Int](30, 70),
-		"rot" -> Array[Int](40, 100, 100, 20),
-		"corr" -> Array[Int](40, 130, 100, 20),
-		"bkgd" -> Array[Int](200, 20, 150, 170),
-		"angel" -> Array[Int](265, 180, 75)
+		"arms" -> Array[Int](30, 80),
+		"rot" -> Array[Int](40, 120, 100, 20),
+		"corr" -> Array[Int](40, 160, 100, 20),
+		"bkgd" -> Array[Int](200, 30, 150, 170),
+		"angel" -> Array[Int](275, 190, 75)
 	)
 
 	this.setupGui("Edit Statue", null)
@@ -44,27 +44,31 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 		super.initGui()
 
 		var bID: Int = 0
+		var coord: Array[Int] = null
 
-		this.facial = new GuiButtonIterator(bID,
-			this.coords.get("face").get(0), this.coords.get("face").get(1), Array(
+		coord = this.coords.get("face").get
+		this.facial = new GuiButtonIterator(bID, coord(0), coord(1), Array(
 			"Calm", "Angry"
 		))
 		bID += 1
 		this.buttonList.asInstanceOf[java.util.List[GuiButton]].add(this.facial)
 
-		this.arms = new GuiButtonIterator(bID, 30, 70, Array(
+		coord = this.coords.get("arms").get
+		this.arms = new GuiButtonIterator(bID, coord(0), coord(1), Array(
 			"Hiding", "Peaking", "Confident"
 		))
 		bID += 1
 		this.buttonList.asInstanceOf[java.util.List[GuiButton]].add(this.arms)
 
+		coord = this.coords.get("rot").get
 		this.rotationField = new GuiTextField(
-			0, this.fontRendererObj, 40, 100, 100, 20
+			0, this.fontRendererObj, coord(0), coord(1), coord(2), coord(3)
 		)
 		this.setupTextField(this.rotationField, 100)
 
+		coord = this.coords.get("corr").get
 		this.corruptionField = new GuiTextField(
-			0, this.fontRendererObj, 40, 130, 100, 20
+			1, this.fontRendererObj, coord(0), coord(1), coord(2), coord(3)
 		)
 		this.setupTextField(this.corruptionField, 100)
 
@@ -80,41 +84,51 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 	override def mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Unit = {
 		super.mouseClicked(mouseX, mouseY, mouseButton)
-
 		if (this.facial.mousePressed(this.mc, mouseX, mouseY)) {
 			this.facial.onPressed(mouseButton)
 			this.syncStatue(1, this.facial.getIndex.asInstanceOf[Float])
 		}
-
 		if (this.arms.mousePressed(this.mc, mouseX, mouseY)) {
 			this.arms.onPressed(mouseButton)
 			this.syncStatue(2, this.arms.getIndex.asInstanceOf[Float])
 		}
+	}
 
+	override def canKeyType(textField: GuiTextField, letter: Char, key: Int): Boolean = {
+		if (key == 14) return true
+		val id: Int = textField.getId
+		if (id == this.rotationField.getId)
+			Character.isDigit(letter) || letter == '.' || letter == '-'
+		else if (id == this.corruptionField.getId)
+			Character.isDigit(letter) || letter == '-'
+		else true
 	}
 
 	override def onKeyTyped(textField: GuiTextField): Unit = {
 		if (textField.getId == this.rotationField.getId) {
-			this.syncStatue(3, this.parseRotationFromField())
+			this.syncStatue(3, this.parseFromField(this.rotationField.getText))
+		}
+		else if (textField.getId == this.corruptionField.getId) {
+			this.syncStatue(4, this.parseFromField(this.corruptionField.getText).toInt)
 		}
 	}
 
-	def parseRotationFromField(): Float = {
-		val rotText: String = this.rotationField.getText
-		var rotation: Float = 0.0F
+	def parseFromField(text: String): Float = {
+		var value: Float = 0.0F
 		try {
-			rotation = rotText.toFloat
+			value = text.toFloat
 		}
 		catch {
 			case e: NumberFormatException =>
 		}
-		rotation
+		value
 	}
 
 	def updateComponents(): Unit = {
 		this.facial.updateIndexAndText(this.tileEntity.getFacialState)
 		this.arms.updateIndexAndText(this.tileEntity.getArmState)
 		this.rotationField.setText(this.tileEntity.getRotation + "")
+		this.corruptionField.setText(this.tileEntity.getCorruption() + "")
 	}
 
 	override def doesGuiPauseGame(): Boolean = {
@@ -126,7 +140,8 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 		// todo move this to a common helper class
 		HUDOverlay.renderBlackoutWithAlpha(0.7F, this.width, this.height)
 		// Draw statue background
-		HUDOverlay.renderBlackoutWithAlpha(1.0F, 200, 20, 150, 170)
+		val coord: Array[Int] = this.coords.get("bkgd").get
+		HUDOverlay.renderBlackoutWithAlpha(1.0F, coord(0), coord(1), coord(2), coord(3))
 		GL11.glPopMatrix()
 	}
 
@@ -139,12 +154,19 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 		val y: Int = 30 + 150
 
 		if (this.angelEntity == null)
-			this.angelEntity = new EntityAngel(this.mc.theWorld)
+			this.angelEntity = new EntityAngel(this.mc.theWorld) {
+				override def getCorruption(): Int = tileEntity.getCorruption()
+			}
 		this.angelEntity.setAngryState(this.tileEntity.getFacialState.asInstanceOf[Byte])
 		this.angelEntity.setArmState(this.tileEntity.getArmState.asInstanceOf[Byte])
 		// todo corruption, similar to testatuerenderer
 		this.angelEntity.setYoungestAdult()
-		this.drawStatue(x, y, 75, -this.tileEntity.getRotation, this.angelEntity)
+
+		val coord: Array[Int] = this.coords.get("angel").get
+		this.drawStatue(
+			coord(0), coord(1), coord(2),
+			-this.tileEntity.getRotation, this.angelEntity
+		)
 
 	}
 

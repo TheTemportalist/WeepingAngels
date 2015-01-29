@@ -49,19 +49,22 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 		// Rotate the statue according to the rotation stored in the statue's data
 		GlStateManager.rotate(statueTE.getRotation, 0.0F, 1.0F, 0.0F)
 
-		this.angelEntity = new EntityAngel(statueTE.getWorld)
+		/* todo... setGrowingAge correllated with corruption */
+		if (this.angelEntity == null)
+			this.angelEntity = new EntityAngel(statueTE.getWorld) {
+				override def getCorruption(): Int = {
+					statueTE.getCorruption()
+				}
+			}
 		this.angelModel.isChild = false
 		this.angelEntity.setAngryState(statueTE.getFacialState.asInstanceOf[Byte])
 		this.angelEntity.setArmState(statueTE.getArmState.asInstanceOf[Byte])
-		// todo corruption
-		/*
-		setGrowingAge correllated with corruption
-		*/
 		statueTE.getFacialState match {
 			case 0 => Rendering.bindResource(WAOptions.weepingAngel1)
 			case 1 => Rendering.bindResource(WAOptions.weepingAngel2)
 			case _ =>
 		}
+		//GlStateManager.bindTexture(this.angelEntity.getTextureID(false))
 		// Render the model
 		this.angelModel.render(angelEntity, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f5)
 

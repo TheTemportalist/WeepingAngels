@@ -410,7 +410,7 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 		val image: BufferedImage = ImageIO.read(stream)
 		IOUtils.closeQuietly(stream)
 
-		val corruption: Int = AngelUtility.getDecrepitation(this.getGrowingAge)
+		val corruption: Int = this.getCorruption()
 		for (i <- 1 to corruption) {
 			val rand: Random = new Random(this.hashCode() * i)
 			val x: Int = rand.nextInt(image.getWidth)
@@ -420,6 +420,8 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 
 		image
 	}
+
+	def getCorruption(): Int = AngelUtility.getDecrepitation(this.getGrowingAge)
 
 	override def attackEntityAsMob(entity: Entity): Boolean = {
 

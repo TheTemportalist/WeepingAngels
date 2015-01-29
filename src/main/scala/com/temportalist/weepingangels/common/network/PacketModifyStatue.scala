@@ -47,14 +47,13 @@ class PacketModifyStatue(pos: BlockPos, var state: Int, var value: Float)
 				this.state match {
 					case 1 => // Face
 						statueTE.setFacialState(Math.floor(this.value).asInstanceOf[Int])
-					//System.out.println("Set face to " + this.value)
-					//System.out.println("Face is " + statueTE.getFacialState())
 					case 2 => // Arms
 						statueTE.setArmState(Math.floor(this.value).asInstanceOf[Int])
 					case 3 => // Rotation
 						statueTE.setRotation(this.value)
-					//System.out.println("Set rot to " + this.value)
-					//System.out.println("Rot is " + statueTE.getRotation())
+					case 4 =>
+						statueTE.setCorruption(this.value.toInt)
+					case _ =>
 				}
 
 			case _ =>
