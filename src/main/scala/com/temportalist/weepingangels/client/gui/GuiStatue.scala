@@ -34,7 +34,7 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 		"arms" -> Array[Int](30, 70),
 		"rot" -> Array[Int](40, 100, 100, 20),
 		"corr" -> Array[Int](40, 130, 100, 20),
-		"bkgd" -> Array[Int]()
+		"bkgd" -> Array[Int](200, 20, 150, 170)
 	)
 
 	this.setupGui("Edit Statue", null)
