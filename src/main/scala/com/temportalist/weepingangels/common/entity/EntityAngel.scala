@@ -65,8 +65,9 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 		this.dataWatcher.addObject(17, 0.asInstanceOf[Byte])
 		// decrepetation texture id
 		this.dataWatcher.addObject(18, -1)
+		this.dataWatcher.addObject(19, -1)
 		// voice throw delay
-		this.dataWatcher.addObject(19, WAOptions.throwVoiceDelay_Max.asInstanceOf[Byte])
+		this.dataWatcher.addObject(20, WAOptions.throwVoiceDelay_Max.asInstanceOf[Byte])
 
 	}
 
@@ -142,20 +143,20 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 		this.dataWatcher.getWatchableObjectInt(18)
 	}
 
-	def getTextureID(): Int = {
-		this.dataWatcher.getWatchableObjectInt(18)
+	def getTextureID(isAngry: Boolean): Int = {
+		this.dataWatcher.getWatchableObjectInt(if (isAngry) 19 else 18)
 	}
 
-	def setTextureID(id: Int): Unit = {
-		this.dataWatcher.updateObject(18, id)
+	def setTextureID(isAngry: Boolean, id: Int): Unit = {
+		this.dataWatcher.updateObject(if (isAngry) 19 else 18, id)
 	}
 
 	def getVoiceThrowDelay(): Int = {
-		this.dataWatcher.getWatchableObjectByte(19).asInstanceOf[Int]
+		this.dataWatcher.getWatchableObjectByte(20).asInstanceOf[Int]
 	}
 
 	def setVoiceThrowDelay(delay: Int): Unit = {
-		this.dataWatcher.updateObject(19, delay.asInstanceOf[Byte])
+		this.dataWatcher.updateObject(20, delay.asInstanceOf[Byte])
 	}
 
 	def decrementVoiceThrowDelay(): Unit = {
@@ -381,20 +382,22 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 
 		super.onLivingUpdate()
 
-		if (this.getTextureID() < 0) {
-			this.onAgeChanged()
-		}
+		if (this.getTextureID(isAngry = false) < 0) this.onAgeChanged(isAngry = false)
+		if (this.getTextureID(isAngry = true) < 0) this.onAgeChanged(isAngry = true)
+
 	}
 
 	@SideOnly(Side.CLIENT)
-	def onAgeChanged() {
-		val image: BufferedImage = this.decrepitize(WAOptions.weepingAngel1)
+	def onAgeChanged(isAngry: Boolean) {
+		val image: BufferedImage = this.decrepitize(
+			if (isAngry) WAOptions.weepingAngel1 else WAOptions.weepingAngel2
+		)
 
 		try {
 			val obj: SimpleTexture = new SimpleTexture(null)
 			obj.deleteGlTexture()
 			TextureUtil.uploadTextureImageAllocate(obj.getGlTextureId, image, false, false)
-			this.setTextureID(obj.getGlTextureId)
+			this.setTextureID(isAngry, obj.getGlTextureId)
 		}
 		catch {
 			case e: Exception =>
@@ -612,7 +615,10 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 			this.setGrowingAge(WAOptions.decrepitationAge_max)
 		}
 
-		if (WorldHelper.isServer()) this.onAgeChanged()
+		if (WorldHelper.isClient()) {
+			this.onAgeChanged(isAngry = false)
+			this.onAgeChanged(isAngry = true)
+		}
 
 	}
 

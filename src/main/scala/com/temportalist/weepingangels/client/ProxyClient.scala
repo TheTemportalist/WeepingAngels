@@ -14,13 +14,11 @@ import net.minecraft.client.renderer.entity.RenderArrow
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
-import net.minecraftforge.client.event.ModelBakeEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.client.IModGuiFactory
 import net.minecraftforge.fml.client.IModGuiFactory.{RuntimeOptionCategoryElement, RuntimeOptionGuiHandler}
 import net.minecraftforge.fml.client.registry.{ClientRegistry, RenderingRegistry}
 import net.minecraftforge.fml.common.FMLLog
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 /**
  *
@@ -73,14 +71,6 @@ class ProxyClient() extends ProxyCommon with IModGuiFactory {
 
 	override def mainConfigGuiClass(): Class[_ <: GuiScreen] = {
 		classOf[GuiConfig]
-	}
-
-	@SubscribeEvent
-	def modelBake(event: ModelBakeEvent): Unit = {
-		event.modelRegistry.putObject(
-			"statue", //WABlocks.statue.asInstanceOf[BlockWrapper].getName(),
-			event.modelManager.getMissingModel
-		)
 	}
 
 }

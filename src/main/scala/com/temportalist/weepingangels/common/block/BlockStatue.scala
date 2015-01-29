@@ -13,8 +13,9 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.{BlockPos, EnumFacing}
+import net.minecraft.util.{EnumWorldBlockLayer, BlockPos, EnumFacing}
 import net.minecraft.world.{IBlockAccess, World}
+import net.minecraftforge.fml.relauncher.{SideOnly, Side}
 
 /**
  *
@@ -60,13 +61,14 @@ class BlockStatue(material: Material, name: String, teclass: Class[_ <: TileEnti
 		state.getValue(States.STATUE_BOTTOM).asInstanceOf[Boolean]
 	}
 
-	override def isOpaqueCube: Boolean = {
-		false
-	}
+	override def isOpaqueCube: Boolean = false
 
-	override def getRenderType: Int = {
-		-1
-	}
+	override def getRenderType: Int = -1
+
+	override def isFullCube: Boolean = false
+
+	@SideOnly(Side.CLIENT)
+	override def getBlockLayer: EnumWorldBlockLayer = EnumWorldBlockLayer.CUTOUT_MIPPED
 
 	override def canPlaceBlockAt(worldIn: World, pos: BlockPos): Boolean = {
 		worldIn.getBlockState(pos).getBlock == Blocks.air &&

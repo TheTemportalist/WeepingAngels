@@ -1,15 +1,15 @@
 package com.temportalist.weepingangels.client.render
 
-import com.temportalist.origin.library.client.utility.TessRenderer
 import com.temportalist.origin.wrapper.client.render.TERenderer
 import com.temportalist.weepingangels.client.render.models.ModelWeepingAngel
 import com.temportalist.weepingangels.common.WAOptions
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.tile.TEStatue
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.texture.TextureMap
 import net.minecraft.init.Blocks
 import net.minecraft.tileentity.TileEntity
+import net.minecraft.util.BlockPos
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 /**
@@ -35,13 +35,20 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 		// Cast
 		val statueTE: TEStatue = tileEntity.asInstanceOf[TEStatue]
 
-		GlStateManager.translate(-0.5, -0.5, -0.5)
+		val pos: BlockPos = statueTE.getPos
+		//GlStateManager.translate(-pos.getX, -pos.getY, -pos.getZ)
 		// Render the slab
+		/*
 		Minecraft.getMinecraft.getBlockRendererDispatcher.renderBlock(
 			Blocks.stone_slab.getDefaultState, statueTE.getPos, statueTE.getWorld,
 			TessRenderer.getTess().getWorldRenderer
 		)
-		GlStateManager.translate(.5, .5, .5)
+		*/
+		this.bindTexture(TextureMap.locationBlocksTexture)
+		Minecraft.getMinecraft.getBlockRendererDispatcher.renderBlockBrightness(
+			Blocks.stone_slab.getDefaultState, 1.0F
+		)
+		//GlStateManager.translate(.5, .5, .5)
 
 	}
 
