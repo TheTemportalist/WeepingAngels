@@ -50,7 +50,6 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 	this.isImmuneToFire = true
 	this.setSize(0.6F, 2.0F)
 	this.stepHeight = 2.0F
-	this.setGrowingAge((WAOptions.decrepitationAge_max * 1.25).asInstanceOf[Int])
 
 	override def createChild(ageable: EntityAgeable): EntityAgeable = {
 		new EntityAngel(this.getEntityWorld)
@@ -64,8 +63,8 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 		// arm state
 		this.dataWatcher.addObject(17, 0.asInstanceOf[Byte])
 		// decrepetation texture id
-		this.dataWatcher.addObject(18, -1)
-		this.dataWatcher.addObject(19, -1)
+		this.dataWatcher.addObject(18, -1) // calm
+		this.dataWatcher.addObject(19, -1) // angry
 		// voice throw delay
 		this.dataWatcher.addObject(20, WAOptions.throwVoiceDelay_Max.asInstanceOf[Byte])
 
@@ -390,7 +389,7 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 	@SideOnly(Side.CLIENT)
 	def onAgeChanged(isAngry: Boolean) {
 		val image: BufferedImage = this.decrepitize(
-			if (isAngry) WAOptions.weepingAngel1 else WAOptions.weepingAngel2
+			if (isAngry) WAOptions.weepingAngel2 else WAOptions.weepingAngel1
 		)
 
 		try {
