@@ -14,6 +14,7 @@ import com.temportalist.weepingangels.common.lib.AngelUtility
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.texture.{SimpleTexture, TextureUtil}
+import net.minecraft.command.CommandResultStats.Type
 import net.minecraft.entity._
 import net.minecraft.entity.ai._
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
@@ -32,7 +33,7 @@ import org.apache.commons.io.IOUtils
  * @author TheTemportalist 1/27/15
  */
 class EntityAngel(world: World) extends EntityAgeable(world) {
-
+	
 	//val lightSourceKillDelay_Max: Int = 20 * 10
 	var stolenInventory: Array[ItemStack] = null
 	var hasProcreated: Boolean = false
@@ -50,6 +51,8 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 	this.isImmuneToFire = true
 	this.setSize(0.6F, 2.0F)
 	this.stepHeight = 2.0F
+
+	override def setCommandStat(results: Type, amount: Int): Unit = {}
 
 	override def createChild(ageable: EntityAgeable): EntityAgeable = {
 		new EntityAngel(this.getEntityWorld)
