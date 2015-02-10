@@ -145,6 +145,8 @@ object AngelUtility {
 				return false
 			}
 
+
+
 			source.getSourceOfDamage match {
 				case player: EntityPlayer =>
 					var canDamage: Boolean = false
@@ -167,6 +169,7 @@ object AngelUtility {
 							else if (world.getDifficulty == EnumDifficulty.HARD) {
 								blockLevel = Blocks.obsidian // Diamond or higher
 							}
+
 
 							canDamage = heldStack.getItem.canHarvestBlock(blockLevel, heldStack) ||
 									heldStack.getItem.canHarvestBlock(blockLevel)

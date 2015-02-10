@@ -43,6 +43,8 @@ class TEStatue() extends TEWrapper("Statue") {
 		tagCom.setInteger("corruption", this.corruption)
 		tagCom.setBoolean("isSpawing", this.isSpawning)
 
+		println ("writing rotation " + this.rotation)
+
 	}
 
 	override def readFromNBT(tagCom: NBTTagCompound): Unit = {
@@ -54,10 +56,13 @@ class TEStatue() extends TEWrapper("Statue") {
 		this.corruption = tagCom.getInteger("corruption")
 		this.isSpawning = tagCom.getBoolean("isSpawning")
 
+		println ("Loading rotation " + tagCom.hasKey("rotation") + " " + tagCom.getFloat("rotation"))
+
 	}
 
 	def setFacialState(state: Int): Unit = {
 		this.facialState = state
+		this.markDirty()
 	}
 
 	def getFacialState: Int = {
@@ -66,6 +71,7 @@ class TEStatue() extends TEWrapper("Statue") {
 
 	def setArmState(state: Int): Unit = {
 		this.armState = state
+		this.markDirty()
 	}
 
 	def getArmState: Int = {
@@ -74,14 +80,17 @@ class TEStatue() extends TEWrapper("Statue") {
 
 	def setRotation(rot: Float): Unit = {
 		this.rotation = rot
+		this.markDirty()
 	}
 
 	def getRotation: Float = {
+		println (this.rotation)
 		this.rotation
 	}
 
 	def setCorruption(corr: Int): Unit = {
 		this.corruption = corr
+		this.markDirty()
 	}
 
 	def getCorruption(): Int = {

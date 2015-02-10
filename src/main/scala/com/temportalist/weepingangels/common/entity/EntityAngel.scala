@@ -6,15 +6,14 @@ import java.io.InputStream
 import java.util.Random
 import javax.imageio.ImageIO
 
+import com.temportalist.origin.library.client.utility.Rendering
 import com.temportalist.origin.library.common.utility.{Drops, Teleport, WorldHelper}
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.extended.AngelPlayer
 import com.temportalist.weepingangels.common.init.WAItems
 import com.temportalist.weepingangels.common.lib.AngelUtility
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.texture.{SimpleTexture, TextureUtil}
-import net.minecraft.command.CommandResultStats.Type
 import net.minecraft.entity._
 import net.minecraft.entity.ai._
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
@@ -51,8 +50,6 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 	this.isImmuneToFire = true
 	this.setSize(0.6F, 2.0F)
 	this.stepHeight = 2.0F
-
-	override def setCommandStat(results: Type, amount: Int): Unit = {}
 
 	override def createChild(ageable: EntityAgeable): EntityAgeable = {
 		new EntityAngel(this.getEntityWorld)
@@ -408,7 +405,7 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 
 	@SideOnly(Side.CLIENT)
 	def decrepitize(angelTex: ResourceLocation): BufferedImage = {
-		val stream: InputStream = Minecraft.getMinecraft.getResourceManager.getResource(angelTex)
+		val stream: InputStream = Rendering.mc.getResourceManager.getResource(angelTex)
 				.getInputStream
 		val image: BufferedImage = ImageIO.read(stream)
 		IOUtils.closeQuietly(stream)

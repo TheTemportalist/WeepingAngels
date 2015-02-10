@@ -213,7 +213,4 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 	}
 
-	// todo move this to a generic access helper
-	def getRM: RenderManager = Minecraft.getMinecraft.getRenderManager
-
 }

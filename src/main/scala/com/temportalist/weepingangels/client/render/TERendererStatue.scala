@@ -47,6 +47,7 @@ class TERendererStatue() extends TERenderer(WAOptions.weepingAngel1) {
 		GlStateManager.rotate(-90, 0, 1, 0)
 		GlStateManager.translate(0.0F, -1.5F, 0.0F)
 		// Rotate the statue according to the rotation stored in the statue's data
+		//println ("rot = " + statueTE.getRotation)
 		GlStateManager.rotate(statueTE.getRotation, 0.0F, 1.0F, 0.0F)
 
 		/* todo... setGrowingAge correllated with corruption */

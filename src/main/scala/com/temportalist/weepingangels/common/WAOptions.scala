@@ -31,6 +31,9 @@ object WAOptions extends OptionRegister {
 	var angelsStealPlayerInventory: Boolean = false
 
 	var angelsOnlyHurtWithPickaxe: Boolean = true
+	//var difficulyDamage: Array[I]
+
+
 	var maximumSpawnHeight: Int = 40
 	var spawnProbability: Int = 80
 	var maxLightLevelForSpawn: Int = 8
@@ -67,8 +70,8 @@ object WAOptions extends OptionRegister {
 		)
 
 		this.maxAngelHealth = this.getAndComment(stats,
-			"Maximum Angel Health",
-			"The maximum health of an Angel." +
+			"Angel Health",
+			"The spawn health of an Angel." +
 					" Also is the maximum health of an angel when a player is infected.",
 			20
 		)
@@ -128,6 +131,8 @@ object WAOptions extends OptionRegister {
 			"Angels can only be damaged with a pickaxe",
 			true
 		)
+
+
 
 		this.maximumSpawnHeight = this.getAndComment(stats,
 			"Max spawn height",
