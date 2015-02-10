@@ -21,17 +21,7 @@ apply plugin: 'scala'
 apply plugin: 'forge'
 
 apply from: 'OriginGradle/index.gradle'
-
-repositories {
-    maven {
-        name "DDD repo"
-        url "http://doubledoordev.net/maven/"
-    }
-}
-
-dependencies {
-    compile("com.temportalist.origin:Origin:${config.minecraft_version}-4+:dev")
-}
+apply from: 'OriginGradle/plugins/deps.gradle'
 
 // Used for processing, dont meddle
 processResources {
