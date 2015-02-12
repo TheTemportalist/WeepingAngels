@@ -1,14 +1,13 @@
 package com.temportalist.weepingangels.client.gui
 
+import com.temportalist.origin.library.client.utility.Rendering
 import com.temportalist.origin.library.common.nethandler.PacketHandler
 import com.temportalist.origin.wrapper.client.gui.GuiScreenWrapper
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.network.PacketModifyStatue
 import com.temportalist.weepingangels.common.tile.TEStatue
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.{GuiButton, GuiTextField}
-import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.renderer.{GlStateManager, OpenGlHelper, RenderHelper}
 import net.minecraft.entity.EntityLivingBase
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
@@ -199,8 +198,8 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 		GlStateManager.rotate(rotation, 0.0F, 1.0F, 0.0F)
 		GlStateManager.translate(0.0F, entity.getYOffset.asInstanceOf[Float], 0.0F)
 
-		this.getRM.playerViewY = 180.0F
-		this.getRM.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F)
+		Rendering.renderManager.playerViewY = 180.0F
+		Rendering.renderManager.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F)
 		GlStateManager.popMatrix()
 
 		RenderHelper.disableStandardItemLighting
