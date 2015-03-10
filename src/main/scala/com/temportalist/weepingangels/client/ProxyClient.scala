@@ -48,7 +48,7 @@ class ProxyClient() extends ProxyCommon with IModGuiFactory {
 		if (ID == WAOptions.statueGui && tileEntity.isInstanceOf[TEStatue]) {
 			return new GuiStatue(tileEntity.asInstanceOf[TEStatue])
 		}
-		else if (ID == WAOptions.timeManipGui) {
+		else if (ID == WAOptions.timeManipGui) { // todo change this?
 			return new GuiTimeManipulation(player)
 		}
 		null

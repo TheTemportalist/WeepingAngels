@@ -1,8 +1,9 @@
 package com.temportalist.weepingangels.common
 
-import com.temportalist.origin.library.common.helpers.RegisterHelper
+import com.temportalist.origin.library.common.handlers.RegisterHelper
 import com.temportalist.origin.wrapper.common.ModWrapper
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
+import com.temportalist.weepingangels.client.gui.GuiDynamic
 import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import com.temportalist.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
 import com.temportalist.weepingangels.common.generation.VaultGenerator
@@ -38,10 +39,7 @@ object WeepingAngels extends ModWrapper {
 	final val clientProxy = "com.temportalist.weepingangels.client.ProxyClient"
 	final val serverProxy = "com.temportalist.weepingangels.server.ProxyServer"
 
-	@SidedProxy(
-		clientSide = this.clientProxy,
-		serverSide = this.serverProxy
-	)
+	@SidedProxy(clientSide = this.clientProxy, serverSide = this.serverProxy)
 	var proxy: ProxyCommon = null
 
 	@Mod.EventHandler
@@ -52,7 +50,7 @@ object WeepingAngels extends ModWrapper {
 		RegisterHelper.registerExtendedPlayer("Extended Angel Player", classOf[AngelPlayer],
 			deathPersistance = false)
 
-		RegisterHelper.registerHandlers(AngelPlayerHandler, this.proxy)
+		RegisterHelper.registerHandler(AngelPlayerHandler, GuiDynamic, EntityAngel)
 
 		RegisterHelper.registerPacketHandler(this.MODID, classOf[PacketModifyStatue],
 			classOf[PacketSetTime])

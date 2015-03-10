@@ -1,7 +1,6 @@
 package com.temportalist.weepingangels.common.network
 
 import com.temportalist.origin.library.common.nethandler.IPacket
-import io.netty.buffer.ByteBuf
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.server.MinecraftServer
 
@@ -10,23 +9,16 @@ import net.minecraft.server.MinecraftServer
  *
  * @author TheTemportalist
  */
-class PacketSetTime(var setTime: Int) extends IPacket {
+class PacketSetTime() extends IPacket {
 
-	def this() {
-		this(0)
+	def this(setTime: Int) {
+		this()
+		this.add(setTime)
 	}
 
-	override def writeTo(buffer: ByteBuf): Unit = {
-		buffer.writeInt(this.setTime)
-	}
-
-	override def readFrom(buffer: ByteBuf): Unit = {
-		this.setTime = buffer.readInt()
-	}
-
-	override def handle(player: EntityPlayer): Unit = {
+	override def handle(player: EntityPlayer, isServer: Boolean): Unit = {
 		for (i <- 0 until MinecraftServer.getServer.worldServers.length) {
-			MinecraftServer.getServer.worldServers(i).setWorldTime(this.setTime.asInstanceOf[Long])
+			MinecraftServer.getServer.worldServers(i).setWorldTime(this.get[Int].toLong)
 		}
 	}
 

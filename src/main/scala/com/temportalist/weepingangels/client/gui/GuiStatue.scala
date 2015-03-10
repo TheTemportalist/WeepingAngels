@@ -77,7 +77,7 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 	def syncStatue(id: Int, value: Float): Unit = {
 		PacketHandler.sync(WeepingAngels.MODID, new PacketModifyStatue(
-			this.tileEntity.getPos, id, value
+			this.tileEntity, id, value
 		))
 	}
 

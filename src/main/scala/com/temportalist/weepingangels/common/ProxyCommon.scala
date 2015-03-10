@@ -1,6 +1,6 @@
 package com.temportalist.weepingangels.common
 
-import com.temportalist.origin.wrapper.common.ProxyWrapper
+import com.temportalist.origin.api.IProxy
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
@@ -10,7 +10,7 @@ import net.minecraft.world.World
  *
  * @author TheTemportalist
  */
-class ProxyCommon() extends ProxyWrapper {
+class ProxyCommon() extends IProxy {
 
 	override def registerRender(): Unit = {}
 

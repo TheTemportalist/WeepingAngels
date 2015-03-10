@@ -109,7 +109,7 @@ class TEStatue() extends TEWrapper("Statue") {
 	def comeToLife(): Unit = {
 		val angelEntity: EntityAngel = new EntityAngel(this.getWorld)
 
-		val pos: V3O = new V3O(this).add(V3O.CENTER)
+		val pos: V3O = new V3O(this) + V3O.CENTER
 		angelEntity.setPositionAndRotation(pos.x, pos.y, pos.z, this.getRotation, 0.0F)
 
 		if (!this.getWorld.isRemote) {

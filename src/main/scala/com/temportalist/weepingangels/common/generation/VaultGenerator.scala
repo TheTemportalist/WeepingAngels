@@ -172,7 +172,7 @@ object VaultGenerator extends IWorldGenerator {
 		this.setStatue(world, 135, statuePos.west(radius).north(radius))
 		this.setStatue(world, 225, statuePos.east(radius).north(radius))
 
-		val spawnerVec: V3O = new V3O(centerPos).up()
+		val spawnerVec: V3O = new V3O(centerPos) + EnumFacing.UP
 		this.getLootOffsetPos(spawnerVec, random, radius)
 		val spawnerPos: BlockPos = spawnerVec.toBlockPos()
 
@@ -218,17 +218,21 @@ object VaultGenerator extends IWorldGenerator {
 			case 0 =>
 				vec.south(radius)
 			case 1 =>
-				vec.west(radius).south(radius)
+				vec.west(radius)
+				vec.south(radius)
 			case 2 =>
-				vec.east(radius).south(radius)
+				vec.east(radius)
+				vec.south(radius)
 			case 3 =>
 				vec.west(radius)
 			case 4 =>
 				vec.east(radius)
 			case 5 =>
-				vec.west(radius).north(radius)
+				vec.west(radius)
+				vec.north(radius)
 			case 6 =>
-				vec.east(radius).north(radius)
+				vec.east(radius)
+				vec.north(radius)
 			case _ =>
 		}
 	}

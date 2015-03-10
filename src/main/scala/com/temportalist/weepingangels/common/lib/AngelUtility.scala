@@ -111,8 +111,10 @@ object AngelUtility {
 
 	def isInFieldOfViewOf(entity: EntityLivingBase, thisEntity: EntityLivingBase): Boolean = {
 		val entityLookVec: V3O = new V3O(entity.getLook(1.0F))
-		val thisEntityPos: V3O = new V3O(thisEntity.getPositionVector).add(0, thisEntity.height, 0)
-		val entityPos: V3O = new V3O(entity.getPositionVector).add(0, entity.getEyeHeight, 0)
+		val thisEntityPos: V3O = new V3O(thisEntity.getPositionVector) +
+				new V3O(0, thisEntity.height, 0)
+		val entityPos: V3O = new V3O(entity.getPositionVector) +
+				new V3O(0, entity.getEyeHeight, 0)
 		val differenceVec: V3O = thisEntityPos - entityPos
 
 		val lengthVec: Double = differenceVec.magnitude()

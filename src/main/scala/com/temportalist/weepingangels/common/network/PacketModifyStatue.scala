@@ -1,11 +1,9 @@
 package com.temportalist.weepingangels.common.network
 
-import com.temportalist.origin.wrapper.common.network.PacketTEWrapper
+import com.temportalist.origin.library.common.network.PacketTile
 import com.temportalist.weepingangels.common.tile.TEStatue
-import io.netty.buffer.ByteBuf
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.BlockPos
 
 /**
  * Used to update different states of a Statue Tile Entity
@@ -16,49 +14,34 @@ import net.minecraft.util.BlockPos
  * @param value Face (1 = Calm, 2 = Angry), Arms (1 = Hiding, 2 = Peaking, 3 = Confident), Rotation (in degrees)
  * @author TheTemportalist
  */
-class PacketModifyStatue(pos: BlockPos, var state: Int, var value: Float)
-		extends PacketTEWrapper(pos) {
+class PacketModifyStatue(tile: TileEntity) extends PacketTile(tile) {
 
 	def this() {
-		this(null, 0, 0.0F)
+		this(null)
 	}
 
-	override def writeTo(buffer: ByteBuf): Unit = {
-		super.writeTo(buffer)
-
-		buffer.writeInt(this.state)
-		buffer.writeFloat(this.value)
-
+	def this(tile: TileEntity, state: Int, value: Float) {
+		this(tile)
+		this.add(state)
+		this.add(value)
 	}
 
-	override def readFrom(buffer: ByteBuf): Unit = {
-		super.readFrom(buffer)
-
-		this.state = buffer.readInt()
-		this.value = buffer.readFloat()
-
-	}
-
-	override def handleSync(player: EntityPlayer, tileEntity: TileEntity): Unit = {
+	override def handle(player: EntityPlayer, tileEntity: TileEntity, isServer: Boolean): Unit = {
 		tileEntity match {
-			case statueTE: TEStatue =>
-
-				// Switch statement
-				this.state match {
+			case statue: TEStatue =>
+				this.get[Int] match {
 					case 1 => // Face
-						statueTE.setFacialState(Math.floor(this.value).asInstanceOf[Int])
+						statue.setFacialState(Math.floor(this.get[Float]).toInt)
 					case 2 => // Arms
-						statueTE.setArmState(Math.floor(this.value).asInstanceOf[Int])
+						statue.setArmState(Math.floor(this.get[Float]).toInt)
 					case 3 => // Rotation
-						statueTE.setRotation(this.value)
-					case 4 =>
-						statueTE.setCorruption(this.value.toInt)
+						statue.setRotation(this.get[Float])
+					case 4 => // Corruption
+						statue.setCorruption(this.get[Float].toInt)
 					case _ =>
 				}
-
 			case _ =>
 		}
-
 	}
 
 }

@@ -3,16 +3,21 @@ package com.temportalist.weepingangels.common.entity
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.InputStream
+import java.util
 import java.util.Random
 import javax.imageio.ImageIO
 
+import scala.collection.mutable
+
 import com.temportalist.origin.library.client.utility.Rendering
+import com.temportalist.origin.library.common.lib.vec.V3O
 import com.temportalist.origin.library.common.utility.{Drops, Teleport, WorldHelper}
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.extended.AngelPlayer
 import com.temportalist.weepingangels.common.init.WAItems
 import com.temportalist.weepingangels.common.lib.AngelUtility
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
+import net.minecraft.block.Block
 import net.minecraft.client.renderer.texture.{SimpleTexture, TextureUtil}
 import net.minecraft.entity._
 import net.minecraft.entity.ai._
@@ -23,6 +28,8 @@ import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.pathfinding.PathNavigateGround
 import net.minecraft.util.{BlockPos, DamageSource, ResourceLocation}
 import net.minecraft.world.{EnumDifficulty, EnumSkyBlock, World}
+import net.minecraftforge.event.world.BlockEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import org.apache.commons.io.IOUtils
 
@@ -32,7 +39,7 @@ import org.apache.commons.io.IOUtils
  * @author TheTemportalist 1/27/15
  */
 class EntityAngel(world: World) extends EntityAgeable(world) {
-	
+
 	//val lightSourceKillDelay_Max: Int = 20 * 10
 	var stolenInventory: Array[ItemStack] = null
 	var hasProcreated: Boolean = false
@@ -625,6 +632,26 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 			this.onAgeChanged(isAngry = true)
 		}
 
+	}
+
+}
+
+object EntityAngel {
+
+	val lights: mutable.Map[V3O, util.List[BlockPos]] = mutable.Map[V3O, util.List[BlockPos]]()
+
+	// todo talk to MCForge people in irc & find out why there is not event in Chunk.setBlockState
+	// todo, if just not implemented, then implement and move this
+	@SubscribeEvent
+	def blockPlaced(event: BlockEvent.PlaceEvent): Unit = {
+		val block: Block = event.placedBlock.getBlock
+		val pos: BlockPos = event.blockSnapshot.pos
+		if (block.getLightValue > 0f) {
+			val chunkPos: V3O = new V3O(event.world.getChunkFromBlockCoords(pos).getChunkCoordIntPair)
+			if (!this.lights.contains(chunkPos))
+				this.lights(chunkPos) = new util.ArrayList[BlockPos]()
+			this.lights(chunkPos).add(pos)
+		}
 	}
 
 }

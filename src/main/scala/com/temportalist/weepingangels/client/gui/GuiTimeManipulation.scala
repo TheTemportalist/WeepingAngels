@@ -1,12 +1,11 @@
 package com.temportalist.weepingangels.client.gui
 
-import com.temportalist.origin.library.common.nethandler.PacketHandler
+import com.temportalist.origin.library.client.utility.Rendering
 import com.temportalist.origin.wrapper.client.gui.GuiScreenWrapper
-import com.temportalist.weepingangels.common.WeepingAngels
-import com.temportalist.weepingangels.common.network.PacketSetTime
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiButton
+import net.minecraft.client.gui.ScaledResolution
+import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 /**
@@ -15,8 +14,20 @@ import net.minecraftforge.fml.relauncher.{Side, SideOnly}
  * @author TheTemportalist
  */
 @SideOnly(Side.CLIENT)
-class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenWrapper() {
+class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenWrapper with IGuiDynamic {
 
+	override def drawMenu(zLevel: Double, resolution: ScaledResolution): Unit = {
+		val angle: Double = this.correctAngle(this.getMouseAngle())
+		GlStateManager.pushMatrix()
+
+		Rendering.bindResource(new ResourceLocation("compression", "gui/clock.png"))
+		GlStateManager.rotate(angle.toFloat, 0, 0, 1)
+		this.drawTexturedModalRect(100, 100, 0, 0, 160, 160)
+
+		GlStateManager.popMatrix()
+	}
+
+	/*
 	var dawn, noon, sunset, midnight: GuiButton = null
 	var p1hr, p2hr: GuiButton = null
 
@@ -60,5 +71,6 @@ class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenWrapper() {
 		}
 		Minecraft.getMinecraft.displayGuiScreen(null)
 	}
+	*/
 
 }
