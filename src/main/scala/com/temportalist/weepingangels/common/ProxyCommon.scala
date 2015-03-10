@@ -10,7 +10,7 @@ import net.minecraft.world.World
  *
  * @author TheTemportalist
  */
-class ProxyCommon() extends IProxy {
+class ProxyCommon extends IProxy {
 
 	override def registerRender(): Unit = {}
 

@@ -1,30 +1,24 @@
 package com.temportalist.weepingangels.common.tile
 
+import com.temportalist.origin.api.tile.{IPowerable, ITileSaver}
 import com.temportalist.origin.library.common.lib.vec.V3O
-import com.temportalist.origin.wrapper.common.tile.TEWrapper
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.tileentity.TileEntity
 
 /**
  *
  *
  * @author TheTemportalist
  */
-class TEStatue() extends TEWrapper("Statue") {
+class TEStatue() extends TileEntity with ITileSaver with IPowerable {
 
 	private var facialState: Int = 0
 	private var armState: Int = 0
 	private var rotation: Float = 0.0F
 	private var corruption: Int = 0
 	private var isSpawning: Boolean = false
-
-	// Default Constructor
-	{
-
-	}
-
-	// End Constructor
 
 	/**
 	 * Triggered when an EntityAngel touches this statue
@@ -43,7 +37,7 @@ class TEStatue() extends TEWrapper("Statue") {
 		tagCom.setInteger("corruption", this.corruption)
 		tagCom.setBoolean("isSpawing", this.isSpawning)
 
-		println ("writing rotation " + this.rotation)
+		//println ("writing rotation " + this.rotation)
 
 	}
 
@@ -56,7 +50,7 @@ class TEStatue() extends TEWrapper("Statue") {
 		this.corruption = tagCom.getInteger("corruption")
 		this.isSpawning = tagCom.getBoolean("isSpawning")
 
-		println ("Loading rotation " + tagCom.hasKey("rotation") + " " + tagCom.getFloat("rotation"))
+		//println ("Loading rotation " + tagCom.hasKey("rotation") + " " + tagCom.getFloat("rotation"))
 
 	}
 
@@ -84,7 +78,7 @@ class TEStatue() extends TEWrapper("Statue") {
 	}
 
 	def getRotation: Float = {
-		println (this.rotation)
+		//println (this.rotation)
 		this.rotation
 	}
 

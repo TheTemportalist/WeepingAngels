@@ -19,13 +19,13 @@ class RenderWeepingAngel(manager: RenderManager)
 	var texture: ResourceLocation = WAOptions.weepingAngel1
 
 	override def getEntityTexture(entity: Entity): ResourceLocation = {
-		println ("get texture")
+		//println ("get texture")
 		this.texture
 	}
 
 	override def doRender(entity: Entity, x: Double, y: Double, z: Double, p_76986_8_ : Float,
 			partialTicks: Float): Unit = {
-		println ("render e")
+		//println ("render e")
 		super.doRender(entity, x, y, z, p_76986_8_, partialTicks)
 	}
 
@@ -33,7 +33,8 @@ class RenderWeepingAngel(manager: RenderManager)
 			f2: Float): Unit = {
 
 
-		println(this.bindEntityTexture(entity))
+		//println()
+		this.bindEntityTexture(entity)
 
 		super.doRender(entity, d1, d2, d3, f1, f2)
 	}

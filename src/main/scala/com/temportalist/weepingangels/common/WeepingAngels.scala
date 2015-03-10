@@ -1,5 +1,6 @@
 package com.temportalist.weepingangels.common
 
+import com.temportalist.origin.api.{IProxy, IResourceHandler}
 import com.temportalist.origin.library.common.handlers.RegisterHelper
 import com.temportalist.origin.wrapper.common.ModWrapper
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
@@ -32,15 +33,17 @@ import net.minecraftforge.fml.common.{Mod, SidedProxy}
 	guiFactory = WeepingAngels.clientProxy,
 	dependencies = "required-after:origin@[4,);after:Morph@[0,);"
 )
-object WeepingAngels extends ModWrapper {
+object WeepingAngels extends ModWrapper with IResourceHandler {
 
 	final val MODID = "weepingangels"
 	final val MODNAME = "Weeping Angels"
 	final val clientProxy = "com.temportalist.weepingangels.client.ProxyClient"
 	final val serverProxy = "com.temportalist.weepingangels.server.ProxyServer"
 
+	override protected def getModid(): String = this.MODID
+
 	@SidedProxy(clientSide = this.clientProxy, serverSide = this.serverProxy)
-	var proxy: ProxyCommon = null
+	var proxy: IProxy = null
 
 	@Mod.EventHandler
 	def preInit(event: FMLPreInitializationEvent): Unit = {
@@ -67,7 +70,7 @@ object WeepingAngels extends ModWrapper {
 
 	@Mod.EventHandler
 	def postInit(event: FMLPostInitializationEvent): Unit = {
-		super.postInitialize(event)
+		super.postInitialize(event, this.proxy)
 
 	}
 
