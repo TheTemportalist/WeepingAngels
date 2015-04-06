@@ -1,11 +1,11 @@
 package com.temportalist.weepingangels.common.init
 
 import com.temportalist.origin.library.common.register.EntityRegister
-import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
+import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
+import cpw.mods.fml.common.registry.EntityRegistry
 import net.minecraft.entity.EnumCreatureType
 import net.minecraft.world.biome.BiomeGenBase
-import net.minecraftforge.fml.common.registry.EntityRegistry
 
 /**
  *
@@ -51,9 +51,8 @@ object WAEntity extends EntityRegister {
 					biome == BiomeGenBase.mushroomIslandShore)) {
 				EntityRegistry.addSpawn(
 					classOf[EntityAngel], WAOptions.spawnProbability, 1, 1,
-					EnumCreatureType.MONSTER, biome
+					EnumCreatureType.monster, biome
 				)
-
 			}
 
 		}

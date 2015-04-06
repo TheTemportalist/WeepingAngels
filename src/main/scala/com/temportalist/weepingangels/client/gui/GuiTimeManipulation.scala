@@ -2,11 +2,13 @@ package com.temportalist.weepingangels.client.gui
 
 import com.temportalist.origin.library.client.utility.Rendering
 import com.temportalist.origin.wrapper.client.gui.GuiScreenWrapper
-import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.client.renderer.GlStateManager
+import com.temportalist.weepingangels.common.WeepingAngels
+import com.temportalist.weepingangels.common.network.PacketSetTime
+import cpw.mods.fml.relauncher.{Side, SideOnly}
+import net.minecraft.client.gui.{Gui, ScaledResolution}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.ResourceLocation
-import net.minecraftforge.fml.relauncher.{Side, SideOnly}
+import org.lwjgl.opengl.GL11
 
 /**
  *
@@ -17,14 +19,20 @@ import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenWrapper with IGuiDynamic {
 
 	override def drawMenu(zLevel: Double, resolution: ScaledResolution): Unit = {
-		val angle: Double = this.correctAngle(this.getMouseAngle())
-		GlStateManager.pushMatrix()
+		val angle: Double = -this.correctAngle(this.getMouseAngle())
+		//GlStateManager.pushMatrix()
+		GL11.glPushMatrix()
 
-		Rendering.bindResource(new ResourceLocation("compression", "gui/clock.png"))
-		GlStateManager.rotate(angle.toFloat, 0, 0, 1)
-		this.drawTexturedModalRect(100, 100, 0, 0, 160, 160)
+		Rendering.bindResource(new ResourceLocation(WeepingAngels.MODID, "textures/gui/clock.png"))
+		//GlStateManager.rotate
+		GL11.glTranslated(resolution.getScaledWidth / 2, resolution.getScaledHeight / 2, 0)
+		GL11.glRotatef(angle.toFloat, 0, 0, 1)
+		GL11.glTranslated(-80, -80, 0)
+		//this.drawGradientRect(100, 100, 0, 0, 160, 160)
+		Gui.func_146110_a(0, 0, 0, 0, 160, 160, 160, 160)
 
-		GlStateManager.popMatrix()
+		//GlStateManager.popMatrix()
+		GL11.glPopMatrix()
 	}
 
 	/*
@@ -72,5 +80,13 @@ class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenWrapper wit
 		Minecraft.getMinecraft.displayGuiScreen(null)
 	}
 	*/
+
+	override def onGuiClosed(): Unit = {
+		super.onGuiClosed()
+		val angle: Double = 360 - this.correctAngle(this.getMouseAngle())
+		var time: Double = angle / 360D * 24000 - 18000
+		if (time < 0) time += 24000
+		new PacketSetTime(player.getEntityWorld.provider.dimensionId, time.toInt).sendToServer()
+	}
 
 }

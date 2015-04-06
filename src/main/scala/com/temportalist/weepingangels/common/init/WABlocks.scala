@@ -5,8 +5,8 @@ import com.temportalist.origin.library.common.register.BlockRegister
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.block.BlockStatue
 import com.temportalist.weepingangels.common.tile.TEStatue
+import cpw.mods.fml.common.registry.GameRegistry
 import net.minecraft.block.material.Material
-import net.minecraftforge.fml.common.registry.GameRegistry
 
 /**
  *

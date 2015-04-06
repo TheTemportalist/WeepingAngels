@@ -1,11 +1,10 @@
 package com.temportalist.weepingangels.client.render.models
 
 import com.temportalist.weepingangels.common.entity.EntityAngel
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.model.{ModelBase, ModelRenderer}
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.Entity
-import net.minecraft.util.MathHelper
-import net.minecraftforge.fml.relauncher.{Side, SideOnly}
+import org.lwjgl.opengl.GL11
 
 /**
  *
@@ -160,9 +159,12 @@ class ModelWeepingAngel() extends ModelBase() {
 
 		if (this.isChild) {
 			val f6: Float = 2.0F
-			GlStateManager.pushMatrix()
-			GlStateManager.scale(1.0F / f6, 1.0F / f6, 1.0F / f6)
-			GlStateManager.translate(0.0F, 24.0F * f5, 0.0F)
+			//GlStateManager.pushMatrix()
+			GL11.glPushMatrix()
+			//GlStateManager.scale
+			GL11.glScalef(1.0F / f6, 1.0F / f6, 1.0F / f6)
+			//GlStateManager.translate
+			GL11.glTranslatef(0.0F, 24.0F * f5, 0.0F)
 			this.head.render(f5)
 			this.leftfoot.render(f5)
 			this.rightfoot.render(f5)
@@ -171,10 +173,12 @@ class ModelWeepingAngel() extends ModelBase() {
 			this.leftarm.render(f5)
 			this.rightleg.render(f5)
 			this.leftleg.render(f5)
-			GlStateManager.popMatrix()
+			//GlStateManager.popMatrix()
+			GL11.glPopMatrix()
 		}
 		else {
-			GlStateManager.pushMatrix()
+			//GlStateManager.pushMatrix()
+			GL11.glPushMatrix()
 			this.leftfoot.render(f5)
 			this.rightfoot.render(f5)
 			this.leftwing1.render(f5)
@@ -191,7 +195,8 @@ class ModelWeepingAngel() extends ModelBase() {
 			this.leftarm.render(f5)
 			this.rightleg.render(f5)
 			this.leftleg.render(f5)
-			GlStateManager.popMatrix()
+			//GlStateManager.popMatrix()
+			GL11.glPopMatrix()
 		}
 	}
 
@@ -210,9 +215,7 @@ class ModelWeepingAngel() extends ModelBase() {
 					angleZ = Math.toRadians(5).asInstanceOf[Float]
 				}
 				if (angel.getArmState >= 2) {
-					val f6: Float = MathHelper.sin(this.swingProgress * 3.141593F)
-					var f7: Float = MathHelper.sin((1.0F - (1.0F - this.swingProgress)
-							* (1.0F - this.swingProgress)) * 3.141593F)
+					val f6: Float = 0f//MathHelper.sin(this.swingProgress * 3.141593F)
 					rightarm.rotateAngleZ = 0.0F
 					leftarm.rotateAngleZ = 0.0F
 					rightarm.rotateAngleY = -(0.1F - f6 * 0.6F)

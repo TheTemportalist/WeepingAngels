@@ -10,6 +10,10 @@ import com.temportalist.weepingangels.common.extended.{AngelPlayer, AngelPlayerH
 import com.temportalist.weepingangels.common.generation.VaultGenerator
 import com.temportalist.weepingangels.common.init.{WABlocks, WAEntity, WAItems}
 import com.temportalist.weepingangels.common.network.{PacketModifyStatue, PacketSetTime}
+import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
+import cpw.mods.fml.common.registry.GameRegistry
+import cpw.mods.fml.common.{Mod, SidedProxy}
 import net.minecraft.enchantment.{Enchantment, EnchantmentHelper}
 import net.minecraft.entity.boss.EntityDragon
 import net.minecraft.entity.monster.EntityEnderman
@@ -18,10 +22,6 @@ import net.minecraft.init.Items
 import net.minecraft.world.World
 import net.minecraftforge.event.entity.living.LivingAttackEvent
 import net.minecraftforge.event.entity.player.{ArrowLooseEvent, ArrowNockEvent}
-import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.registry.GameRegistry
-import net.minecraftforge.fml.common.{Mod, SidedProxy}
 
 /**
  *

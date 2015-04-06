@@ -3,18 +3,18 @@ package com.temportalist.weepingangels.client.render
 import com.temportalist.weepingangels.client.render.models.ModelWeepingAngel
 import com.temportalist.weepingangels.common.WAOptions
 import com.temportalist.weepingangels.common.entity.EntityAngel
-import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.client.renderer.entity.{RenderLiving, RenderManager}
+import net.minecraft.client.renderer.entity.RenderLiving
 import net.minecraft.entity.Entity
 import net.minecraft.util.ResourceLocation
+import org.lwjgl.opengl.GL11
 
 /**
  *
  *
  * @author TheTemportalist 1/26/15
  */
-class RenderAngel(manager: RenderManager) extends RenderLiving(
-	manager, new ModelWeepingAngel(), 0.5F
+class RenderAngel() extends RenderLiving(
+	new ModelWeepingAngel(), 0.5F
 ) {
 
 	override def getEntityTexture(entity: Entity): ResourceLocation = {
@@ -31,16 +31,14 @@ class RenderAngel(manager: RenderManager) extends RenderLiving(
 		}
 	}
 
-	override def bindEntityTexture(entity: Entity): Boolean = {
+	override def bindEntityTexture(entity: Entity): Unit = {
 		entity match {
 			case angel: EntityAngel =>
-				GlStateManager.bindTexture(
-					angel.getTextureID(isAngry = angel.getAngryState > 0)
-				)
-				return true
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, angel.getTextureID(
+					isAngry = angel.getAngryState > 0))
 			case _ =>
+				super.bindEntityTexture(entity)
 		}
-		super.bindEntityTexture(entity)
 	}
 
 	override def doRender(entity: Entity, x: Double, y: Double, z: Double, p_76986_8_ : Float,

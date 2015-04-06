@@ -4,14 +4,14 @@ import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.WAOptions
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.lib.AngelUtility
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
+import cpw.mods.fml.common.gameevent.TickEvent
+import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent
+import cpw.mods.fml.relauncher.Side
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.DamageSource
 import net.minecraftforge.event.entity.living.LivingAttackEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent
-import net.minecraftforge.fml.relauncher.Side
 
 /**
  *
@@ -55,7 +55,7 @@ object AngelPlayerHandler {
 							player.rotationYaw, player.rotationPitch)
 
 						if (WAOptions.angelsTakePlayerName) {
-							angelEntity.setCustomNameTag(player.getName)
+							angelEntity.setCustomNameTag(player.getCommandSenderName)
 						}
 
 						if (WAOptions.angelsStealPlayerInventory) {

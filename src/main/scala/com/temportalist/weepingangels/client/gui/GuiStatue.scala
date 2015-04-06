@@ -1,16 +1,14 @@
 package com.temportalist.weepingangels.client.gui
 
 import com.temportalist.origin.library.client.utility.Rendering
-import com.temportalist.origin.library.common.nethandler.PacketHandler
 import com.temportalist.origin.wrapper.client.gui.GuiScreenWrapper
-import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.network.PacketModifyStatue
 import com.temportalist.weepingangels.common.tile.TEStatue
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.gui.{GuiButton, GuiTextField}
-import net.minecraft.client.renderer.{GlStateManager, OpenGlHelper, RenderHelper}
+import net.minecraft.client.renderer.{OpenGlHelper, RenderHelper}
 import net.minecraft.entity.EntityLivingBase
-import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import org.lwjgl.opengl.GL11
 
 /**
@@ -61,13 +59,13 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 		coord = this.coords.get("rot").get
 		this.rotationField = new GuiTextField(
-			0, this.fontRendererObj, coord(0), coord(1), coord(2), coord(3)
+			this.fontRendererObj, coord(0), coord(1), coord(2), coord(3)
 		)
 		this.setupTextField(this.rotationField, 100)
 
 		coord = this.coords.get("corr").get
 		this.corruptionField = new GuiTextField(
-			1, this.fontRendererObj, coord(0), coord(1), coord(2), coord(3)
+			this.fontRendererObj, coord(0), coord(1), coord(2), coord(3)
 		)
 		this.setupTextField(this.corruptionField, 100)
 
@@ -76,9 +74,9 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 	}
 
 	def syncStatue(id: Int, value: Float): Unit = {
-		PacketHandler.sync(WeepingAngels.MODID, new PacketModifyStatue(
+		new PacketModifyStatue(
 			this.tileEntity, id, value
-		))
+		).sendToBoth()
 	}
 
 	override def mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Unit = {
@@ -95,19 +93,18 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 	override def canKeyType(textField: GuiTextField, letter: Char, key: Int): Boolean = {
 		if (key == 14) return true
-		val id: Int = textField.getId
-		if (id == this.rotationField.getId)
+		if (textField == this.rotationField)
 			Character.isDigit(letter) || letter == '.' || letter == '-'
-		else if (id == this.corruptionField.getId)
+		else if (textField == this.corruptionField)
 			Character.isDigit(letter) || letter == '-'
 		else true
 	}
 
 	override def onKeyTyped(textField: GuiTextField): Unit = {
-		if (textField.getId == this.rotationField.getId) {
+		if (textField == this.rotationField) {
 			this.syncStatue(3, this.parseFromField(this.rotationField.getText))
 		}
-		else if (textField.getId == this.corruptionField.getId) {
+		else if (textField == this.corruptionField) {
 			this.syncStatue(4, this.parseFromField(this.corruptionField.getText).toInt)
 		}
 	}
@@ -158,7 +155,6 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 			}
 		this.angelEntity.setAngryState(this.tileEntity.getFacialState.asInstanceOf[Byte])
 		this.angelEntity.setArmState(this.tileEntity.getArmState.asInstanceOf[Byte])
-		// todo corruption, similar to testatuerenderer
 		this.angelEntity.setYoungestAdult()
 
 		val coord: Array[Int] = this.coords.get("angel").get
@@ -177,37 +173,51 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
 
 	def drawStatue(x: Int, y: Int, scale: Int, rotation: Float, entity: EntityLivingBase): Unit = {
 
-		GlStateManager.enableColorMaterial()
+		//GlStateManager.enableColorMaterial()
+		GL11.glEnable(GL11.GL_COLOR_MATERIAL)
 
-		GlStateManager.pushMatrix()
+		//GlStateManager.pushMatrix()
+		GL11.glPushMatrix()
 		// Move to position on screen
-		GlStateManager.translate(x.asInstanceOf[Float], y.asInstanceOf[Float], 50.0F)
+		//GlStateManager.translate
+		GL11.glTranslatef(x.asInstanceOf[Float], y.asInstanceOf[Float], 50.0F)
+
 		// Scale
-		GlStateManager.scale(
+		//GlStateManager.scale(
+		GL11.glScalef(
 			(-scale).asInstanceOf[Float],
 			scale.asInstanceOf[Float],
 			scale.asInstanceOf[Float]
 		)
 		// Turn right side up
-		GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F)
+		//GlStateManager.rotate
+		GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F)
 		// todo apply and revert? what effect does this have?
-		GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F)
+		//GlStateManager.rotate
+		GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F)
 		RenderHelper.enableStandardItemLighting
-		GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F)
-		GlStateManager.rotate(10.0F, 1.0F, 0.0F, 0.0F)
-		GlStateManager.rotate(rotation, 0.0F, 1.0F, 0.0F)
-		GlStateManager.translate(0.0F, entity.getYOffset.asInstanceOf[Float], 0.0F)
+		//GlStateManager.rotate
+		GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F)
+		//GlStateManager.rotate
+		GL11.glRotatef(10.0F, 1.0F, 0.0F, 0.0F)
+		//GlStateManager.rotate
+		GL11.glRotatef(-rotation, 0.0F, 1.0F, 0.0F)
+		//GlStateManager.translate
+		GL11.glTranslatef(0.0F, entity.getYOffset.asInstanceOf[Float], 0.0F)
 
 		Rendering.renderManager.playerViewY = 180.0F
-		Rendering.renderManager.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F)
-		GlStateManager.popMatrix()
+		Rendering.renderManager.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0F, 1F)
+		//GlStateManager.popMatrix()
+		GL11.glPopMatrix()
 
 		RenderHelper.disableStandardItemLighting
 
-		GlStateManager.disableRescaleNormal()
+		//GlStateManager.disableRescaleNormal()
+		//GL11.glDisable(GL11.GL_RES)
 
 		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit)
-		GlStateManager.disableTexture2D()
+		//GlStateManager.disableTexture2D()
+		GL11.glDisable(GL11.GL_TEXTURE_2D)
 		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit)
 
 	}

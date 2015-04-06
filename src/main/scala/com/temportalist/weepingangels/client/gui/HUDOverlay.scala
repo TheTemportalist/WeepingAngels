@@ -1,17 +1,16 @@
 package com.temportalist.weepingangels.client.gui
 
-import com.temportalist.origin.library.client.utility.Rendering
+import com.temportalist.origin.library.client.utility.{Rendering, TessRenderer}
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.extended.AngelPlayer
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
+import cpw.mods.fml.common.eventhandler.{EventPriority, SubscribeEvent}
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.{Gui, ScaledResolution}
-import net.minecraft.client.renderer.{WorldRenderer, Tessellator}
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
-import net.minecraftforge.fml.common.eventhandler.{EventPriority, SubscribeEvent}
-import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import org.lwjgl.opengl.GL11
 
 /**
@@ -115,16 +114,12 @@ object HUDOverlay extends Gui() {
 
 		Rendering.bindResource(this.blackout)
 
-		val tessellator: Tessellator = Tessellator.getInstance()
-		val wr: WorldRenderer = tessellator.getWorldRenderer
-		wr.startDrawingQuads()
-
-		wr.addVertexWithUV(x + 0.0D, y + height, -90.0D, 0.0D, 1.0D)
-		wr.addVertexWithUV(x + width, y + height, -90.0D, 1.0D, 1.0D)
-		wr.addVertexWithUV(x + width, y + 0.0D, -90.0D, 1.0D, 0.0D)
-		wr.addVertexWithUV(x + 0.0D, y + 0.0D, -90.0D, 0.0D, 0.0D)
-
-		tessellator.draw()
+		TessRenderer.startQuads()
+		TessRenderer.addVertex(x + 0.0D, y + height, -90.0D, 0.0D, 1.0D)
+		TessRenderer.addVertex(x + width, y + height, -90.0D, 1.0D, 1.0D)
+		TessRenderer.addVertex(x + width, y + 0.0D, -90.0D, 1.0D, 0.0D)
+		TessRenderer.addVertex(x + 0.0D, y + 0.0D, -90.0D, 0.0D, 0.0D)
+		TessRenderer.draw()
 
 		GL11.glDepthMask(true)
 		GL11.glEnable(GL11.GL_DEPTH_TEST)

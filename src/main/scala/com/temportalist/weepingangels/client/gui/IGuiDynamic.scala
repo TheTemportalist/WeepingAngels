@@ -2,10 +2,10 @@ package com.temportalist.weepingangels.client.gui
 
 import com.temportalist.origin.library.client.utility.{GuiHelper, Keys, Rendering}
 import com.temportalist.origin.wrapper.client.gui.IGuiScreen
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
+import cpw.mods.fml.common.gameevent.TickEvent
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraftforge.client.event.RenderGameOverlayEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Mouse
 
 /**

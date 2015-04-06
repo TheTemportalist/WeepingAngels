@@ -2,15 +2,17 @@ package com.temportalist.weepingangels.common.item
 
 import java.util
 
-import com.temportalist.origin.library.common.utility.Teleport
+import com.temportalist.origin.library.common.utility.{Generic, Teleport}
 import com.temportalist.origin.wrapper.common.item.ItemWrapper
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
+import cpw.mods.fml.relauncher.{SideOnly, Side}
+import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.world.World
-import net.minecraftforge.fml.relauncher.{Side, SideOnly}
+import net.minecraft.init.Items
 
 /**
  *
@@ -47,9 +49,9 @@ class ItemAngelTear() extends ItemWrapper(WeepingAngels.MODID, "angelTear") {
 	override def addInformation(itemStack: ItemStack, player: EntityPlayer, list: util.List[_],
 			isAdvanced: Boolean): Unit = {
 		if (itemStack.hasTagCompound) {
-			this.addInfo(list, itemStack.getTagCompound.getString("type"))
+			Generic.addToList(list, itemStack.getTagCompound.getString("type"))
 			val uses: Int = itemStack.getTagCompound.getInteger("uses")
-			this.addInfo(list, "Uses: " + (if (uses < 0) "Creative" else uses))
+			Generic.addToList(list, "Uses: " + (if (uses < 0) "Creative" else uses))
 		}
 	}
 
@@ -59,15 +61,20 @@ class ItemAngelTear() extends ItemWrapper(WeepingAngels.MODID, "angelTear") {
 		itemStack.setTagCompound(new NBTTagCompound)
 		itemStack.getTagCompound.setString("type", "Teleportation")
 		itemStack.getTagCompound.setInteger("uses", -1)
-		this.addInfo(list, itemStack.copy())
+		Generic.addToList(list, itemStack.copy())
 		itemStack.setTagCompound(null)
 
 		itemStack.setTagCompound(new NBTTagCompound)
 		itemStack.getTagCompound.setString("type", "Time Manipulation")
 		itemStack.getTagCompound.setInteger("uses", -1)
-		this.addInfo(list, itemStack.copy())
+		Generic.addToList(list, itemStack.copy())
 		itemStack.setTagCompound(null)
 
+	}
+
+	@SideOnly(Side.CLIENT)
+	override def registerIcons(reg: IIconRegister): Unit = {
+	this.itemIcon = Items.ghast_tear.getIconFromDamage(0)
 	}
 
 }

@@ -8,6 +8,9 @@ import com.temportalist.weepingangels.client.render.{RenderAngel, TERendererStat
 import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import com.temportalist.weepingangels.common.tile.TEStatue
 import com.temportalist.weepingangels.common.{ProxyCommon, WAOptions}
+import cpw.mods.fml.client.IModGuiFactory
+import cpw.mods.fml.client.IModGuiFactory.{RuntimeOptionGuiHandler, RuntimeOptionCategoryElement}
+import cpw.mods.fml.client.registry.{RenderingRegistry, ClientRegistry}
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.entity.RenderArrow
@@ -15,9 +18,6 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.client.IModGuiFactory
-import net.minecraftforge.fml.client.IModGuiFactory.{RuntimeOptionCategoryElement, RuntimeOptionGuiHandler}
-import net.minecraftforge.fml.client.registry.{ClientRegistry, RenderingRegistry}
 
 /**
  *
@@ -33,10 +33,10 @@ class ProxyClient() extends ProxyCommon with IModGuiFactory {
 		)
 
 		RenderingRegistry.registerEntityRenderingHandler(
-			classOf[EntityAngel], new RenderAngel(Minecraft.getMinecraft.getRenderManager)
+			classOf[EntityAngel], new RenderAngel()
 		)
 		RenderingRegistry.registerEntityRenderingHandler(
-			classOf[EntityAngelArrow], new RenderArrow(Minecraft.getMinecraft.getRenderManager)
+			classOf[EntityAngelArrow], new RenderArrow()
 		)
 
 		MinecraftForge.EVENT_BUS.register(HUDOverlay)
@@ -48,7 +48,7 @@ class ProxyClient() extends ProxyCommon with IModGuiFactory {
 		if (ID == WAOptions.statueGui && tileEntity.isInstanceOf[TEStatue]) {
 			return new GuiStatue(tileEntity.asInstanceOf[TEStatue])
 		}
-		else if (ID == WAOptions.timeManipGui) { // todo change this?
+		else if (ID == WAOptions.timeManipGui) {
 			return new GuiTimeManipulation(player)
 		}
 		null

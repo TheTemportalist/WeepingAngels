@@ -2,10 +2,10 @@ package com.temportalist.weepingangels.client.render
 
 import com.temportalist.weepingangels.client.render.models.ModelWeepingAngel
 import com.temportalist.weepingangels.common.WAOptions
+import cpw.mods.fml.relauncher.{SideOnly, Side}
 import net.minecraft.client.renderer.entity.{RenderLiving, RenderManager}
 import net.minecraft.entity.{Entity, EntityLiving}
 import net.minecraft.util.ResourceLocation
-import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 /**
  *
@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.{Side, SideOnly}
  */
 @SideOnly(Side.CLIENT)
 class RenderWeepingAngel(manager: RenderManager)
-		extends RenderLiving(manager, new ModelWeepingAngel(), 0.5F) {
+		extends RenderLiving(new ModelWeepingAngel(), 0.5F) {
 
 	var texture: ResourceLocation = WAOptions.weepingAngel1
 

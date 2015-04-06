@@ -15,7 +15,7 @@ object WAOptions extends OptionRegister {
 	val decrepitationAge_max: Int = this.maxDecrepitation_amount * this.ticksPerDecrepitation
 
 	val statueGui: Int = 0
-	val timeManipGui: Int = 0
+	val timeManipGui: Int = 1
 
 	var angelsCanConvertPlayers: Boolean = true
 	var conversionChance: Int = 10
@@ -31,8 +31,6 @@ object WAOptions extends OptionRegister {
 	var angelsStealPlayerInventory: Boolean = false
 
 	var angelsOnlyHurtWithPickaxe: Boolean = true
-	//var difficulyDamage: Array[I]
-
 
 	var maximumSpawnHeight: Int = 40
 	var spawnProbability: Int = 80

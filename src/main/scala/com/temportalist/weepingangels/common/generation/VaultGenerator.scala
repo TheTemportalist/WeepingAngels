@@ -2,20 +2,20 @@ package com.temportalist.weepingangels.common.generation
 
 import java.util.Random
 
-import com.temportalist.origin.library.common.lib.LogHelper
 import com.temportalist.origin.library.common.lib.vec.V3O
+import com.temportalist.origin.library.common.lib.{BlockState, LogHelper}
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.init.WABlocks
 import com.temportalist.weepingangels.common.tile.TEStatue
+import cpw.mods.fml.common.IWorldGenerator
 import net.minecraft.block._
-import net.minecraft.block.state.IBlockState
 import net.minecraft.init.Blocks
 import net.minecraft.tileentity.{TileEntityChest, TileEntityMobSpawner}
-import net.minecraft.util.{EnumFacing, BlockPos, AxisAlignedBB, WeightedRandomChestContent}
+import net.minecraft.util.{AxisAlignedBB, WeightedRandomChestContent}
 import net.minecraft.world.World
 import net.minecraft.world.chunk.IChunkProvider
 import net.minecraftforge.common.ChestGenHooks
-import net.minecraftforge.fml.common.IWorldGenerator
+import net.minecraftforge.common.util.ForgeDirection
 
 /**
  *
@@ -44,7 +44,7 @@ object VaultGenerator extends IWorldGenerator {
 		}
 		val tubeLength: Int = random.nextInt(lowestY - highestY + 1) + lowestY
 		val y: Int = topY - 6 - tubeLength
-		val centerPos: BlockPos = new BlockPos(x, y, z)
+		val centerPos: V3O = new V3O(x, y, z)
 
 		this.clearArea(world, centerPos)
 		this.makeWalls(world, centerPos, random)
@@ -59,13 +59,18 @@ object VaultGenerator extends IWorldGenerator {
 	def getTopY(world: World, x: Int, z: Int): Int = {
 		val pos: V3O = new V3O(x, 128, z)
 		while (pos.y >= 20) {
-			val state: IBlockState = pos.getBlockState(world)
-			val block: Block = state.getBlock
+			val block: Block = pos.getBlock(world)
 			if (block != Blocks.air) {
-				val box: AxisAlignedBB = block
-						.getCollisionBoundingBox(world, pos.toBlockPos(), state)
+				val box: AxisAlignedBB = AxisAlignedBB.getBoundingBox(
+					block.getBlockBoundsMinX,
+					block.getBlockBoundsMinY,
+					block.getBlockBoundsMinZ,
+					block.getBlockBoundsMaxX,
+					block.getBlockBoundsMaxY,
+					block.getBlockBoundsMaxZ
+				)
 				if (box != null && this.isSameScaleAABB(
-					box, AxisAlignedBB.fromBounds(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)
+					box, AxisAlignedBB.getBoundingBox(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)
 				)) {
 					return pos.y_i()
 				}
@@ -79,61 +84,61 @@ object VaultGenerator extends IWorldGenerator {
 		V3O.from(box1) == V3O.from(box2)
 	}
 
-	def clearArea(world: World, pos: BlockPos): Unit = {
-		for (x <- pos.getX - 4 to pos.getX + 4) {
-			for (z <- pos.getZ - 4 to pos.getZ + 10) {
-				for (y <- pos.getY + 1 to pos.getY + 6) {
-					world.setBlockToAir(new BlockPos(x, y, z))
+	def clearArea(world: World, pos: V3O): Unit = {
+		for (x <- pos.x_i() - 4 to pos.x_i() + 4) {
+			for (z <- pos.z_i() - 4 to pos.z_i() + 10) {
+				for (y <- pos.y_i() + 1 to pos.y_i() + 6) {
+					world.setBlockToAir(x, y, z)
 				}
 			}
 		}
 	}
 
-	def makeWalls(world: World, pos: BlockPos, random: Random): Unit = {
-		for (z <- pos.getZ - 4 to pos.getZ + 10) {
-			for (y <- pos.getY + 1 to pos.getY + 6) {
-				this.setBlock(world, random, new BlockPos(pos.getX - 4, y, z))
-				this.setBlock(world, random, new BlockPos(pos.getX + 4, y, z))
+	def makeWalls(world: World, pos: V3O, random: Random): Unit = {
+		for (z <- pos.z_i() - 4 to pos.z_i() + 10) {
+			for (y <- pos.y_i() + 1 to pos.y_i() + 6) {
+				this.setBlock(world, random, new V3O(pos.x_i() - 4, y, z))
+				this.setBlock(world, random, new V3O(pos.x_i() + 4, y, z))
 			}
 		}
-		for (x <- pos.getX - 4 to pos.getX + 4) {
-			for (y <- pos.getY + 1 to pos.getY + 6) {
-				this.setBlock(world, random, new BlockPos(x, y, pos.getZ - 4))
-				this.setBlock(world, random, new BlockPos(x, y, pos.getZ + 10))
+		for (x <- pos.x_i() - 4 to pos.x_i() + 4) {
+			for (y <- pos.y_i() + 1 to pos.y_i() + 6) {
+				this.setBlock(world, random, new V3O(x, y, pos.z_i() - 4))
+				this.setBlock(world, random, new V3O(x, y, pos.z_i() + 10))
 			}
 		}
-		for (x <- pos.getX - 4 to pos.getX + 4) {
-			for (z <- pos.getY - 4 to pos.getY + 10) {
-				this.setBlock(world, random, new BlockPos(x, pos.getY + 1, z))
-				this.setBlock(world, random, new BlockPos(x, pos.getY + 6, z))
+		for (x <- pos.x_i() - 4 to pos.x_i() + 4) {
+			for (z <- pos.y_i() - 4 to pos.y_i() + 10) {
+				this.setBlock(world, random, new V3O(x, pos.y_i() + 1, z))
+				this.setBlock(world, random, new V3O(x, pos.y_i() + 6, z))
 			}
 		}
-		for (x <- pos.getX - 4 to pos.getX + 4) {
-			for (y <- pos.getY + 2 to pos.getY + 5) {
-				this.setBlock(world, random, new BlockPos(x, y, pos.getZ + 2))
+		for (x <- pos.x_i() - 4 to pos.x_i() + 4) {
+			for (y <- pos.y_i() + 2 to pos.y_i() + 5) {
+				this.setBlock(world, random, new V3O(x, y, pos.z_i() + 2))
 			}
 		}
 	}
 
-	def makeEntrance(world: World, centerPos: BlockPos, random: Random): Unit = {
+	def makeEntrance(world: World, centerPos: V3O, random: Random): Unit = {
 		//this.setBlock(centerX + 0, centerY + 0, centerZ + 0, random)
 
-		val pos: BlockPos = centerPos.up(2)
+		val pos: V3O = centerPos + V3O.UP
 		// top middle
 		this.setBlock(world, random, pos)
 		// stairs to path
-		this.setBlock(world, this.getStairs(EnumFacing.EAST), pos.west())
-		this.setBlock(world, this.getStairs(EnumFacing.WEST), pos.east())
-		this.setBlock(world, this.getStairs(EnumFacing.SOUTH), pos.north())
+		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.west())
+		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.east())
+		this.setBlock(world, this.getStairs(ForgeDirection.SOUTH), pos.north())
 		// path start into vault
 		this.setBlock(world, random, pos.south(1))
 		// make hole into vault
-		this.setBlock(world, pos.up(1).south(2), Blocks.iron_bars.getDefaultState)
-		this.setBlock(world, pos.up(2).south(2), Blocks.iron_bars.getDefaultState)
+		this.setBlock(world, pos.up(1).south(2), Blocks.iron_bars)
+		this.setBlock(world, pos.up(2).south(2), Blocks.iron_bars)
 		// make 3 stairs into vault (post bars)
-		this.setBlock(world, this.getStairs(EnumFacing.EAST), pos.west(1).south(3))
-		this.setBlock(world, this.getStairs(EnumFacing.WEST), pos.east(1).south(3))
-		this.setBlock(world, this.getStairs(EnumFacing.NORTH), pos.east(1).south(3))
+		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.west(1).south(3))
+		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.east(1).south(3))
+		this.setBlock(world, this.getStairs(ForgeDirection.NORTH), pos.east(1).south(3))
 		// entrance pillars
 		this.makePillar(world, random, pos.east().south())
 		this.makePillar(world, random, pos.east().north())
@@ -152,16 +157,16 @@ object VaultGenerator extends IWorldGenerator {
 
 	}
 
-	def makePillar(world: World, random: Random, pos: BlockPos): Unit = {
+	def makePillar(world: World, random: Random, pos: V3O): Unit = {
 		this.setBlock(world, pos, random)
 		this.setBlock(world, pos.up(), random)
 		this.setBlock(world, pos.up(2), random)
 		this.setBlock(world, pos.up(3), random)
 	}
 
-	def makeFeatures(world: World, centerPos: BlockPos, random: Random): Unit = {
-		val pos: BlockPos = centerPos.south(6)
-		val statuePos: BlockPos = pos.up(2)
+	def makeFeatures(world: World, centerPos: V3O, random: Random): Unit = {
+		val pos: V3O = centerPos.south(6)
+		val statuePos: V3O = pos.up(2)
 		val radius: Int = 3 // radius
 		// 7 Statues
 		this.setStatue(world, 0, statuePos.south(radius))
@@ -172,19 +177,18 @@ object VaultGenerator extends IWorldGenerator {
 		this.setStatue(world, 135, statuePos.west(radius).north(radius))
 		this.setStatue(world, 225, statuePos.east(radius).north(radius))
 
-		val spawnerVec: V3O = new V3O(centerPos) + EnumFacing.UP
+		val spawnerVec: V3O = centerPos + ForgeDirection.UP
 		this.getLootOffsetPos(spawnerVec, random, radius)
-		val spawnerPos: BlockPos = spawnerVec.toBlockPos()
 
 		// 1 Spawner
-		this.setBlock(world, spawnerPos, Blocks.mob_spawner.getDefaultState)
-		world.getTileEntity(spawnerPos) match {
+		this.setBlock(world, spawnerVec, Blocks.mob_spawner)
+		spawnerVec.getTile(world) match {
 			case spawner: TileEntityMobSpawner =>
-				spawner.getSpawnerBaseLogic.setEntityName("Weeping Angel")
+				spawner.func_145881_a().setEntityName("Weeping Angel")
 			case _ =>
 				LogHelper.info(WeepingAngels.MODNAME,
-					"Failed to fetch mob spawner entity at (" + spawnerPos.getX + ", " +
-							spawnerPos.getY + ", " + spawnerPos.getZ + ")"
+					"Failed to fetch mob spawner entity at (" + spawnerVec.x_i() + ", " +
+							spawnerVec.y_i() + ", " + spawnerVec.z_i() + ")"
 				)
 		}
 
@@ -194,17 +198,15 @@ object VaultGenerator extends IWorldGenerator {
 
 	}
 
-	def setChest(world: World, pos: BlockPos, random: Random, radius: Int): Unit = {
-		val chestVec: V3O = new V3O(pos)
-		this.getLootOffsetPos(chestVec, random, radius)
-		if (chestVec.toBlockPos() == pos) return
-		val chestPos: BlockPos = chestVec.toBlockPos()
+	def setChest(world: World, pos: V3O, random: Random, radius: Int): Unit = {
+		val chestPos: V3O = pos.copy()
+		this.getLootOffsetPos(chestPos, random, radius)
+		if (chestPos == pos) return
 
-		val state: IBlockState = world.getBlockState(chestPos)
-		if (state.getBlock != Blocks.mob_spawner && state.getBlock != Blocks.chest) {
-			this.setBlock(world, chestPos, Blocks.chest.getDefaultState)
-			val teChest: TileEntityChest = world.getTileEntity(chestPos)
-					.asInstanceOf[TileEntityChest]
+		val block: Block = chestPos.getBlock(world)
+		if (block != Blocks.mob_spawner && block != Blocks.chest) {
+			this.setBlock(world, chestPos, Blocks.chest)
+			val teChest: TileEntityChest = chestPos.getTile(world).asInstanceOf[TileEntityChest]
 			if (teChest != null) {
 				WeightedRandomChestContent.generateChestContents(random,
 					ChestGenHooks.getItems(ChestGenHooks.DUNGEON_CHEST, random), teChest,
@@ -237,9 +239,8 @@ object VaultGenerator extends IWorldGenerator {
 		}
 	}
 
-	def makeTube(world: World, centerPos: BlockPos, random: Random,
-			height: Int): Unit = {
-		var pos: BlockPos = centerPos.up(7)
+	def makeTube(world: World, centerPos: V3O, random: Random, height: Int): Unit = {
+		var pos: V3O = centerPos.up(7)
 
 		// 0 = down
 		// 1 = up
@@ -247,29 +248,29 @@ object VaultGenerator extends IWorldGenerator {
 		// 3 = south -Z
 		// 4 = west +X
 		// 5 = east -X
-		var ladderFacing: EnumFacing = EnumFacing.NORTH
+		var ladderFacing: ForgeDirection = ForgeDirection.NORTH
 
 		random.nextInt(3) match {
 			case 0 =>
 				pos = pos.north(3)
-				ladderFacing = EnumFacing.SOUTH
+				ladderFacing = ForgeDirection.SOUTH
 			case 1 =>
 				pos = pos.east(3)
-				ladderFacing = EnumFacing.WEST
+				ladderFacing = ForgeDirection.WEST
 			case 2 =>
 				pos = pos.west(3)
-				ladderFacing = EnumFacing.EAST
+				ladderFacing = ForgeDirection.EAST
 			case _ =>
 				return
 		}
 
-		this.setBlock(world, pos.down(), Blocks.air.getDefaultState)
-		for (y <- pos.getY to pos.getY + height) {
-			val pos2: BlockPos = pos.up(y)
+		this.setBlock(world, pos.down(), Blocks.air)
+		for (y <- pos.y_i() to pos.y_i() + height) {
+			val pos2: V3O = pos.up(y)
 			this.setBlock(world, random, pos2.west())
 			this.setBlock(world, random, pos2.west().north())
 			this.setBlock(world, random, pos2.west().south())
-			this.setBlock(world, Blocks.air.getDefaultState, pos2)
+			this.setBlock(world, Blocks.air, pos2)
 			this.setBlock(world, random, pos2.north())
 			this.setBlock(world, random, pos2.south())
 			this.setBlock(world, random, pos2.east())
@@ -279,10 +280,10 @@ object VaultGenerator extends IWorldGenerator {
 
 		// ~~~~~~~~~~~~~~
 		// Make ladder
-		for (y <- pos.getY - 4 to pos.getY + height) {
+		for (y <- pos.y_i() - 4 to pos.y_i() + height) {
 			if (random.nextInt(this.ladderRarity) != 0)
 				this.setBlock(world, pos.up(y),
-					Blocks.ladder.getDefaultState.withProperty(BlockLadder.FACING, ladderFacing)
+					Blocks.ladder, ladderFacing.ordinal()
 				)
 		}
 
@@ -290,62 +291,70 @@ object VaultGenerator extends IWorldGenerator {
 
 	}
 
-	def makeTubeEntrance(world: World, pos: BlockPos, random: Random): Unit = {
+	def makeTubeEntrance(world: World, pos: V3O, random: Random): Unit = {
 
-		this.setBlock(world, this.getStairs(EnumFacing.NORTH), pos.up().south())
-		this.setBlock(world, this.getStairs(EnumFacing.NORTH), pos.west().up().south())
-		this.setBlock(world, this.getStairs(EnumFacing.EAST), pos.west().up())
-		this.setBlock(world, this.getStairs(EnumFacing.EAST), pos.west().up().north())
-		this.setBlock(world, this.getStairs(EnumFacing.SOUTH), pos.up().north())
-		this.setBlock(world, this.getStairs(EnumFacing.SOUTH), pos.east().up().north())
-		this.setBlock(world, this.getStairs(EnumFacing.WEST), pos.east().up())
-		this.setBlock(world, this.getStairs(EnumFacing.WEST), pos.east().up().south())
+		this.setBlock(world, this.getStairs(ForgeDirection.NORTH), pos.up().south())
+		this.setBlock(world, this.getStairs(ForgeDirection.NORTH), pos.west().up().south())
+		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.west().up())
+		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.west().up().north())
+		this.setBlock(world, this.getStairs(ForgeDirection.SOUTH), pos.up().north())
+		this.setBlock(world, this.getStairs(ForgeDirection.SOUTH), pos.east().up().north())
+		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.east().up())
+		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.east().up().south())
 
-		this.setBlock(world, pos.up(), Blocks.trapdoor.getDefaultState.
+		/* todo set trapdoor, experiement with metadata
+		this.setBlock(world, pos.up(), Blocks.trapdoor.
 				withProperty(BlockTrapDoor.FACING, EnumFacing.NORTH).
 				withProperty(BlockTrapDoor.OPEN, false).
 				withProperty(BlockTrapDoor.HALF, BlockTrapDoor.DoorHalf.TOP)
 		)
+		*/
 		this.setStatue(world, random.nextFloat() * 360, pos.up(2))
 
 	}
 
-	def getStairs(enumFacing: EnumFacing): IBlockState = {
-		Blocks.stone_brick_stairs.getDefaultState.withProperty(
-			BlockStairs.FACING, EnumFacing.NORTH
-		)
+	def getStairs(dir: ForgeDirection): BlockState = {
+		new BlockState(Blocks.stone_brick_stairs, dir.ordinal()) // todo check the metadata
 	}
 
-	def setStatue(world: World, rot: Float, pos: BlockPos): Unit = {
-		this.setBlock(world, pos, WABlocks.statue.getDefaultState)
-		world.getTileEntity(pos) match {
+	def setStatue(world: World, rot: Float, pos: V3O): Unit = {
+		this.setBlock(world, pos, WABlocks.statue)
+		pos.getTile(world) match {
 			case te: TEStatue =>
 				te.setRotation(rot)
 			case _ =>
 				LogHelper.info(WeepingAngels.MODNAME,
-					"Failed to fetch statue entity at (" + pos.getX + ", " + pos.getY + ", " +
-							pos.getZ + ")"
+					"Failed to fetch statue entity at (" + pos.x_i() + ", " + pos.y_i() + ", " +
+							pos.z_i() + ")"
 				)
 		}
 	}
 
-	def setBlock(world: World, random: Random, pos: BlockPos): Unit = {
+	def setBlock(world: World, random: Random, pos: V3O): Unit = {
 		this.setBlock(world, pos, random)
 	}
 
-	def setBlock(world: World, pos: BlockPos, random: Random): Unit = {
-		this.setBlock(world, pos, this.getBlock(random))
+	def setBlock(world: World, pos: V3O, random: Random): Unit = {
+		val state: BlockState = this.getBlock(random)
+		this.setBlock(world, pos, state.getBlock(), state.getMeta())
 	}
 
-	def setBlock(world: World, state: IBlockState, pos: BlockPos): Unit = {
-		this.setBlock(world, pos, state)
+	def setBlock(world: World, block: Block, pos: V3O): Unit = {
+		this.setBlock(world, pos, block)
 	}
 
-	def setBlock(world: World, pos: BlockPos, state: IBlockState): Unit = {
-		world.setBlockState(pos, state, 2)
+	def setBlock(world: World, state: BlockState, pos: V3O): Unit =
+		this.setBlock(world, pos, state.getBlock(), state.getMeta())
+
+	def setBlock(world: World, pos: V3O, block: Block): Unit = {
+		this.setBlock(world, pos, block, 0)
 	}
 
-	def getBlock(random: Random): IBlockState = {
+	def setBlock(world: World, pos:V3O, block: Block, meta: Int): Unit = {
+		pos.setBlock(world, block, meta, 2)
+	}
+
+	def getBlock(random: Random): BlockState = {
 		val chance: Int = random.nextInt(100) + 1
 		/*
 		50% brick
@@ -356,28 +365,22 @@ object VaultGenerator extends IWorldGenerator {
 		 */
 		if (chance <= 50) {
 			// 1 - 50 (50%)
-			Blocks.stonebrick.getDefaultState.withProperty(
-				BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.DEFAULT
-			)
+			new BlockState(Blocks.stonebrick, 0)
 		}
 		else if (chance <= 75) {
 			// 51 - 75 (25%)
-			Blocks.stonebrick.getDefaultState.withProperty(
-				BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.MOSSY
-			)
+			new BlockState(Blocks.stonebrick, 1)
 		}
 		else if (chance <= 87) {
 			// 76 - 87 (12%)
-			Blocks.cobblestone.getDefaultState
+			new BlockState(Blocks.cobblestone, 0)
 		}
 		else if (chance <= 99) {
 			// 88 - 99 (12%)
-			Blocks.stonebrick.getDefaultState.withProperty(
-				BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.CRACKED
-			)
+			new BlockState(Blocks.stonebrick, 1)
 		}
 		else {
-			Blocks.air.getDefaultState
+			new BlockState(Blocks.air, 0)
 		}
 	}
 

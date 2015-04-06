@@ -3,6 +3,8 @@ package com.temportalist.weepingangels.common.tile
 import com.temportalist.origin.api.tile.{IPowerable, ITileSaver}
 import com.temportalist.origin.library.common.lib.vec.V3O
 import com.temportalist.weepingangels.common.entity.EntityAngel
+import com.temportalist.weepingangels.common.lib.AngelUtility
+import cpw.mods.fml.relauncher.{SideOnly, Side}
 import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
@@ -18,7 +20,41 @@ class TEStatue() extends TileEntity with ITileSaver with IPowerable {
 	private var armState: Int = 0
 	private var rotation: Float = 0.0F
 	private var corruption: Int = 0
+	var texIDs: Array[Int] = Array[Int](-1, -1)
+	private var hashLocal: Int = 0
 	private var isSpawning: Boolean = false
+
+	@SideOnly(Side.CLIENT)
+	private def createTexIDs(): Unit = {
+		this.texIDs(0) = AngelUtility.getTextureIDFromCorruption(
+			false, this.corruption, this.hashLocal)
+		this.texIDs(1) = AngelUtility.getTextureIDFromCorruption(
+			true, this.corruption, this.hashLocal)
+	}
+
+	def hash(): Int = {
+		val state = Seq(facialState, armState)
+		var out: Int = 1
+		for (i: Int <- state) out = out * 31 + i
+		out
+	}
+
+	def refreshTexture(): Unit = {
+		this.hashLocal = this.hash()
+		if (this.getWorldObj.isRemote)
+			this.createTexIDs()
+	}
+
+	def getEntityTex(isAngry: Boolean): Int = {
+		val id: Int = this.texIDs(if (isAngry) 1 else 0)
+		if (id == -1) {
+			this.createTexIDs()
+			this.getEntityTex(isAngry)
+		}
+		else id
+	}
+
+	override def canUpdate: Boolean = false
 
 	/**
 	 * Triggered when an EntityAngel touches this statue
@@ -35,6 +71,7 @@ class TEStatue() extends TileEntity with ITileSaver with IPowerable {
 		tagCom.setInteger("armState", this.armState)
 		tagCom.setFloat("rotation", this.rotation)
 		tagCom.setInteger("corruption", this.corruption)
+		tagCom.setIntArray("texIDs", this.texIDs)
 		tagCom.setBoolean("isSpawing", this.isSpawning)
 
 		//println ("writing rotation " + this.rotation)
@@ -48,6 +85,7 @@ class TEStatue() extends TileEntity with ITileSaver with IPowerable {
 		this.armState = tagCom.getInteger("armState")
 		this.rotation = tagCom.getFloat("rotation")
 		this.corruption = tagCom.getInteger("corruption")
+		this.texIDs = tagCom.getIntArray("texIDs")
 		this.isSpawning = tagCom.getBoolean("isSpawning")
 
 		//println ("Loading rotation " + tagCom.hasKey("rotation") + " " + tagCom.getFloat("rotation"))
@@ -56,6 +94,7 @@ class TEStatue() extends TileEntity with ITileSaver with IPowerable {
 
 	def setFacialState(state: Int): Unit = {
 		this.facialState = state
+		this.refreshTexture()
 		this.markDirty()
 	}
 
@@ -65,6 +104,7 @@ class TEStatue() extends TileEntity with ITileSaver with IPowerable {
 
 	def setArmState(state: Int): Unit = {
 		this.armState = state
+		this.refreshTexture()
 		this.markDirty()
 	}
 
@@ -84,6 +124,7 @@ class TEStatue() extends TileEntity with ITileSaver with IPowerable {
 
 	def setCorruption(corr: Int): Unit = {
 		this.corruption = corr
+		this.refreshTexture()
 		this.markDirty()
 	}
 
@@ -101,23 +142,25 @@ class TEStatue() extends TileEntity with ITileSaver with IPowerable {
 	}
 
 	def comeToLife(): Unit = {
-		val angelEntity: EntityAngel = new EntityAngel(this.getWorld)
+		val angelEntity: EntityAngel = new EntityAngel(this.getWorldObj)
 
 		val pos: V3O = new V3O(this) + V3O.CENTER
 		angelEntity.setPositionAndRotation(pos.x, pos.y, pos.z, this.getRotation, 0.0F)
 
-		if (!this.getWorld.isRemote) {
-			this.getWorld.spawnEntityInWorld(angelEntity)
+		if (!this.getWorldObj.isRemote) {
+			this.getWorldObj.spawnEntityInWorld(angelEntity)
 		}
 
 		this.isSpawning = true
 
-		this.getWorld.setBlockState(this.getPos, Blocks.stone_slab.getDefaultState)
+		new V3O(this).setBlock(this.getWorldObj, Blocks.stone_slab, 0)
 
 	}
 
 	def isComingToLife: Boolean = {
 		this.isSpawning
 	}
+
+	def canEqual(other: Any): Boolean = other.isInstanceOf[TEStatue]
 
 }
