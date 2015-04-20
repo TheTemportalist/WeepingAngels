@@ -2,22 +2,22 @@ package com.temportalist.weepingangels.client
 
 import java.util
 
+import com.temportalist.origin.library.common.handlers.RegisterHelper
 import com.temportalist.weepingangels.client.gui.configFactory.GuiConfig
-import com.temportalist.weepingangels.client.gui.{GuiStatue, GuiTimeManipulation, HUDOverlay}
+import com.temportalist.weepingangels.client.gui.{GuiDynamic, GuiStatue, GuiTimeManipulation, HUDOverlay}
 import com.temportalist.weepingangels.client.render.{RenderAngel, TERendererStatue}
 import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import com.temportalist.weepingangels.common.tile.TEStatue
 import com.temportalist.weepingangels.common.{ProxyCommon, WAOptions}
 import cpw.mods.fml.client.IModGuiFactory
-import cpw.mods.fml.client.IModGuiFactory.{RuntimeOptionGuiHandler, RuntimeOptionCategoryElement}
-import cpw.mods.fml.client.registry.{RenderingRegistry, ClientRegistry}
+import cpw.mods.fml.client.IModGuiFactory.{RuntimeOptionCategoryElement, RuntimeOptionGuiHandler}
+import cpw.mods.fml.client.registry.{ClientRegistry, RenderingRegistry}
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.entity.RenderArrow
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
-import net.minecraftforge.common.MinecraftForge
 
 /**
  *
@@ -39,7 +39,7 @@ class ProxyClient() extends ProxyCommon with IModGuiFactory {
 			classOf[EntityAngelArrow], new RenderArrow()
 		)
 
-		MinecraftForge.EVENT_BUS.register(HUDOverlay)
+		RegisterHelper.registerHandler(HUDOverlay, GuiDynamic)
 
 	}
 

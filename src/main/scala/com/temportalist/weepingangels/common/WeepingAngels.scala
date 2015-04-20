@@ -4,13 +4,12 @@ import com.temportalist.origin.api.{IProxy, IResourceHandler}
 import com.temportalist.origin.library.common.handlers.RegisterHelper
 import com.temportalist.origin.wrapper.common.ModWrapper
 import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
-import com.temportalist.weepingangels.client.gui.GuiDynamic
 import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import com.temportalist.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
 import com.temportalist.weepingangels.common.generation.VaultGenerator
 import com.temportalist.weepingangels.common.init.{WABlocks, WAEntity, WAItems}
 import com.temportalist.weepingangels.common.network.{PacketModifyStatue, PacketSetTime}
-import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
+import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.common.{Mod, SidedProxy}
@@ -53,7 +52,7 @@ object WeepingAngels extends ModWrapper with IResourceHandler {
 		RegisterHelper.registerExtendedPlayer("Extended Angel Player", classOf[AngelPlayer],
 			deathPersistance = false)
 
-		RegisterHelper.registerHandler(AngelPlayerHandler, GuiDynamic, EntityAngel)
+		RegisterHelper.registerHandler(AngelPlayerHandler, EntityAngel)
 
 		RegisterHelper.registerPacketHandler(this.MODID, classOf[PacketModifyStatue],
 			classOf[PacketSetTime])
