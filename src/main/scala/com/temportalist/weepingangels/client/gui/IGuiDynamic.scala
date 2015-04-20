@@ -4,6 +4,7 @@ import com.temportalist.origin.library.client.utility.{GuiHelper, Keys, Renderin
 import com.temportalist.origin.wrapper.client.gui.IGuiScreen
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
+import cpw.mods.fml.relauncher.{SideOnly, Side}
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import org.lwjgl.input.Mouse
@@ -13,6 +14,7 @@ import org.lwjgl.input.Mouse
  *
  * @author TheTemportalist
  */
+@SideOnly(Side.CLIENT)
 trait IGuiDynamic extends IGuiScreen {
 
 	final def render(): Unit = {
@@ -67,6 +69,7 @@ trait IGuiDynamic extends IGuiScreen {
 
 }
 
+@SideOnly(Side.CLIENT)
 object GuiDynamic {
 
 	def getDynamic(): IGuiDynamic = {
