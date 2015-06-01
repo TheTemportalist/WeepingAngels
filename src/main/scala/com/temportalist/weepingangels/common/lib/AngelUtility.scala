@@ -6,10 +6,8 @@ import java.io.InputStream
 import java.util
 import java.util.Random
 import javax.imageio.ImageIO
-
-import com.temportalist.origin.library.client.utility.Rendering
-import com.temportalist.origin.library.common.lib.LogHelper
-import com.temportalist.origin.library.common.lib.vec.V3O
+import com.temportalist.origin.api.client.utility.Rendering
+import com.temportalist.origin.api.common.lib.{V3O, LogHelper}
 import com.temportalist.weepingangels.common.{WeepingAngels, WAOptions}
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import cpw.mods.fml.relauncher.{Side, SideOnly}

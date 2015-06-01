@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.common.tile
 
-import com.temportalist.origin.api.tile.{IPowerable, ITileSaver}
-import com.temportalist.origin.library.common.lib.vec.V3O
+import com.temportalist.origin.api.common.lib.V3O
+import com.temportalist.origin.api.common.tile.{IPowerable, ITileSaver}
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.lib.AngelUtility
 import cpw.mods.fml.relauncher.{SideOnly, Side}

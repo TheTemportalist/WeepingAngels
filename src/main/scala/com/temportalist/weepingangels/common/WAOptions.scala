@@ -1,6 +1,6 @@
 package com.temportalist.weepingangels.common
 
-import com.temportalist.origin.library.common.register.OptionRegister
+import com.temportalist.origin.foundation.common.register.OptionRegister
 import net.minecraft.util.ResourceLocation
 
 /**

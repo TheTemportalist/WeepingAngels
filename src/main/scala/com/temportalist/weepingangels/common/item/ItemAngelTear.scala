@@ -2,24 +2,24 @@ package com.temportalist.weepingangels.common.item
 
 import java.util
 
-import com.temportalist.origin.library.common.utility.{Generic, Teleport}
-import com.temportalist.origin.wrapper.common.item.ItemWrapper
+import com.temportalist.origin.api.common.item.ItemBase
+import com.temportalist.origin.api.common.utility.{Generic, Teleport}
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
-import cpw.mods.fml.relauncher.{SideOnly, Side}
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.init.Items
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.world.World
-import net.minecraft.init.Items
 
 /**
  *
  *
  * @author TheTemportalist
  */
-class ItemAngelTear() extends ItemWrapper(WeepingAngels.MODID, "angelTear") {
+class ItemAngelTear() extends ItemBase(WeepingAngels.MODID, "angelTear") {
 
 	override def onItemRightClick(itemStack: ItemStack, world: World,
 			player: EntityPlayer): ItemStack = {

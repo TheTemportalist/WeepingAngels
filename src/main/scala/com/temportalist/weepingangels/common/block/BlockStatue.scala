@@ -1,8 +1,8 @@
 package com.temportalist.weepingangels.common.block
 
-import com.temportalist.origin.library.common.lib.vec.V3O
-import com.temportalist.origin.library.common.utility.Stacks
-import com.temportalist.origin.wrapper.common.block.BlockWrapperTE
+import com.temportalist.origin.api.common.block.BlockTile
+import com.temportalist.origin.api.common.lib.V3O
+import com.temportalist.origin.api.common.utility.Stacks
 import com.temportalist.weepingangels.common.tile.TEStatue
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import net.minecraft.block.Block
@@ -20,7 +20,7 @@ import net.minecraft.world.{IBlockAccess, World}
  * @author TheTemportalist
  */
 class BlockStatue(material: Material, name: String, teclass: Class[_ <: TileEntity])
-		extends BlockWrapperTE(material, WeepingAngels.MODID, name, teclass) {
+		extends BlockTile(material, WeepingAngels.MODID, name, teclass) {
 
 	val maxHeight: Int = 3
 	val maxHeight_Bound: Float = 2.5F

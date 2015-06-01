@@ -1,9 +1,11 @@
 package com.temportalist.weepingangels.common
 
-import com.temportalist.origin.api.{IProxy, IResourceHandler}
-import com.temportalist.origin.library.common.handlers.RegisterHelper
-import com.temportalist.origin.wrapper.common.ModWrapper
-import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
+import com.temportalist.origin.api.common.proxy.IProxy
+import com.temportalist.origin.api.common.register.Registry
+import com.temportalist.origin.api.common.resource.{IModDetails, IModResource}
+import com.temportalist.origin.foundation.common.IMod
+import com.temportalist.origin.internal.common.extended.ExtendedEntityHandler
+import com.temportalist.origin.internal.common.handlers.RegisterHelper
 import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import com.temportalist.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
 import com.temportalist.weepingangels.common.generation.VaultGenerator
@@ -27,35 +29,40 @@ import net.minecraftforge.event.entity.player.{ArrowLooseEvent, ArrowNockEvent}
  *
  * @author TheTemportalist
  */
-@Mod(modid = WeepingAngels.MODID, name = WeepingAngels.MODNAME, version = "@PLUGIN_VERSION@",
+@Mod(modid = WeepingAngels.MODID, name = WeepingAngels.MODNAME, version = WeepingAngels.VERSION,
 	modLanguage = "scala",
 	guiFactory = WeepingAngels.clientProxy,
 	dependencies = "required-after:origin@[4,);after:Morph@[0,);"
 )
-object WeepingAngels extends ModWrapper with IResourceHandler {
+object WeepingAngels extends IMod with IModResource {
 
 	final val MODID = "weepingangels"
 	final val MODNAME = "Weeping Angels"
+	final val VERSION = "@PLUGIN_VERSION@"
 	final val clientProxy = "com.temportalist.weepingangels.client.ProxyClient"
 	final val serverProxy = "com.temportalist.weepingangels.server.ProxyServer"
 
-	override protected def getModid(): String = this.MODID
+	override def getDetails: IModDetails = this
+
+	override def getModid: String = this.MODID
+
+	override def getModName: String = this.MODNAME
+
+	override def getModVersion: String = this.VERSION
 
 	@SidedProxy(clientSide = this.clientProxy, serverSide = this.serverProxy)
 	var proxy: IProxy = null
 
 	@Mod.EventHandler
 	def preInit(event: FMLPreInitializationEvent): Unit = {
-		super.preInitialize(this.MODID, this.MODNAME, event, this.proxy, WAOptions, WABlocks,
-			WAItems, WAEntity)
+		super.preInitialize(this, event, this.proxy, WAOptions, WABlocks, WAItems, WAEntity)
 
 		RegisterHelper.registerExtendedPlayer("Extended Angel Player", classOf[AngelPlayer],
 			deathPersistance = false)
 
-		RegisterHelper.registerHandler(AngelPlayerHandler, EntityAngel)
+		Registry.registerHandler(AngelPlayerHandler, EntityAngel)
 
-		RegisterHelper.registerPacketHandler(this.MODID, classOf[PacketModifyStatue],
-			classOf[PacketSetTime])
+		this.registerPackets(classOf[PacketModifyStatue], classOf[PacketSetTime])
 
 	}
 
@@ -157,8 +164,8 @@ object WeepingAngels extends ModWrapper with IResourceHandler {
 				event.source.getSourceOfDamage.isInstanceOf[EntityAngelArrow]) {
 			event.entityLiving match {
 				case player: EntityPlayer =>
-					val angelPlayer: AngelPlayer = ExtendedEntityHandler
-							.getExtended(player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
+					val angelPlayer: AngelPlayer = ExtendedEntityHandler.getExtended(
+						player, classOf[AngelPlayer])
 					if (!angelPlayer.converting()) {
 						angelPlayer.startConversion()
 						angelPlayer.setAngelHealth(0.0F)

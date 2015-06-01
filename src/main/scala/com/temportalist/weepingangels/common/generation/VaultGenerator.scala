@@ -2,8 +2,7 @@ package com.temportalist.weepingangels.common.generation
 
 import java.util.Random
 
-import com.temportalist.origin.library.common.lib.vec.V3O
-import com.temportalist.origin.library.common.lib.{BlockState, LogHelper}
+import com.temportalist.origin.api.common.lib.{V3O, BlockState, LogHelper}
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.init.WABlocks
 import com.temportalist.weepingangels.common.tile.TEStatue
@@ -336,7 +335,7 @@ object VaultGenerator extends IWorldGenerator {
 
 	def setBlock(world: World, pos: V3O, random: Random): Unit = {
 		val state: BlockState = this.getBlock(random)
-		this.setBlock(world, pos, state.getBlock(), state.getMeta())
+		this.setBlock(world, pos, state.getBlock, state.getMeta)
 	}
 
 	def setBlock(world: World, block: Block, pos: V3O): Unit = {
@@ -344,7 +343,7 @@ object VaultGenerator extends IWorldGenerator {
 	}
 
 	def setBlock(world: World, state: BlockState, pos: V3O): Unit =
-		this.setBlock(world, pos, state.getBlock(), state.getMeta())
+		this.setBlock(world, pos, state.getBlock, state.getMeta)
 
 	def setBlock(world: World, pos: V3O, block: Block): Unit = {
 		this.setBlock(world, pos, block, 0)

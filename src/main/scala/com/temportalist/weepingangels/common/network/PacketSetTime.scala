@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.common.network
 
-import com.temportalist.origin.library.common.nethandler.IPacket
-import com.temportalist.weepingangels.common.WeepingAngels
+import com.temportalist.origin.foundation.common.network.IPacket
+import cpw.mods.fml.relauncher.Side
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.common.DimensionManager
 
@@ -12,15 +12,13 @@ import net.minecraftforge.common.DimensionManager
  */
 class PacketSetTime() extends IPacket {
 
-	override def getChannel(): String = WeepingAngels.MODID
-
 	def this(dim: Int, setTime: Int) {
 		this()
 		this.add(dim)
 		this.add(setTime)
 	}
 
-	override def handle(player: EntityPlayer, isServer: Boolean): Unit = {
+	override def handle(player: EntityPlayer, side: Side): Unit = {
 		DimensionManager.getWorld(this.get[Int]).setWorldTime(this.get[Int].toLong)
 	}
 

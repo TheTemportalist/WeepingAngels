@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.client.gui
 
-import com.temportalist.origin.library.client.utility.Rendering
-import com.temportalist.origin.wrapper.client.gui.GuiScreenWrapper
+import com.temportalist.origin.api.client.gui.GuiScreenBase
+import com.temportalist.origin.api.client.utility.Rendering
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.network.PacketSetTime
 import cpw.mods.fml.relauncher.{Side, SideOnly}
@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11
  * @author TheTemportalist
  */
 @SideOnly(Side.CLIENT)
-class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenWrapper with IGuiDynamic {
+class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenBase with IGuiDynamic {
 
 	override def drawMenu(zLevel: Double, resolution: ScaledResolution): Unit = {
 		val angle: Double = -this.correctAngle(this.getMouseAngle())

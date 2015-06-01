@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.common.init
 
-import com.temportalist.origin.library.common.Origin
-import com.temportalist.origin.library.common.register.BlockRegister
+import com.temportalist.origin.foundation.common.register.BlockRegister
+import com.temportalist.origin.internal.common.Origin
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.block.BlockStatue
 import com.temportalist.weepingangels.common.tile.TEStatue

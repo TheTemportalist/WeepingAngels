@@ -1,8 +1,10 @@
 package com.temportalist.weepingangels.common.extended
 
-import com.temportalist.origin.wrapper.common.extended.ExtendedEntity
+import com.temportalist.origin.foundation.common.extended.ExtendedEntity
+import com.temportalist.origin.foundation.common.network.PacketExtendedSync
 import com.temportalist.weepingangels.common.WAOptions
 import com.temportalist.weepingangels.common.lib.AngelUtility
+import cpw.mods.fml.relauncher.Side
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
@@ -67,16 +69,12 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	def startConversion(): Unit = {
 		this.isConverting = true
-
-		this.syncEntity()
-
+		this.syncEntity("converting", this.isConverting)
 	}
 
 	def stopConversion(): Unit = {
 		this.isConverting = false
-
-		this.syncEntity()
-
+		this.syncEntity("converting", this.isConverting)
 	}
 
 	def converting(): Boolean = {
@@ -85,12 +83,10 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 
 	def setAngelHealth(newHealth: Float): Unit = {
 		this.angelHealth = newHealth
-
-		this.syncEntity()
-
+		this.syncEntity("health", this.angelHealth)
 	}
 
-	def getAngelHealth(): Float = {
+	def getAngelHealth: Float = {
 		this.angelHealth + this.fractionalHealth
 	}
 
@@ -104,66 +100,57 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 			this.fractionalHealth = 0.0F
 		}
 
-		this.syncEntity()
+		this.syncEntity("health_with_ticks", this.angelHealth, this.fractionalHealth)
 
 	}
 
 	def setTicksUntilNextRegen(newTicks: Int): Unit = {
 		this.ticksUntilNextRegen = newTicks
-
-		this.syncEntity()
-
+		this.syncEntity("regen_ticks", this.ticksUntilNextRegen)
 	}
 
-	def getTicksUntilNextRegen(): Int = {
+	def getTicksUntilNextRegen: Int = {
 		this.ticksUntilNextRegen
 	}
 
 	def decrementTicksUntilRegen(): Unit = {
 		this.ticksUntilNextRegen -= 1
-
-		this.syncEntity()
-
+		this.syncEntity("regen_ticks", this.ticksUntilNextRegen)
 	}
 
 	def clearRegenTicks(): Unit = {
 		this.ticksUntilNextRegen = this.getMaxTicksPerRegen
-
-		this.syncEntity()
-
+		this.syncEntity("regen_ticks", this.ticksUntilNextRegen)
 	}
 
-	def getOpacityForBlackout(): Float = {
-		if (this.getAngelHealth > 0.0F) {
+	def getOpacityForBlackout: Float = {
+		if (this.getAngelHealth > 0.0F)
 			this.getAngelHealth / WAOptions.maxAngelHealth.asInstanceOf[Float]
-		}
-		else {
-			0.0F
-		}
+		else 0.0F
 	}
 
 	// Morph Compatibility
 
 	def setWatched(isWatched: Boolean): Unit = {
 		this.isWatched = isWatched
-		this.syncEntity()
+		this.syncEntity("watched", this.isWatched)
 	}
 
-	def isQuantumLocked(): Boolean = {
+	def isQuantumLocked: Boolean = {
 		this.isWatched
 	}
 
 	def setIsAttacking(): Unit = {
 		this.ticksWhenAttack = this.player.ticksExisted
-		this.syncEntity()
+		this.syncEntity("attack_ticks", this.ticksWhenAttack)
 	}
 
 	def setIsAttacked(): Unit = {
 		this.ticksWhenAttacked = this.player.ticksExisted
-		this.syncEntity()
+		this.syncEntity("attacked_ticks", this.ticksWhenAttacked)
 	}
 
-	def getAngryState(): Byte = {
+	def getAngryState: Byte = {
 		val ticksSinceLastAttacked: Int = this.player.ticksExisted - this.ticksWhenAttacked
 		if (this.ticksWhenAttacked >= 0 && ticksSinceLastAttacked <= WAOptions.morphedAngryTicks)
 			1
@@ -171,7 +158,7 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 			0
 	}
 
-	def getArmState(): Byte = {
+	def getArmState: Byte = {
 		val ticksSinceLastAttack: Int = this.player.ticksExisted - this.ticksWhenAttack
 		if (this.ticksWhenAttack >= 0 && ticksSinceLastAttack <= WAOptions.morphedChaseTicks) {
 			return 2
@@ -184,6 +171,28 @@ class AngelPlayer(player: EntityPlayer) extends ExtendedEntity(player) {
 		}
 
 		1
+	}
+
+	override def handleSyncPacketData(uniqueIdentifier: String, packet: PacketExtendedSync,
+			side: Side): Unit = {
+		uniqueIdentifier match {
+			case "converting" =>
+				this.isConverting = packet.get[Boolean]
+			case "health" =>
+				this.angelHealth = packet.get[Float]
+			case "health_with_ticks" =>
+				this.angelHealth = packet.get[Float]
+				this.fractionalHealth = packet.get[Float]
+			case "regen_ticks" =>
+				this.ticksUntilNextRegen = packet.get[Int]
+			case "watched" =>
+				this.isWatched = packet.get[Boolean]
+			case "attack_ticks" =>
+				this.ticksWhenAttack = packet.get[Int]
+			case "attacked_ticks" =>
+				this.ticksWhenAttacked = packet.get[Int]
+			case _ =>
+		}
 	}
 
 }

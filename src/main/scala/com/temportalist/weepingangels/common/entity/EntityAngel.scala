@@ -2,9 +2,9 @@ package com.temportalist.weepingangels.common.entity
 
 import java.util
 
-import com.temportalist.origin.library.common.lib.vec.V3O
-import com.temportalist.origin.library.common.utility.{Stacks, Teleport, WorldHelper}
-import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
+import com.temportalist.origin.api.common.lib.V3O
+import com.temportalist.origin.api.common.utility.{WorldHelper, Teleport, Stacks}
+import com.temportalist.origin.internal.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.extended.AngelPlayer
 import com.temportalist.weepingangels.common.init.WAItems
 import com.temportalist.weepingangels.common.lib.AngelUtility
@@ -415,8 +415,8 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 				case player: EntityPlayerMP =>
 					if (WAOptions.angelsCanConvertPlayers &&
 							this.rand.nextInt(100) < WAOptions.conversionChance) {
-						val angelPlayer: AngelPlayer = ExtendedEntityHandler
-								.getExtended(player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
+						val angelPlayer: AngelPlayer = ExtendedEntityHandler.getExtended(
+							player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
 
 						if (!angelPlayer.converting()) {
 							angelPlayer.startConversion()
@@ -615,7 +615,7 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 			this.setYoungestAdult()
 		}
 
-		if (WorldHelper.isClient()) {
+		if (WorldHelper.isClient) {
 			this.onAgeChanged(isAngry = false)
 			this.onAgeChanged(isAngry = true)
 		}

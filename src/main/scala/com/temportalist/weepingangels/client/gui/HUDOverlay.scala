@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.client.gui
 
-import com.temportalist.origin.library.client.utility.{Rendering, TessRenderer}
-import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
+import com.temportalist.origin.api.client.utility.{TessRenderer, Rendering}
+import com.temportalist.origin.internal.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.extended.AngelPlayer
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import cpw.mods.fml.common.eventhandler.{EventPriority, SubscribeEvent}
@@ -39,12 +39,12 @@ object HUDOverlay extends Gui() {
 			//return
 		}
 
-		val angelPlayer: AngelPlayer = ExtendedEntityHandler
-				.getExtended(this.mc.thePlayer, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
+		val angelPlayer: AngelPlayer = ExtendedEntityHandler.getExtended(
+			this.mc.thePlayer, classOf[AngelPlayer])
 
 		if (!angelPlayer.converting()) return
 
-		val angelHealth: Float = angelPlayer.getAngelHealth()
+		val angelHealth: Float = angelPlayer.getAngelHealth
 		//System.out.println(angelHealth)
 
 		val width: Int = event.resolution.getScaledWidth
@@ -52,7 +52,7 @@ object HUDOverlay extends Gui() {
 
 		// Used for transparency because it is immediately before crosshairs, which precedes all hud things
 		if (event.`type` == ElementType.HELMET) {
-			this.renderBlackoutWithAlpha(angelPlayer.getOpacityForBlackout(), width, height)
+			this.renderBlackoutWithAlpha(angelPlayer.getOpacityForBlackout, width, height)
 		}
 
 		// Triggered to render the angel health

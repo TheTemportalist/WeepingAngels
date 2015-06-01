@@ -2,14 +2,14 @@ package com.temportalist.weepingangels.common.init
 
 import java.util
 
-import com.temportalist.origin.library.common.Origin
-import com.temportalist.origin.library.common.register.ItemRegister
-import com.temportalist.origin.library.common.utility.Generic
-import com.temportalist.origin.wrapper.common.item.ItemWrapper
+import com.temportalist.origin.api.common.item.ItemBase
+import com.temportalist.origin.api.common.utility.Generic
+import com.temportalist.origin.foundation.common.register.ItemRegister
+import com.temportalist.origin.internal.common.Origin
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.item.ItemAngelTear
 import cpw.mods.fml.common.registry.GameRegistry
-import cpw.mods.fml.relauncher.{SideOnly, Side}
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.renderer.texture.IIconRegister
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
@@ -23,15 +23,15 @@ import net.minecraftforge.oredict.OreDictionary
  */
 object WAItems extends ItemRegister {
 
-	var angelTear: ItemWrapper = null
-	var angelArrow: ItemWrapper = null
+	var angelTear: ItemBase = null
+	var angelArrow: ItemBase = null
 
 	override def register(): Unit = {
 
 		this.angelTear = new ItemAngelTear()
 		Origin.addItemToTab(this.angelTear)
 
-		this.angelArrow = new ItemWrapper(WeepingAngels.MODID, "angelArrow") {
+		this.angelArrow = new ItemBase(WeepingAngels.MODID, "angelArrow") {
 			@SideOnly(Side.CLIENT)
 			override def addInformation(itemStack: ItemStack, player: EntityPlayer,
 					list: util.List[_], isAdvanced: Boolean): Unit = {

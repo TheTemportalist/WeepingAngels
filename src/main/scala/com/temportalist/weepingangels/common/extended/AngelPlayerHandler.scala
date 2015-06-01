@@ -1,6 +1,6 @@
 package com.temportalist.weepingangels.common.extended
 
-import com.temportalist.origin.wrapper.common.extended.ExtendedEntityHandler
+import com.temportalist.origin.internal.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.WAOptions
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.lib.AngelUtility
@@ -21,7 +21,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent
 object AngelPlayerHandler {
 
 	def get(player: EntityPlayer): AngelPlayer = {
-		ExtendedEntityHandler.getExtended(player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
+		ExtendedEntityHandler.getExtended(player, classOf[AngelPlayer])
 	}
 
 	@SubscribeEvent
@@ -31,8 +31,8 @@ object AngelPlayerHandler {
 		if (side == Side.SERVER) {
 			if (event.phase == TickEvent.Phase.START) {
 				val player: EntityPlayer = event.player
-				val angelPlayer: AngelPlayer = ExtendedEntityHandler
-						.getExtended(player, classOf[AngelPlayer]).asInstanceOf[AngelPlayer]
+				val angelPlayer: AngelPlayer = ExtendedEntityHandler.getExtended(
+					player, classOf[AngelPlayer])
 
 				if (angelPlayer == null) return
 
@@ -46,7 +46,7 @@ object AngelPlayerHandler {
 
 				}
 				else if (angelPlayer.converting()) {
-					if (angelPlayer.getAngelHealth() >= WAOptions.maxAngelHealth) {
+					if (angelPlayer.getAngelHealth >= WAOptions.maxAngelHealth) {
 						angelPlayer.stopConversion()
 
 						val angelEntity: EntityAngel = new EntityAngel(player.worldObj)
@@ -89,7 +89,7 @@ object AngelPlayerHandler {
 
 					}
 					else {
-						if (angelPlayer.getTicksUntilNextRegen() <= 0) {
+						if (angelPlayer.getTicksUntilNextRegen <= 0) {
 							angelPlayer.clearRegenTicks()
 						}
 						else {
@@ -100,7 +100,7 @@ object AngelPlayerHandler {
 					}
 
 				}
-				else if (!angelPlayer.converting() && angelPlayer.getAngelHealth() > 0.0F) {
+				else if (!angelPlayer.converting() && angelPlayer.getAngelHealth > 0.0F) {
 					angelPlayer.setAngelHealth(0.0F)
 					angelPlayer.clearRegenTicks()
 				}

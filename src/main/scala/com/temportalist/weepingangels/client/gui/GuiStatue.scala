@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.client.gui
 
-import com.temportalist.origin.library.client.utility.Rendering
-import com.temportalist.origin.wrapper.client.gui.GuiScreenWrapper
+import com.temportalist.origin.api.client.gui.GuiScreenBase
+import com.temportalist.origin.api.client.utility.Rendering
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.network.PacketModifyStatue
 import com.temportalist.weepingangels.common.tile.TEStatue
@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL11
  * @author TheTemportalist
  */
 @SideOnly(Side.CLIENT)
-class GuiStatue(val tileEntity: TEStatue) extends GuiScreenWrapper() {
+class GuiStatue(val tileEntity: TEStatue) extends GuiScreenBase() {
 
 	var facial: GuiButtonIterator = null
 	var arms: GuiButtonIterator = null

@@ -1,6 +1,6 @@
 package com.temportalist.weepingangels.common.init
 
-import com.temportalist.origin.library.common.register.EntityRegister
+import com.temportalist.origin.foundation.common.register.EntityRegister
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArrow}
 import cpw.mods.fml.common.registry.EntityRegistry

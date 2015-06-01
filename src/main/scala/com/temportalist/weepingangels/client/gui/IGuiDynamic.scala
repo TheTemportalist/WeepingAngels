@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.client.gui
 
-import com.temportalist.origin.library.client.utility.{GuiHelper, Keys, Rendering}
-import com.temportalist.origin.wrapper.client.gui.IGuiScreen
+import com.temportalist.origin.api.client.gui.IGuiScreen
+import com.temportalist.origin.api.client.utility.{Rendering, Keys}
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
 import cpw.mods.fml.relauncher.{SideOnly, Side}
@@ -63,7 +63,7 @@ trait IGuiDynamic extends IGuiScreen {
 		angle2
 	}
 
-	def doesMouseAffect(): Boolean = Keys.isMouseDownLeft()
+	def doesMouseAffect(): Boolean = Keys.isMouseDownLeft
 
 	def drawMenu(zLevel: Double, resolution: ScaledResolution): Unit
 
@@ -80,7 +80,7 @@ object GuiDynamic {
 	}
 
 	def display(menu: IGuiDynamic): Unit = {
-		GuiHelper.display(menu)
+		Rendering.display(menu)
 
 		// this stuff grabs the cursor so it doesnt render in the radial menu
 		Rendering.mc.inGameHasFocus = true

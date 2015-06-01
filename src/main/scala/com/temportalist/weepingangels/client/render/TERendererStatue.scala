@@ -1,7 +1,7 @@
 package com.temportalist.weepingangels.client.render
 
-import com.temportalist.origin.library.client.utility.{Rendering, TessRenderer}
-import com.temportalist.origin.wrapper.client.render.TERenderer
+import com.temportalist.origin.api.client.render.TERenderer
+import com.temportalist.origin.api.client.utility.{TessRenderer, Rendering}
 import com.temportalist.weepingangels.client.render.models.ModelWeepingAngel
 import com.temportalist.weepingangels.common.WAOptions
 import com.temportalist.weepingangels.common.entity.EntityAngel

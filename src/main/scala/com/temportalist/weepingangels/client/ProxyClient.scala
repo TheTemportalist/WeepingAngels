@@ -1,8 +1,6 @@
 package com.temportalist.weepingangels.client
 
 import java.util
-
-import com.temportalist.origin.library.common.handlers.RegisterHelper
 import com.temportalist.weepingangels.client.gui.configFactory.GuiConfig
 import com.temportalist.weepingangels.client.gui.{GuiDynamic, GuiStatue, GuiTimeManipulation, HUDOverlay}
 import com.temportalist.weepingangels.client.render.{RenderAngel, TERendererStatue}
@@ -18,6 +16,7 @@ import net.minecraft.client.renderer.entity.RenderArrow
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
+import com.temportalist.origin.api.common.register.Registry
 
 /**
  *
@@ -26,7 +25,7 @@ import net.minecraft.world.World
  */
 class ProxyClient() extends ProxyCommon with IModGuiFactory {
 
-	override def registerRender(): Unit = {
+	override def register(): Unit = {
 
 		ClientRegistry.bindTileEntitySpecialRenderer(
 			classOf[TEStatue], new TERendererStatue()
@@ -39,7 +38,7 @@ class ProxyClient() extends ProxyCommon with IModGuiFactory {
 			classOf[EntityAngelArrow], new RenderArrow()
 		)
 
-		RegisterHelper.registerHandler(HUDOverlay, GuiDynamic)
+		Registry.registerHandler(HUDOverlay, GuiDynamic)
 
 	}
 
