@@ -32,7 +32,7 @@ import net.minecraftforge.event.entity.player.{ArrowLooseEvent, ArrowNockEvent}
 @Mod(modid = WeepingAngels.MODID, name = WeepingAngels.MODNAME, version = WeepingAngels.VERSION,
 	modLanguage = "scala",
 	guiFactory = WeepingAngels.clientProxy,
-	dependencies = "required-after:origin@[4,);after:Morph@[0,);"
+	dependencies = "required-after:origin@[5,);after:Morph@[0,);"
 )
 object WeepingAngels extends IMod with IModResource {
 
