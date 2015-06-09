@@ -31,6 +31,8 @@ object VaultGenerator extends IWorldGenerator {
 	override def generate(random: Random, chunkX: Int, chunkZ: Int, world: World,
 			chunkGenerator: IChunkProvider, chunkProvider: IChunkProvider): Unit = {
 
+		if (world.provider.dimensionId != 0) return
+
 		if (random.nextInt(this.rarity) != 0) {
 			return
 		}
@@ -203,13 +205,15 @@ object VaultGenerator extends IWorldGenerator {
 		if (chestPos == pos) return
 
 		val block: Block = chestPos.getBlock(world)
+		println(block.getClass.getCanonicalName)
 		if (block != Blocks.mob_spawner && block != Blocks.chest) {
 			this.setBlock(world, chestPos, Blocks.chest)
-			val teChest: TileEntityChest = chestPos.getTile(world).asInstanceOf[TileEntityChest]
-			if (teChest != null) {
-				WeightedRandomChestContent.generateChestContents(random,
-					ChestGenHooks.getItems(ChestGenHooks.DUNGEON_CHEST, random), teChest,
-					ChestGenHooks.getCount(ChestGenHooks.DUNGEON_CHEST, random))
+			chestPos.getTile(world) match {
+				case teChest: TileEntityChest =>
+					WeightedRandomChestContent.generateChestContents(random,
+						ChestGenHooks.getItems(ChestGenHooks.DUNGEON_CHEST, random), teChest,
+						ChestGenHooks.getCount(ChestGenHooks.DUNGEON_CHEST, random))
+				case _ =>
 			}
 		}
 	}
