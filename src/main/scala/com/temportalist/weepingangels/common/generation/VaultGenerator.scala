@@ -2,7 +2,7 @@ package com.temportalist.weepingangels.common.generation
 
 import java.util.Random
 
-import com.temportalist.origin.api.common.lib.{V3O, BlockState, LogHelper}
+import com.temportalist.origin.api.common.lib.{BlockState, LogHelper, V3O}
 import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.init.WABlocks
 import com.temportalist.weepingangels.common.tile.TEStatue
@@ -107,16 +107,13 @@ object VaultGenerator extends IWorldGenerator {
 				this.setBlock(world, random, new V3O(x, y, pos.z_i() - 4))
 				this.setBlock(world, random, new V3O(x, y, pos.z_i() + 10))
 			}
+			for (y <- pos.y_i() + 2 to pos.y_i() + 5)
+				this.setBlock(world, random, new V3O(x, y, pos.z_i() + 2))
 		}
 		for (x <- pos.x_i() - 4 to pos.x_i() + 4) {
-			for (z <- pos.y_i() - 4 to pos.y_i() + 10) {
+			for (z <- pos.z_i() - 4 to pos.z_i() + 10) {
 				this.setBlock(world, random, new V3O(x, pos.y_i() + 1, z))
 				this.setBlock(world, random, new V3O(x, pos.y_i() + 6, z))
-			}
-		}
-		for (x <- pos.x_i() - 4 to pos.x_i() + 4) {
-			for (y <- pos.y_i() + 2 to pos.y_i() + 5) {
-				this.setBlock(world, random, new V3O(x, y, pos.z_i() + 2))
 			}
 		}
 	}
@@ -128,64 +125,64 @@ object VaultGenerator extends IWorldGenerator {
 		// top middle
 		this.setBlock(world, random, pos)
 		// stairs to path
-		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.west())
-		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.east())
-		this.setBlock(world, this.getStairs(ForgeDirection.SOUTH), pos.north())
+		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.copy().west())
+		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.copy().east())
+		this.setBlock(world, this.getStairs(ForgeDirection.SOUTH), pos.copy().north())
 		// path start into vault
-		this.setBlock(world, random, pos.south(1))
+		this.setBlock(world, random, pos.copy().south(1))
 		// make hole into vault
-		this.setBlock(world, pos.up(1).south(2), Blocks.iron_bars)
-		this.setBlock(world, pos.up(2).south(2), Blocks.iron_bars)
+		this.setBlock(world, pos.copy().up(1).south(2), Blocks.iron_bars)
+		this.setBlock(world, pos.copy().up(2).south(2), Blocks.iron_bars)
 		// make 3 stairs into vault (post bars)
-		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.west(1).south(3))
-		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.east(1).south(3))
-		this.setBlock(world, this.getStairs(ForgeDirection.NORTH), pos.east(1).south(3))
+		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.copy().west(1).south(3))
+		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.copy().east(1).south(3))
+		this.setBlock(world, this.getStairs(ForgeDirection.NORTH), pos.copy().east(1).south(3))
 		// entrance pillars
-		this.makePillar(world, random, pos.east().south())
-		this.makePillar(world, random, pos.east().north())
-		this.makePillar(world, random, pos.west().south())
-		this.makePillar(world, random, pos.west().north())
+		this.makePillar(world, random, pos.copy().east().south())
+		this.makePillar(world, random, pos.copy().east().north())
+		this.makePillar(world, random, pos.copy().west().south())
+		this.makePillar(world, random, pos.copy().west().north())
 		// walling in the back (excess)
-		this.makePillar(world, random, pos.west(3).north(2))
-		this.makePillar(world, random, pos.west(3).north(3))
-		this.makePillar(world, random, pos.west(2).north(2))
-		this.makePillar(world, random, pos.west(2).north(3))
+		this.makePillar(world, random, pos.copy().west(3).north(2))
+		this.makePillar(world, random, pos.copy().west(3).north(3))
+		this.makePillar(world, random, pos.copy().west(2).north(2))
+		this.makePillar(world, random, pos.copy().west(2).north(3))
 		// ^
-		this.makePillar(world, random, pos.east(3).north(2))
-		this.makePillar(world, random, pos.east(3).north(3))
-		this.makePillar(world, random, pos.east(2).north(2))
-		this.makePillar(world, random, pos.east(2).north(3))
+		this.makePillar(world, random, pos.copy().east(3).north(2))
+		this.makePillar(world, random, pos.copy().east(3).north(3))
+		this.makePillar(world, random, pos.copy().east(2).north(2))
+		this.makePillar(world, random, pos.copy().east(2).north(3))
 
 	}
 
 	def makePillar(world: World, random: Random, pos: V3O): Unit = {
-		this.setBlock(world, pos, random)
-		this.setBlock(world, pos.up(), random)
-		this.setBlock(world, pos.up(2), random)
-		this.setBlock(world, pos.up(3), random)
+		this.setBlock(world, pos.copy(), random)
+		this.setBlock(world, pos.copy().up(), random)
+		this.setBlock(world, pos.copy().up(2), random)
+		this.setBlock(world, pos.copy().up(3), random)
 	}
 
 	def makeFeatures(world: World, centerPos: V3O, random: Random): Unit = {
-		val pos: V3O = centerPos.south(6)
-		val statuePos: V3O = pos.up(2)
+		val pos: V3O = centerPos.copy().south(6).up()
+		val statuePos: V3O = pos.copy().up()
 		val radius: Int = 3 // radius
 		// 7 Statues
-		this.setStatue(world, 0, statuePos.south(radius))
-		this.setStatue(world, 45, statuePos.west(radius).south(radius))
-		this.setStatue(world, 315, statuePos.east(radius).south(radius))
-		this.setStatue(world, 90, statuePos.west(radius))
-		this.setStatue(world, 270, statuePos.east(radius))
-		this.setStatue(world, 135, statuePos.west(radius).north(radius))
-		this.setStatue(world, 225, statuePos.east(radius).north(radius))
+		this.setStatue(world, 0, statuePos.copy().south(radius))
+		this.setStatue(world, 315, statuePos.copy().west(radius).south(radius))
+		this.setStatue(world, 45, statuePos.copy().east(radius).south(radius))
+		this.setStatue(world, 270, statuePos.copy().west(radius))
+		this.setStatue(world, 90, statuePos.copy().east(radius))
+		this.setStatue(world, 225, statuePos.copy().west(radius).north(radius))
+		this.setStatue(world, 135, statuePos.copy().east(radius).north(radius))
 
-		val spawnerVec: V3O = centerPos + ForgeDirection.UP
+		val spawnerVec: V3O = pos.copy()
 		this.getLootOffsetPos(spawnerVec, random, radius)
 
 		// 1 Spawner
 		this.setBlock(world, spawnerVec, Blocks.mob_spawner)
 		spawnerVec.getTile(world) match {
 			case spawner: TileEntityMobSpawner =>
-				spawner.func_145881_a().setEntityName("Weeping Angel")
+				spawner.func_145881_a().setEntityName("weepingangel")
 			case _ =>
 				LogHelper.info(WeepingAngels.MODNAME,
 					"Failed to fetch mob spawner entity at (" + spawnerVec.x_i() + ", " +
@@ -205,8 +202,12 @@ object VaultGenerator extends IWorldGenerator {
 		if (chestPos == pos) return
 
 		val block: Block = chestPos.getBlock(world)
-		println(block.getClass.getCanonicalName)
+		//println(block.getClass.getCanonicalName)
 		if (block != Blocks.mob_spawner && block != Blocks.chest) {
+			if (block == WABlocks.statue) {
+				WeepingAngels.log("ERROR: chest trying to place at BlockStatue pos of " + pos.toString())
+				return
+			}
 			this.setBlock(world, chestPos, Blocks.chest)
 			chestPos.getTile(world) match {
 				case teChest: TileEntityChest =>
@@ -243,7 +244,7 @@ object VaultGenerator extends IWorldGenerator {
 	}
 
 	def makeTube(world: World, centerPos: V3O, random: Random, height: Int): Unit = {
-		var pos: V3O = centerPos.up(7)
+		val pos: V3O = centerPos.copy().up(7)
 
 		// 0 = down
 		// 1 = up
@@ -255,55 +256,53 @@ object VaultGenerator extends IWorldGenerator {
 
 		random.nextInt(3) match {
 			case 0 =>
-				pos = pos.north(3)
+				pos.north(3)
 				ladderFacing = ForgeDirection.SOUTH
 			case 1 =>
-				pos = pos.east(3)
+				pos.east(3)
 				ladderFacing = ForgeDirection.WEST
 			case 2 =>
-				pos = pos.west(3)
+				pos.west(3)
 				ladderFacing = ForgeDirection.EAST
 			case _ =>
 				return
 		}
 
-		this.setBlock(world, pos.down(), Blocks.air)
-		for (y <- pos.y_i() to pos.y_i() + height) {
-			val pos2: V3O = pos.up(y)
-			this.setBlock(world, random, pos2.west())
-			this.setBlock(world, random, pos2.west().north())
-			this.setBlock(world, random, pos2.west().south())
-			this.setBlock(world, Blocks.air, pos2)
-			this.setBlock(world, random, pos2.north())
-			this.setBlock(world, random, pos2.south())
-			this.setBlock(world, random, pos2.east())
-			this.setBlock(world, random, pos2.east().north())
-			this.setBlock(world, random, pos2.east().south())
-		}
+		this.setBlock(world, pos.copy().down(), Blocks.air)
+		for (y1 <- -4 to height) {
+			val pos2: V3O = pos + new V3O(0, y1, 0)
+			if (pos2.y_i() >= pos.y_i()) {
+				this.setBlock(world, random, pos2.copy().west())
+				this.setBlock(world, random, pos2.copy().west().north())
+				this.setBlock(world, random, pos2.copy().west().south())
 
-		// ~~~~~~~~~~~~~~
-		// Make ladder
-		for (y <- pos.y_i() - 4 to pos.y_i() + height) {
+				this.setBlock(world, random, pos2.copy().north())
+				this.setBlock(world, random, pos2.copy().south())
+				this.setBlock(world, random, pos2.copy().east())
+				this.setBlock(world, random, pos2.copy().east().north())
+				this.setBlock(world, random, pos2.copy().east().south())
+			}
 			if (random.nextInt(this.ladderRarity) != 0)
-				this.setBlock(world, pos.up(y),
+				this.setBlock(world, pos2,
 					Blocks.ladder, ladderFacing.ordinal()
 				)
+			else this.setBlock(world, Blocks.air, pos2)
 		}
 
-		this.makeTubeEntrance(world, pos.up(height), random)
+		this.makeTubeEntrance(world, pos.copy().up(height), random)
 
 	}
 
 	def makeTubeEntrance(world: World, pos: V3O, random: Random): Unit = {
 
-		this.setBlock(world, this.getStairs(ForgeDirection.NORTH), pos.up().south())
-		this.setBlock(world, this.getStairs(ForgeDirection.NORTH), pos.west().up().south())
-		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.west().up())
-		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.west().up().north())
-		this.setBlock(world, this.getStairs(ForgeDirection.SOUTH), pos.up().north())
-		this.setBlock(world, this.getStairs(ForgeDirection.SOUTH), pos.east().up().north())
-		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.east().up())
-		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.east().up().south())
+		this.setBlock(world, this.getStairs(ForgeDirection.NORTH), pos.copy().up().south())
+		this.setBlock(world, this.getStairs(ForgeDirection.NORTH), pos.copy().west().up().south())
+		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.copy().west().up())
+		this.setBlock(world, this.getStairs(ForgeDirection.EAST), pos.copy().west().up().north())
+		this.setBlock(world, this.getStairs(ForgeDirection.SOUTH), pos.copy().up().north())
+		this.setBlock(world, this.getStairs(ForgeDirection.SOUTH), pos.copy().east().up().north())
+		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.copy().east().up())
+		this.setBlock(world, this.getStairs(ForgeDirection.WEST), pos.copy().east().up().south())
 
 		/* todo set trapdoor, experiement with metadata
 		this.setBlock(world, pos.up(), Blocks.trapdoor.
@@ -312,12 +311,21 @@ object VaultGenerator extends IWorldGenerator {
 				withProperty(BlockTrapDoor.HALF, BlockTrapDoor.DoorHalf.TOP)
 		)
 		*/
-		this.setStatue(world, random.nextFloat() * 360, pos.up(2))
+		this.setStatue(world, random.nextFloat() * 360, pos.copy().up(2))
 
 	}
 
 	def getStairs(dir: ForgeDirection): BlockState = {
-		new BlockState(Blocks.stone_brick_stairs, dir.ordinal()) // todo check the metadata
+		// http://minecraft.gamepedia.com/Data_values#Stairs
+		val bit1and2: Int =
+			if (dir == ForgeDirection.EAST) 0
+			else if (dir == ForgeDirection.WEST) 1
+			else if (dir == ForgeDirection.SOUTH) 2
+			else if (dir == ForgeDirection.NORTH) 3
+			else -1
+		val bit4: Int = 0 // right side up stairs (1 if upsidedown)
+		val meta = bit1and2 | bit4
+		new BlockState(Blocks.stone_brick_stairs, meta)
 	}
 
 	def setStatue(world: World, rot: Float, pos: V3O): Unit = {
