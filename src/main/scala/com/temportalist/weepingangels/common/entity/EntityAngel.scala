@@ -3,7 +3,7 @@ package com.temportalist.weepingangels.common.entity
 import java.util
 
 import com.temportalist.origin.api.common.lib.V3O
-import com.temportalist.origin.api.common.utility.{Stacks, Teleport, WorldHelper}
+import com.temportalist.origin.api.common.utility.{Stacks, WorldHelper}
 import com.temportalist.origin.internal.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.extended.AngelPlayer
 import com.temportalist.weepingangels.common.init.WAItems
@@ -429,12 +429,9 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 						entityIsConvertting = true
 
 					}
-
 					if (!didAlternateAction && WAOptions.angelsCanTeleportPlayers &&
 							this.rand.nextInt(100) < WAOptions.teleportationChance) {
-						Teleport.toPointRandom(
-							player, WAOptions.teleportationMinRange, WAOptions.teleportationMaxRange
-						)
+						AngelUtility.teleportEntityToRandom(player, WAOptions.teleportationMinRange, WAOptions.teleportationMaxRange)
 						this.rejuvinate(1, 1.0D)
 						this.worldObj.playSoundAtEntity(player,
 							WeepingAngels.MODID + ":teleport_activate", 1.0F, 1.0F)
