@@ -3,7 +3,7 @@ package com.temportalist.weepingangels.common.entity
 import java.util
 
 import com.temportalist.origin.api.common.lib.V3O
-import com.temportalist.origin.api.common.utility.{WorldHelper, Teleport, Stacks}
+import com.temportalist.origin.api.common.utility.{Stacks, Teleport, WorldHelper}
 import com.temportalist.origin.internal.common.extended.ExtendedEntityHandler
 import com.temportalist.weepingangels.common.extended.AngelPlayer
 import com.temportalist.weepingangels.common.init.WAItems
@@ -20,7 +20,7 @@ import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraft.util.{AxisAlignedBB, DamageSource, EntityDamageSource}
-import net.minecraft.world.{EnumDifficulty, EnumSkyBlock, World}
+import net.minecraft.world.{EnumDifficulty, World}
 import net.minecraftforge.event.world.BlockEvent
 
 import scala.collection.mutable
@@ -532,26 +532,7 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 	}
 
 	def isValidLightLevel: Boolean = {
-		val vec: V3O = new V3O(
-			this.posX,
-			if (this.getBoundingBox != null) this.getBoundingBox.minY else this.posY,
-			this.posZ
-		)
-
-
-		if (vec.getSavedLightValue(this.worldObj, EnumSkyBlock.Sky) > this.rand.nextInt(32)) {
-			false
-		}
-		else {
-			var i: Int = this.worldObj.getBlockLightValue(vec.x_i(), vec.y_i(), vec.z_i())
-			if (this.worldObj.isThundering) {
-				val j: Int = this.worldObj.skylightSubtracted
-				this.worldObj.skylightSubtracted = 10
-				i = this.worldObj.getBlockLightValue(vec.x_i(), vec.y_i(), vec.z_i())
-				this.worldObj.skylightSubtracted = j
-			}
-			i <= this.rand.nextInt(WAOptions.maxLightLevelForSpawn)
-		}
+		AngelUtility.isValidLightLevelForMobSpawn(this, WAOptions.maxLightLevelForSpawn)
 	}
 
 	override def interact(player: EntityPlayer): Boolean = {

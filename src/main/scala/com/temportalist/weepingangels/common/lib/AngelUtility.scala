@@ -6,19 +6,20 @@ import java.io.InputStream
 import java.util
 import java.util.Random
 import javax.imageio.ImageIO
+
 import com.temportalist.origin.api.client.utility.Rendering
-import com.temportalist.origin.api.common.lib.{V3O, LogHelper}
-import com.temportalist.weepingangels.common.{WeepingAngels, WAOptions}
+import com.temportalist.origin.api.common.lib.{LogHelper, V3O}
 import com.temportalist.weepingangels.common.entity.EntityAngel
+import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.block.Block
-import net.minecraft.client.renderer.texture.{TextureUtil, SimpleTexture}
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.client.renderer.texture.{SimpleTexture, TextureUtil}
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.{Entity, EntityLivingBase}
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.util._
-import net.minecraft.world.{EnumSkyBlock, EnumDifficulty, World}
+import net.minecraft.world.{EnumDifficulty, EnumSkyBlock, World}
 import org.apache.commons.io.IOUtils
 
 /**
@@ -28,15 +29,43 @@ import org.apache.commons.io.IOUtils
  */
 object AngelUtility {
 
+	def getVectorForEntity(entity: Entity): V3O =
+		new V3O(entity.posX, entity.boundingBox.minY, entity.posZ)
+
+	def getLightLevel(entity: Entity): Int =
+		this.getLightLevel(entity.worldObj, this.getVectorForEntity(entity))
+
+	def getLightLevel(world: World, pos: V3O): Int = {
+		val isThundering = world.isThundering
+		val skylightSubtracted = world.skylightSubtracted
+		if (isThundering) world.skylightSubtracted = 10
+		// todo move this to V3O
+		val blockLightLevel = world.getBlockLightValue(pos.x_i(), pos.y_i(), pos.z_i())
+		if (isThundering) world.skylightSubtracted = skylightSubtracted
+		blockLightLevel
+	}
+
+	def isValidLightLevelForMobSpawn(entity: Entity, minLightLevel: Int): Boolean =
+		this.isValidLightLevelForMobSpawn(
+			entity.worldObj, this.getVectorForEntity(entity), minLightLevel)
+
+	def isValidLightLevelForMobSpawn(world: World, pos: V3O, minLightLevel: Int): Boolean = {
+		if (pos.getSavedLightValue(world, EnumSkyBlock.Sky) > world.rand.nextInt(32)) false
+		else {
+			this.getLightLevel(world, pos) <= world.rand.nextInt(minLightLevel)
+		}
+	}
+
 	def canBeSeen_Multiplayer(world: World, entity: EntityLivingBase, boundingBox: AxisAlignedBB,
 			radius: Double): Boolean = {
 
-		if (new V3O(entity).getSavedLightValue(world, EnumSkyBlock.Sky) <= 1) {
+		if (this.getLightLevel(entity) <= 1) {
 			return false
 		}
 
 		if (boundingBox == null) {
-			LogHelper.warn(WeepingAngels.MODID, "Error: null bounding box on " + entity.getCommandSenderName)
+			LogHelper.warn(WeepingAngels.MODID,
+				"Error: null bounding box on " + entity.getCommandSenderName)
 			return true
 		}
 
