@@ -9,19 +9,18 @@ import javax.imageio.ImageIO
 
 import com.temportalist.origin.api.client.utility.Rendering
 import com.temportalist.origin.api.common.lib.{LogHelper, V3O}
+import com.temportalist.origin.api.common.utility.WorldHelper
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.{WAOptions, WeepingAngels}
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.block.Block
 import net.minecraft.client.renderer.texture.{SimpleTexture, TextureUtil}
-import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
-import net.minecraft.entity.{Entity, EntityLivingBase}
+import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
 import net.minecraft.util._
-import net.minecraft.world.{EnumDifficulty, EnumSkyBlock, World}
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.entity.living.EnderTeleportEvent
+import net.minecraft.world.{EnumDifficulty, World}
 import org.apache.commons.io.IOUtils
 
 /**
@@ -31,37 +30,10 @@ import org.apache.commons.io.IOUtils
  */
 object AngelUtility {
 
-	def getVectorForEntity(entity: Entity): V3O =
-		new V3O(entity.posX, entity.boundingBox.minY, entity.posZ)
-
-	def getLightLevel(entity: Entity): Int =
-		this.getLightLevel(entity.worldObj, this.getVectorForEntity(entity))
-
-	def getLightLevel(world: World, pos: V3O): Int = {
-		val isThundering = world.isThundering
-		val skylightSubtracted = world.skylightSubtracted
-		if (isThundering) world.skylightSubtracted = 10
-		// todo move this to V3O
-		val blockLightLevel = world.getBlockLightValue(pos.x_i(), pos.y_i(), pos.z_i())
-		if (isThundering) world.skylightSubtracted = skylightSubtracted
-		blockLightLevel
-	}
-
-	def isValidLightLevelForMobSpawn(entity: Entity, minLightLevel: Int): Boolean =
-		this.isValidLightLevelForMobSpawn(
-			entity.worldObj, this.getVectorForEntity(entity), minLightLevel)
-
-	def isValidLightLevelForMobSpawn(world: World, pos: V3O, minLightLevel: Int): Boolean = {
-		if (pos.getSavedLightValue(world, EnumSkyBlock.Sky) > world.rand.nextInt(32)) false
-		else {
-			this.getLightLevel(world, pos) <= world.rand.nextInt(minLightLevel)
-		}
-	}
-
 	def canBeSeen_Multiplayer(world: World, entity: EntityLivingBase, boundingBox: AxisAlignedBB,
 			radius: Double): Boolean = {
 
-		if (this.getLightLevel(entity) <= 1) {
+		if (WorldHelper.getLightLevel(entity) <= 1) {
 			return false
 		}
 
@@ -157,6 +129,8 @@ object AngelUtility {
 		}
 	}
 
+	@Deprecated
+	// See WorldHelper.isInFieldOfViewOf
 	def isInFieldOfViewOf(viewer: EntityLivingBase, viewed: EntityLivingBase): Boolean = {
 		val entityLookVec: V3O = new V3O(viewer.getLook(1.0F))
 		val thisEntityPos: V3O = new V3O(viewed) + new V3O(0, viewed.height, 0)
@@ -286,114 +260,8 @@ object AngelUtility {
 		image
 	}
 
-	/// todo temporary until moved to Teleport class
-	def getRandomPoint(rand: Random, minRadius: Int, maxRadius: Int): V3O = {
-		new V3O(
-			this.getRandomBetweenBounds(rand, minRadius, maxRadius),
-			this.getRandomBetweenBounds(rand, minRadius, maxRadius),
-			this.getRandomBetweenBounds(rand, minRadius, maxRadius)
-		)
-	}
 
-	// todo MathFuncs
-	def getRandomBetweenBounds(rand: Random, min: Int, max: Int): Int = {
-		rand.nextInt(Math.abs(max - min)) + min
-	}
 
-	// todo to V3O
-	def getEntityCoordinate(entity: Entity): V3O = {
-		new V3O(
-			MathHelper.floor_double(entity.posX),
-			MathHelper.floor_double(entity.posY),
-			MathHelper.floor_double(entity.posZ)
-		)
-	}
 
-	// todo to Teleport class object
-	def teleportEntityToRandom(entity: EntityLivingBase, minRadius: Int, maxRadius: Int): Unit = {
-		val entityPos = this.getEntityCoordinate(entity)
-		var newPosCoordinate: V3O = null
-		var centeredNewPos: V3O = null
-		var loop: Int = 0
-		newPosCoordinate = this.getRandomPoint(
-			entity.worldObj.rand, minRadius, maxRadius) + entityPos
-		centeredNewPos = newPosCoordinate + V3O.CENTER
-		var safePos: (Boolean, Block) = this.isSafePosition(entity.worldObj, newPosCoordinate)
-		var isSaveAndValidPos: Boolean = safePos._1 &&
-				this.isValidPosition(entity.worldObj, centeredNewPos, entity)
-		while (!isSaveAndValidPos) {
-			loop += 1
-			// world height is 128
-			if (loop > 128) {
-				this.teleportEntityToRandom(entity, minRadius, maxRadius)
-				return
-			}
-
-			if (safePos._2 != Blocks.air) {
-				newPosCoordinate.up()
-				centeredNewPos.up()
-			}
-			else {
-				newPosCoordinate.down()
-				centeredNewPos.down()
-			}
-
-			safePos = this.isSafePosition(entity.worldObj, newPosCoordinate)
-			isSaveAndValidPos = safePos._1 &&
-					this.isValidPosition(entity.worldObj, centeredNewPos, entity)
-
-		}
-
-		this.teleportEntityToPoint(entity, centeredNewPos)
-	}
-
-	def isSafePosition(world: World, position: V3O): (Boolean, Block) = {
-		val block = position.copy().down().getBlock(world)
-		(block != Blocks.air, block) // && block.isOpaqueCube
-	}
-
-	def isValidPosition(world: World, centeredPos: V3O, entity: EntityLivingBase): Boolean = {
-		val entityHalfWidth: Float = entity.width / 2
-		val posBoundingBox: AxisAlignedBB = AxisAlignedBB.getBoundingBox(
-			centeredPos.x - entityHalfWidth,
-			centeredPos.y - entity.yOffset + entity.ySize,
-			centeredPos.z - entityHalfWidth,
-			centeredPos.x + entityHalfWidth,
-			centeredPos.y - entity.yOffset + entity.ySize + entity.height,
-			centeredPos.z + entityHalfWidth
-		)
-		world.getCollidingBoundingBoxes(entity, posBoundingBox).isEmpty &&
-				!world.isAnyLiquid(posBoundingBox)
-	}
-
-	def teleportEntityToPoint(entity: Entity, point: V3O): Boolean = {
-		entity match {
-			case player: EntityPlayer =>
-				val event: EnderTeleportEvent = new EnderTeleportEvent(
-					player, point.x_i(), point.y_i(), point.z_i(), 0.0F
-				)
-				if (MinecraftForge.EVENT_BUS.post(event)) return false
-			case _ =>
-		}
-
-		// todo make sure spot is chunk loaded (setup chunkloader for Origin mod?)
-
-		entity match {
-			case elb: EntityLivingBase =>
-				elb.setPositionAndUpdate(point.x, point.y, point.z)
-				elb match {
-					case mp: EntityPlayerMP =>
-						mp.playerNetServerHandler.setPlayerLocation(point.x, point.y, point.z,
-							mp.rotationYaw, mp.rotationPitch)
-					case _ =>
-				}
-			case _ =>
-				entity.setPosition(point.x, point.y, point.z)
-		}
-
-		// todo optional particles
-
-		true
-	}
 
 }
