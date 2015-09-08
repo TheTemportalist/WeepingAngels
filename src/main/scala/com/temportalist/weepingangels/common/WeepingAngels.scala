@@ -38,7 +38,7 @@ object WeepingAngels extends IMod with IModResource {
 
 	final val MODID = "weepingangels"
 	final val MODNAME = "Weeping Angels"
-	final val VERSION = "@PLUGIN_VERSION@"
+	final val VERSION = "@MOD_VERSION@"
 	final val clientProxy = "com.temportalist.weepingangels.client.ProxyClient"
 	final val serverProxy = "com.temportalist.weepingangels.server.ProxyServer"
 
