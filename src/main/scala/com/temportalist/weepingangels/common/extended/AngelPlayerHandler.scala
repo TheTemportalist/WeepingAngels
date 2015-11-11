@@ -81,11 +81,16 @@ object AngelPlayerHandler {
 							player.worldObj.spawnEntityInWorld(angelEntity)
 
 
+						player.setHealth(0F)
+						player.setDead()
+						/*
 						if (!player.attackEntityFrom(DamageSource.causeMobDamage(angelEntity),
 							Float.MaxValue)) {
+							if (angelEntity.hasStolenInventory) angelEntity.dropStolenInventory()
 							angelEntity.setDead()
 							// TODO Maybe return here, to prevent anything from occuring after death
 						}
+						*/
 
 					}
 					else {
