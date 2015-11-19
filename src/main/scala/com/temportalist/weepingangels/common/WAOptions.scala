@@ -1,7 +1,14 @@
 package com.temportalist.weepingangels.common
 
+import java.util.Map.Entry
+
+import com.google.gson.{JsonObject, JsonArray, JsonElement}
+import com.temportalist.origin.api.common.lib.ConfigJson
+import com.temportalist.origin.api.common.utility.Scala
 import com.temportalist.origin.foundation.common.register.OptionRegister
 import net.minecraft.util.ResourceLocation
+
+import scala.collection.mutable
 
 /**
  *
@@ -9,6 +16,8 @@ import net.minecraft.util.ResourceLocation
  * @author TheTemportalist
  */
 object WAOptions extends OptionRegister {
+
+	override def getExtension: String = "json"
 
 	val maxDecrepitation_amount: Int = 6000
 	val ticksPerDecrepitation: Int = 1200
@@ -32,7 +41,8 @@ object WAOptions extends OptionRegister {
 
 	var angelsOnlyHurtWithPickaxe: Boolean = true
 
-	var maximumSpawnHeight: Int = 40
+	val spawnHeightRanges = mutable.Map[Int, (Int, Int)]()
+
 	var spawnProbability: Int = 80
 	var maxLightLevelForSpawn: Int = 8
 	var angelOverridesPlayerArmor: Boolean = false
@@ -130,16 +140,6 @@ object WAOptions extends OptionRegister {
 			true
 		)
 
-
-
-		this.maximumSpawnHeight = this.getAndComment(stats,
-			"Max spawn height",
-			"The maximum spawn height for Angels." +
-					" Angels will only be able to spawn between levels 0 and (this), in darkness." +
-					" Default 40.",
-			40
-		)
-
 		this.spawnProbability = this.getAndComment(stats,
 			"Weighted Spawn Probability",
 			"The weighted probability that an Angel can spawn. The larger this number is, the" +
@@ -203,6 +203,39 @@ object WAOptions extends OptionRegister {
 				"creeper.primed"
 			)
 		)
+
+		// get the json object which is how the config object is populated
+		val json = this.config.asInstanceOf[ConfigJson].configJson
+
+		// check if the json has a spawn variable
+		if (!json.has("spawn")) {
+			val spawn = new JsonObject
+
+			// create the overworld default config values
+			val overworld = new JsonObject
+			overworld.addProperty("dimensionID", 0)
+			overworld.addProperty("minSpawnHeight", 0)
+			overworld.addProperty("maxSpawnHeight", 40)
+			spawn.add("overworld", overworld)
+
+			// add the spawn object to the json config
+			json.add("spawn", spawn)
+		}
+		try {
+			// try to load the spawn object
+			val spawn = json.get("spawn").getAsJsonObject
+			Scala.iterateCol(spawn.entrySet(), (entry: Entry[String, JsonElement]) => {
+				// the name of the entry is inconsequential. All we care about is the dimID
+				val dimJson = entry.getValue.getAsJsonObject
+				// add it to the spawn ranges. Used in EntityAngel.getCanSpawnHere
+				this.spawnHeightRanges(dimJson.get("dimensionID").getAsInt) =
+						(dimJson.get("minSpawnHeight").getAsInt,
+								dimJson.get("maxSpawnHeight").getAsInt)
+			})
+		}
+		catch {
+			case e: Exception => e.printStackTrace()
+		}
 
 	}
 

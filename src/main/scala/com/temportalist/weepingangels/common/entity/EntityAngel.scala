@@ -524,9 +524,16 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 	}
 
 	override def getCanSpawnHere: Boolean = {
-		this.worldObj.difficultySetting != EnumDifficulty.PEACEFUL &&
-				this.posY <= WAOptions.maximumSpawnHeight &&
-				this.isValidLightLevel && super.getCanSpawnHere
+		if (this.worldObj.difficultySetting != EnumDifficulty.PEACEFUL) {
+			val dimensionID = this.worldObj.provider.dimensionId
+			if (WAOptions.spawnHeightRanges.contains(dimensionID)) {
+				val range = WAOptions.spawnHeightRanges(dimensionID)
+				if (range._1 <= this.posY && this.posY <= range._2) {
+					return this.isValidLightLevel && super.getCanSpawnHere
+				}
+			}
+		}
+		false
 	}
 
 	def isValidLightLevel: Boolean = {
