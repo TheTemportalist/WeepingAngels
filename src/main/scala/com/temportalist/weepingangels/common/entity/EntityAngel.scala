@@ -5,6 +5,7 @@ import java.util
 import com.temportalist.origin.api.common.lib.V3O
 import com.temportalist.origin.api.common.utility.{Teleport, Stacks, WorldHelper}
 import com.temportalist.origin.internal.common.extended.ExtendedEntityHandler
+import com.temportalist.weepingangels.common.entity.ai.EntityAIAngelAttackTarget
 import com.temportalist.weepingangels.common.extended.AngelPlayer
 import com.temportalist.weepingangels.common.init.WAItems
 import com.temportalist.weepingangels.common.lib.AngelUtility
@@ -42,9 +43,7 @@ class EntityAngel(world: World) extends EntityAgeable(world) {
 	this.tasks.addTask(2, new EntityAIWatchClosest(this, classOf[EntityVillager], 8.0F))
 	this.tasks.addTask(3, new EntityAILookIdle(this))
 	this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true))
-	this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(
-		this, classOf[EntityPlayer], 0, true
-	))
+	this.targetTasks.addTask(2, new EntityAIAngelAttackTarget(this))
 
 	this.experienceValue = 50
 	this.isImmuneToFire = true
