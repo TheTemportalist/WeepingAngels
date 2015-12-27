@@ -10,11 +10,12 @@ import com.temportalist.weepingangels.common.entity.{EntityAngel, EntityAngelArr
 import com.temportalist.weepingangels.common.extended.{AngelPlayer, AngelPlayerHandler}
 import com.temportalist.weepingangels.common.generation.VaultGenerator
 import com.temportalist.weepingangels.common.init.{WABlocks, WAEntity, WAItems}
-import com.temportalist.weepingangels.common.network.{PacketModifyStatue, PacketSetTime}
+import com.temportalist.weepingangels.common.network.{PacketSetTime, PacketModifyStatue}
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.common.{Mod, SidedProxy}
+import cpw.mods.fml.relauncher.Side
 import net.minecraft.enchantment.{Enchantment, EnchantmentHelper}
 import net.minecraft.entity.boss.EntityDragon
 import net.minecraft.entity.monster.EntityEnderman
@@ -32,7 +33,7 @@ import net.minecraftforge.event.entity.player.{ArrowLooseEvent, ArrowNockEvent}
 @Mod(modid = WeepingAngels.MODID, name = WeepingAngels.MODNAME, version = WeepingAngels.VERSION,
 	modLanguage = "scala",
 	guiFactory = WeepingAngels.clientProxy,
-	dependencies = "required-after:origin@[5,);after:Morph@[0,);"
+	dependencies = "required-after:origin@[8,);after:Morph@[0,);"
 )
 object WeepingAngels extends IMod with IModResource {
 
@@ -62,7 +63,10 @@ object WeepingAngels extends IMod with IModResource {
 
 		Registry.registerHandler(AngelPlayerHandler, EntityAngel)
 
-		this.registerPackets(classOf[PacketModifyStatue], classOf[PacketSetTime])
+		this.registerNetwork()
+		this.registerPacket(classOf[PacketModifyStatue.Handler],
+			classOf[PacketModifyStatue], Side.SERVER)
+		this.registerPacket(classOf[PacketSetTime.Handler], classOf[PacketSetTime], Side.SERVER)
 
 	}
 

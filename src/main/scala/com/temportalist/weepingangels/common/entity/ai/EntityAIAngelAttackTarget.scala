@@ -36,9 +36,10 @@ class EntityAIAngelAttackTarget(owner: EntityCreature)
 
 	// TODO move to origin
 	def isChristmas(leniencyDays: Int): Boolean = {
-		val currentDate = Calendar.getInstance().getTime
-		currentDate.getMonth == 12 && currentDate.getDate >= 25 - leniencyDays &&
-				currentDate.getDate < 26 + leniencyDays
+		val inst = Calendar.getInstance()
+		inst.get(Calendar.MONTH) + 1 == 12 &&
+				inst.get(Calendar.DATE) >= 25 - leniencyDays &&
+				inst.get(Calendar.DATE) < 26 + leniencyDays
 	}
 
 }

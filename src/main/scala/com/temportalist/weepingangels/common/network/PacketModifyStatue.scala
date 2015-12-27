@@ -1,9 +1,9 @@
 package com.temportalist.weepingangels.common.network
 
-import com.temportalist.origin.foundation.common.network.PacketTile
+import com.temportalist.origin.foundation.common.network.IPacket
 import com.temportalist.weepingangels.common.tile.TEStatue
+import cpw.mods.fml.common.network.simpleimpl.{IMessage, IMessageHandler, MessageContext}
 import cpw.mods.fml.relauncher.Side
-import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.tileentity.TileEntity
 
 /**
@@ -12,11 +12,7 @@ import net.minecraft.tileentity.TileEntity
  *
  * @author TheTemportalist
  */
-class PacketModifyStatue(tile: TileEntity) extends PacketTile(tile) {
-
-	def this() {
-		this(null)
-	}
+class PacketModifyStatue extends IPacket {
 
 	/**
 	 * @param tile The tile entity
@@ -24,28 +20,35 @@ class PacketModifyStatue(tile: TileEntity) extends PacketTile(tile) {
 	 * @param value Face (1 = Calm, 2 = Angry), Arms (1 = Hiding, 2 = Peaking, 3 = Confident), Rotation (in degrees)
 	 */
 	def this(tile: TileEntity, state: Int, value: Float) {
-		this(tile)
+		this()
+		this.add(tile)
 		this.add(state)
 		this.add(value)
 	}
 
-	override def handle(player: EntityPlayer, tileEntity: TileEntity, side: Side): Unit = {
-		tileEntity match {
-			case statue: TEStatue =>
-				this.get[Int] match {
-					case 1 => // Face
-						statue.setFacialState(Math.floor(this.get[Float]).toInt)
-					case 2 => // Arms
-						statue.setArmState(Math.floor(this.get[Float]).toInt)
-						println("Set arm state to " + statue.getArmState)
-					case 3 => // Rotation
-						statue.setRotation(this.get[Float])
-					case 4 => // Corruption
-						statue.setCorruption(this.get[Float].toInt)
-					case _ =>
-				}
-			case _ =>
+	override def getReceivableSide: Side = Side.SERVER
+
+}
+object PacketModifyStatue {
+	class Handler extends IMessageHandler[PacketModifyStatue, IMessage] {
+		override def onMessage(message: PacketModifyStatue, ctx: MessageContext): IMessage = {
+			message.getTile(ctx.getServerHandler.playerEntity.worldObj) match {
+				case statue: TEStatue =>
+					message.get[Int] match {
+						case 1 => // Face
+							statue.setFacialState(Math.floor(message.get[Float]).toInt)
+						case 2 => // Arms
+							statue.setArmState(Math.floor(message.get[Float]).toInt)
+							println("Set arm state to " + statue.getArmState)
+						case 3 => // Rotation
+							statue.setRotation(message.get[Float])
+						case 4 => // Corruption
+							statue.setCorruption(message.get[Float].toInt)
+						case _ =>
+					}
+				case _ =>
+			}
+			null
 		}
 	}
-
 }
