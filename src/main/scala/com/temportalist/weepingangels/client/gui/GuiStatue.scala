@@ -2,6 +2,7 @@ package com.temportalist.weepingangels.client.gui
 
 import com.temportalist.origin.api.client.gui.GuiScreenBase
 import com.temportalist.origin.api.client.utility.Rendering
+import com.temportalist.weepingangels.common.WeepingAngels
 import com.temportalist.weepingangels.common.entity.EntityAngel
 import com.temportalist.weepingangels.common.network.PacketModifyStatue
 import com.temportalist.weepingangels.common.tile.TEStatue
@@ -76,7 +77,7 @@ class GuiStatue(val tileEntity: TEStatue) extends GuiScreenBase() {
 	def syncStatue(id: Int, value: Float): Unit = {
 		new PacketModifyStatue(
 			this.tileEntity, id, value
-		).sendToBoth()
+		).sendToServer(WeepingAngels)
 	}
 
 	override def mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Unit = {

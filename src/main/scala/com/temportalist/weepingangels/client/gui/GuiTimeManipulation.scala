@@ -86,7 +86,8 @@ class GuiTimeManipulation(val player: EntityPlayer) extends GuiScreenBase with I
 		val angle: Double = 360 - this.correctAngle(this.getMouseAngle())
 		var time: Double = angle / 360D * 24000 - 18000
 		if (time < 0) time += 24000
-		new PacketSetTime(player.getEntityWorld.provider.dimensionId, time.toInt).sendToServer()
+		new PacketSetTime(player.getEntityWorld.provider.dimensionId,
+			time.toInt).sendToServer(WeepingAngels)
 	}
 
 }
